@@ -1,8 +1,20 @@
 # Assert 示例
 
-## 示例代码
+对应目录：
 
-```rust
+- `galaxy-flow/examples/assert`
+- 入口：`_gal/work.gxl`
+- 常用 flow：`assert_main`、`assert_parent`
+
+这个示例主要验证三类能力：
+
+- `gx.assert(...)` 的相等断言
+- 对象、数组与大小写不敏感变量访问
+- `#[auto_load(entry/exit)]` 与模块 flow 组合
+
+示例代码：
+
+```gxl
 extern mod os { path= "../../_gal/mods"; }
 mod base_env {
     env _common {
@@ -81,22 +93,9 @@ mod main   {
 }
 ```
 
-## 说明
+运行方式：
 
-这个示例展示了如何使用 `gx.assert` 命令进行断言检查。在 `assert_main` 流程中，多个 `gx.assert` 命令用于验证变量的值是否符合预期。在 `base.define` 流程中，也使用了 `gx.assert` 来验证环境变量和模块变量的值。
-
-```mermaid
-graph TD
-    A[Start] --> B[Load base_env]
-    B --> C[Load envs]
-    C --> D[Load base module]
-    D --> E[Load other module]
-    E --> F[Load main module]
-    F --> G[Execute __into flow]
-    G --> H[Execute assert_main flow]
-    H --> I[Execute gx.assert commands]
-    I --> J[Execute base.define flow]
-    J --> K[Execute more gx.assert commands]
-    K --> L[Execute __exit flow]
-    L --> M[End]
+```bash
+gx assert_main
+gx assert_parent
 ```

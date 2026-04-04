@@ -1,8 +1,20 @@
 # Read 示例
 
-## 示例代码
+对应目录：
 
-```rust
+- `galaxy-flow/examples/read`
+- 入口：`_gal/work.gxl`
+- 常用 flow：`conf`
+
+这个示例演示：
+
+- `gx.read_file(...)` 把 ini 文件读入变量空间
+- `gx.read_cmd(...)` 捕获命令输出
+- 读取命名对象后用 `for` 遍历
+
+示例代码：
+
+```gxl
 extern mod os { path= "../../_gal/mods"; }
 mod envs {
     env _dev_local {
@@ -37,22 +49,8 @@ mod main   {
 }
 ```
 
-```mermaid
-graph TD
-    A[Start] --> B[Load envs module]
-    B --> C[Execute _dev_local env]
-    C --> D[Execute gx.read_file command]
-    D --> E[Load main module]
-    E --> F[Execute conf flow]
-    F --> G[Execute gx.echo commands]
-    G --> H[Execute gx.read_cmd command]
-    H --> I[Execute gx.echo command]
-    I --> J[Execute gx.read_file command]
-    J --> K[Loop through DATA]
-    K --> L[Execute gx.echo command for each item]
-    L --> M[End]
+运行方式：
+
+```bash
+gx conf
 ```
-
-## 说明
-
-这个示例展示了如何使用 `gx.read` 命令从不同来源读取数据。在 `_dev_local` 环境中，使用 `gx.read_file` 从 `var.ini` 文件读取数据。在 `conf` 流程中，使用 `gx.read_cmd` 执行 Git 命令并捕获输出，以及使用 `gx.read_file` 从 `var2.ini` 文件读取数据。还展示了如何遍历读取的数据。

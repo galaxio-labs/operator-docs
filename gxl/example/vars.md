@@ -1,8 +1,20 @@
-# Vars Example
+# Vars 示例
 
-This example demonstrates how to define and use variables in GXL.
+对应目录：
 
-```rust
+- `galaxy-flow/examples/vars`
+- 入口：`_gal/work.gxl`
+- 常用 flow：`array_do`、`obj_do`
+
+这个示例演示：
+
+- env 中定义列表与对象变量
+- `for` 遍历数组和对象
+- `if` 条件判断与变量比较
+
+示例代码：
+
+```gxl
 mod envs {
     env default {
         data_list = [
@@ -32,20 +44,9 @@ mod main {
 }
 ```
 
-## Description
+运行方式：
 
-This example shows how to define variables in an environment and how to use these variables in flows. In the `default` environment, a list `data_list` and an object `data_obj` are defined. In the `array_do` flow, the `data_list` list is iterated over and each element is output. In the `obj_do` flow, the `data_obj` object is iterated over and the properties of each object are output.
-
-```mermaid
-graph TD
-    A[Start] --> B[Load envs module]
-    B --> C[Define data_list and data_obj variables]
-    C --> D[Load main module]
-    D --> E[Execute array_do flow]
-    E --> F[Loop through ENV.DATA_LIST]
-    F --> G[Execute gx.echo command for each item]
-    G --> H[Execute obj_do flow]
-    H --> I[Loop through ENV.DATA_OBJ]
-    I --> J[Execute gx.echo command for each item]
-    J --> K[End]
+```bash
+gx array_do
+gx obj_do
 ```

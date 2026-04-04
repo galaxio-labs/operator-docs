@@ -1,54 +1,42 @@
-# Fun Example
+# Function 示例
 
-This example demonstrates how to define and use functions in GXL.
+对应目录：
 
-```rust
+- `galaxy-flow/examples/fun`
+- 入口：`_gal/work.gxl`
+- 常用 flow：`conf`
+
+这个示例演示：
+
+- `fn` 定义与模块内调用
+- 默认参数与可变参数
+- 函数中继续调用其他函数与 `for`
+
+示例代码：
+
+```gxl
 extern mod os { path = "../../_gal/mods"; }
 
 mod sys {
-    fun echo(name) {
-        gx.echo("echo:${name}");
+    fn echo( *value ) {
+        gx.echo ( "${value}");
     }
-    fun echo_obj(obj) {
-        gx.echo("echo_obj:${obj}");
+    fn echo_obj( *value , msg = "object") {
+        gx.echo ( "${value}:${msg}");
     }
-    fun echo_list(list) {
-        gx.echo("echo_list:${list}");
-    }
-}
-
-mod envs {
-    env default {
-        DATA = [
-            "JAVA",
-            "RUST",
-            "PYTHON",
-        ];
-        OBJ = {
-            name: "test",
-            value: "value",
-        };
-    }
-}
-
-mod main {
-    flow conf {
-        sys.echo("test");
-        sys.echo_obj("${OBJ}");
-        sys.echo_list("${DATA}");
+    fn echo_list( *value , list_msg  ) {
+      prefix = "galaxy";
+      sys.echo_obj("sys.echo_obj");
+      echo_obj("echo_obj");
+      for ${item} in ${list_msg}  {
+          gx.echo ( "${prefix}-${value}-${item}");
+      }
     }
 }
 ```
 
-```mermaid
-graph TD
-    A[Start] --> B[Load sys module]
-    B --> C[Define echo functions]
-    C --> D[Load envs module]
-    D --> E[Load main module]
-    E --> F[Execute conf flow]
-    F --> G[Call sys.echo function]
-    G --> H[Call sys.echo_obj function]
-    H --> I[Call sys.echo_list function]
-    I --> J[End]
+运行方式：
+
+```bash
+gx conf
 ```

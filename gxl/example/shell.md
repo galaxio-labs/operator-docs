@@ -1,8 +1,20 @@
-# Shell Example
+# Shell 示例
 
-This example demonstrates how to execute shell commands in GXL.
+对应目录：
 
-```rust
+- `galaxy-flow/examples/shell`
+- 入口：`_gal/work.gxl`
+- 常用 flow：`conf`、`do_obj`
+
+这个示例演示：
+
+- `gx.shell(...)` 运行脚本并回填 `out_var`
+- `arg_file` 的使用
+- 列表、对象遍历中重复执行 shell
+
+示例代码：
+
+```gxl
 extern mod os { path = "../../_gal/mods"; }
 
 mod envs {
@@ -51,26 +63,9 @@ mod main {
 }
 ```
 
-## 说明
+运行方式：
 
-这个示例展示了如何使用 `gx.shell` 命令执行 shell 脚本。在 `conf` 流程中，首先从 `var.yml` 文件读取数据，然后使用 `gx.shell` 执行 `demo.sh` 脚本，并通过 `arg_file` 参数传递 `var.json` 文件。还展示了如何在循环中执行 shell 脚本，并处理列表和对象数据。
-
-```mermaid
-graph TD
-    A[Start] --> B[Load envs module]
-    B --> C[Load main module]
-    C --> D[Execute conf flow]
-    D --> E[Execute gx.read_file command]
-    E --> F[Execute gx.echo command]
-    F --> G[Execute gx.shell command]
-    G --> H[Execute gx.echo command]
-    H --> I[Execute gx.read_file command]
-    I --> J[Loop through DATA.DEV_LANG]
-    J --> K[Execute gx.shell command for each item]
-    K --> L[Execute gx.echo command]
-    L --> M[Execute gx.read_file command]
-    M --> N[Loop through DATA]
-    N --> O[Execute gx.shell command for each item]
-    O --> P[Execute gx.echo command]
-    P --> Q[End]
+```bash
+gx conf
+gx do_obj
 ```

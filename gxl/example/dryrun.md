@@ -1,8 +1,19 @@
-# Dryrun Example
+# Dryrun 示例
 
-This example demonstrates the dryrun functionality in GXL.
+对应目录：
 
-```rust
+- `galaxy-flow/examples/dryrun`
+- 入口：`_gal/work.gxl`
+- 常用 flow：`start`
+
+这个示例演示：
+
+- `#[dryrun(_step3)]` 在 dryrun 模式下替换目标 flow
+- 非 dryrun 时原 flow 继续执行，且断言失败
+
+示例代码：
+
+```gxl
 mod main {
 
 env default {}
@@ -26,14 +37,9 @@ flow start | _step1 | _step2 ;
 }
 ```
 
-```mermaid
-graph TD
-    A[Start] --> B[Load main module]
-    B --> C[Execute start flow]
-    C --> D[Execute _step1 flow]
-    D --> E[Execute _step2 flow]
-    E --> F{Assertion fails?}
-    F -->|Yes| G[Execute _step3 flow]
-    F -->|No| H[End]
-    G --> I[End]
+运行方式：
+
+```bash
+gx start --dryrun
+gx start
 ```

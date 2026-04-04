@@ -1,8 +1,20 @@
-# Template Example
+# Template 示例
 
-This example demonstrates how to use templates in GXL.
+对应目录：
 
-```rust
+- `galaxy-flow/examples/template`
+- 入口：`_gal/work.gxl`
+- 常用 flow：`conf`
+
+这个示例演示：
+
+- `gx.tpl(...)` 渲染模板目录
+- 先用 `gx.cmd(...)` 准备输出目录
+- `cmd` 代码块的写法
+
+示例代码：
+
+```gxl
 extern mod os { path = "../../_gal/mods"; }
 
 mod base_env {
@@ -45,6 +57,8 @@ mod main {
 }
 ```
 
-## Description
+运行方式：
 
-This example shows how to use the `gx.tpl` command to process template files. In the `conf` flow, the `os.path` command is first used to create the target directory, then the `gx.tpl` command renders template files from the `tpls` directory based on values in the `value.json` file and outputs them to the `used` directory. Finally, an inline shell command block is shown to copy a file.
+```bash
+gx conf
+```

@@ -1,8 +1,21 @@
-# Transaction Example
+# Transaction 示例
 
-This example demonstrates how to use transactions in GXL.
+对应目录：
 
-```rust
+- `galaxy-flow/examples/transaction`
+- 入口：`_gal/work.gxl`
+- 外部模块：`_gal/base.gxl`
+- 常用 flow：`trans1`、`trans2`
+
+这个示例演示：
+
+- `#[transaction]` 事务式 flow
+- `#[undo(...)]` 回滚 flow
+- 引入外部模块后的跨模块事务步骤
+
+示例代码：
+
+```gxl
 extern mod base { path = "./_gal/"; }
 
 mod envs {
@@ -39,20 +52,9 @@ mod main {
 }
 ```
 
-```mermaid
-graph TD
-    A[Start] --> B[Load base module]
-    B --> C[Load envs module]
-    C --> D[Load main module]
-    D --> E[Define flows]
-    E --> F[Execute trans1 flow]
-    F --> G[Execute step1 flow]
-    G --> H[Execute step2 flow]
-    H --> I[Execute base.base_step1 flow]
-    I --> J[Execute step3 flow]
-    J --> K[Execute trans2 flow]
-    K --> L[Execute step1 flow]
-    L --> M[Execute step3 flow]
-    M --> N[Execute step2 flow]
-    N --> O[End]
+运行方式：
+
+```bash
+gx trans1
+gx trans2
 ```
