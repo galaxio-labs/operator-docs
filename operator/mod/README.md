@@ -1,156 +1,95 @@
-# Mod-Operator 开发指南
+# Module Operator 指南
 
 ## 概述
 
-Mod-Operator 是 Galaxy Ops 框架的核心组件，用于定义和管理可复用的运维模块。每个 Mod-Operator 代表一个独立的软件组件或服务，包含完整的生命周期管理能力，包括安装、配置、启动、停止、监控等操作。
+在当前 `galaxy-ops` 实现里，模块通过 `gops mod` 管理，不存在独立的 `gmod` CLI。
 
-### 核心特性
+`Module` 是最小可复用运维单元。它负责沉淀：
 
-- **多平台支持**: 支持不同的 CPU 架构、操作系统和运行环境组合
-- **模块化设计**: 每个模块都是独立的，可单独开发和版本管理
-- **工作流驱动**: 使用 GXL 语言定义复杂的运维操作流程
-- **模板本地化**: 支持配置模板渲染和环境适配
-- **依赖管理**: 处理模块间的依赖关系
-- **构件管理**: 统一的软件包下载、缓存和分发机制
+- 模块变量
+- 模块依赖
+- 模块构件
+- 模块工作流
+- 模块本地化输出
 
-### 在 Galaxy Ops 生态系统中的位置
+模块本身不直接面向客户交付，它先被组合成 `System`，再由 `Ops Project` 导入和交付。
 
+## 当前命令
+
+```bash
+gops mod example
+gops mod new --name <name>
+gops mod update
+gops mod localize [--value <file> | --default]
 ```
-gmod (创建模块) → gsys (组合系统) → gops (工程管理) → gflow (执行工作流)
+
+## 典型工作流
+
+### 1. 创建模块
+
+```bash
+gops mod new --name nginx
 ```
 
-Mod-Operator 是整个运维体系的基础构建块，由 `gmod` 工具创建和管理，最终通过 `gflow` 执行具体的运维操作。
+当前实现会在目标目录下生成类似结构：
+
+```text
+nginx/
+├── .gitignore
+├── version.txt
+├── mod-prj.yml
+├── _gal/
+│   ├── adm.gxl
+│   ├── project.toml
+│   └── work.gxl
+└── mod/
+    ├── arm-mac14-host/
+    │   └── vars.yml
+    └── x86-ubt22-k8s/
+        └── vars.yml
+```
+
+注意：
+
+- 当前骨架一定会生成 `mod-prj.yml`
+- 当前骨架会按支持的 `ModelSTD` 生成 `mod/<model>/...`
+- 初始模板比较轻，后续文件通常通过 update / localize / 手工补充逐步完善
+
+### 2. 更新模块本地引用
+
+```bash
+gops mod update
+gops mod update --force 2
+```
+
+`update` 主要用于同步依赖、本地引用和相关生成内容。`--force` 支持不同强度的覆盖策略。
+
+### 3. 本地化模块
+
+```bash
+gops mod localize --value values/dev.yml
+```
+
+或：
+
+```bash
+gops mod localize --default
+```
+
+`localize` 会基于模块变量和值文件生成本地化结果，用于后续系统组合或实际交付。
+
+## 模块在整体分层中的位置
+
+```text
+gops mod   -> 定义和维护模块
+gops sys   -> 组合模块形成系统
+gops prj   -> 导入系统形成具体交付项目
+galaxy-flow -> 执行工作流
+```
 
 ## 文档索引
 
-本指南被拆分为以下文档以便于维护：
-
-- **[配置说明](./CONFIGURATION.md)** - 核心配置文件详细说明
-- **[开发指南](./DEVELOPMENT.md)** - 开发工作流和最佳实践
-- **[故障排除](./TROUBLESHOOTING.md)** - 调试和故障排除
-- **[API 参考](./REFERENCE.md)** - API 和枚举参考
-
-## 快速开始
-
-### 创建新模块
-
-```bash
-# 创建基础模块
-gmod new postgresql
-
-# 创建带目标的模块
-gmod new postgresql --targets arm-mac14-host,x86-ubt22-k8s
-
-# 从模板创建
-gmod new postgresql --template database
-```
-
-### 基本文件结构
-
-```
-module_name/
-├── mod/                              # 模块定义目录
-│   ├── arm-mac14-host/              # ARM + macOS14 + Host 环境
-│   │   ├── _gal/                    # 项目配置目录
-│   │   ├── local/                   # 本地化生成的配置
-│   │   ├── spec/                    # 规范文件目录
-│   │   ├── values/                  # 值文件目录
-│   │   ├── vars.yml                 # 变量定义
-│   │   ├── setting.yml              # 本地化设置
-│   │   └── workflows/               # 工作流定义
-│   └── x86-ubt22-k8s/              # x86 + Ubuntu22 + K8s 环境
-│       └── [相同的子目录结构]
-├── mod-prj.yml                      # 模块项目配置
-├── version.txt                      # 版本文件
-├── .gitignore                       # Git 忽略文件
-└── test_res/                        # 测试资源目录
-```
-
-### 支持的目标平台
-
-| 组合 | CPU架构 | 操作系统 | 运行环境 | 适用场景 |
-|------|---------|----------|----------|----------|
-| `arm-mac14-host` | ARM | macOS 14+ | Host 宿主机 | Apple Silicon Mac 本地开发 |
-| `x86-ubt22-host` | x86_64 | Ubuntu 22.04 | Host 宿主机 | Linux 服务器本地部署 |
-| `x86-ubt22-k8s` | x86_64 | Ubuntu 22.04 | Kubernetes | K8s 集群容器化部署 |
-
-## 开发工作流
-
-### 1. 定义模块规范
-- 编辑 `spec/artifact.yml` - 构件定义
-- 编辑 `spec/depends.yml` - 依赖定义
-
-### 2. 配置变量
-- 编辑 `vars.yml` - 变量定义
-- 编辑 `values/_value.yml` - 默认值
-
-### 3. 编写工作流
-- 编辑 `workflows/operators.gxl` - 使用 GXL 定义工作流
-
-### 4. 测试和验证
-- 使用 `gflow` 测试工作流
-- 使用 `gmod validate` 验证配置
-
-### 5. 本地化模块
-- 使用 `gmod localize` 生成特定环境配置
-
-## 关键概念
-
-### ModelSTD 标准型号
-
-Mod-Operator 使用 `ModelSTD` 标准型号来定义目标平台，格式为 `arch-os-spc`：
-
-- **CPU 架构**: X86 (x86_64), ARM
-- **操作系统**: MAC14 (macOS 14+), UBT22 (Ubuntu 22.04), WIN10 (Windows 10+), COS7 (CentOS 7)
-- **运行空间**: Host (宿主机环境), K8S (Kubernetes 环境)
-
-### 构件管理
-
-构件定义了模块所需的软件包和下载资源，包括：
-
-- 名称 (name)
-- 版本 (version)
-- 原始地址 (origin_addr)
-- 缓存地址 (cache_addr)
-- 缓存启用 (cache_enable)
-- 本地文件名 (local)
-
-### 依赖管理
-
-模块可以依赖其他模块或资源，支持：
-
-- 本地路径依赖
-- Git 仓库依赖
-- 条件依赖（根据变量启用/禁用）
-- 版本约束
-
-### 工作流引擎
-
-使用 GXL (Galaxy eXecution Language) 定义运维操作：
-
-- 支持任务定义和执行
-- 变量模板渲染
-- 条件分支和循环
-- 外部命令执行
-- 错误处理和重试机制
-
-## 相关工具
-
-- **gmod**: 模块创建和管理工具
-- **gops**: 工程管理工具
-- **gflow**: 工作流执行工具
-- **gsys**: 系统组合工具
-
-## 更多信息
-
-查看详细文档：
-
-- 📖 [配置说明](./CONFIGURATION.md) - 完整的配置文件参考
-- 📖 [开发指南](./DEVELOPMENT.md) - 开发最佳实践
-- 📖 [故障排除](./TROUBLESHOOTING.md) - 调试和问题解决
-- 📖 [示例参考](./EXAMPLES.md) - 完整的模块示例
-- 📖 [API 参考](./REFERENCE.md) - API 和枚举定义
-
----
-
-*Mod-Operator 是 Galaxy Ops 框架的核心构建块，通过标准化的文件结构、配置管理和工作流定义，实现了软件组件的模块化运维管理。*
+- [CONFIGURATION.md](./CONFIGURATION.md)
+- [DEVELOPMENT.md](./DEVELOPMENT.md)
+- [REFERENCE.md](./REFERENCE.md)
+- [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
