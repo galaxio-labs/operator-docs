@@ -1,34 +1,16 @@
-# gx.tar 和 gx.untar
+# gx.tar / gx.untar
 
-## 功能描述
-创建和解压tar归档文件。
+## gx.tar
 
-## 语法定义
 ```gxl
-// 创建tar归档
-gx.tar {
-  src: <源文件/目录>,     // 要归档的源文件或目录
-  file: <归档文件名>      // 生成的归档文件名
-}
-
-// 解压tar归档
-gx.untar {
-  file: <归档文件名>,     // 要解压的归档文件
-  dst: <目标目录>         // 解压到的目标目录
-}
+gx.tar(src: "./src", file: "./dist/src.tar.gz");
 ```
 
-## 示例代码
-```gxl
-// 创建tar归档
-gx.tar {
-  src: "src/",
-  file: "source.tar"
-}
+## gx.untar
 
-// 解压tar归档
-gx.untar {
-  file: "source.tar",
-  dst: "extracted/"
-}
+```gxl
+gx.untar(file: "./dist/src.tar.gz", dst: "./dist/unpack");
 ```
+
+说明：
+- `gx.untar` 解压前会处理目标路径（存在时清理）。

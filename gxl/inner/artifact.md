@@ -1,21 +1,11 @@
-# gx.artifact
+# gx.artifact（当前未作为内置 block 能力接入）
 
-## 功能描述
-处理构建产物文件。
+当前 `BlockAction` 与 `stc_blk` 未直接识别 `gx.artifact`。
 
-## 语法定义
+如果需要 artifact 流程，请通过外部模块/活动调用方式实现，例如：
+
 ```gxl
-gx.artifact {
-  file: <文件路径>,       // 构建产物文件路径
-  dst_path: <目标路径>    // 目标存储路径
-}
+os.artifact(file: "./target/a", dst: "./artifacts");
 ```
 
-## 示例代码
-```gxl
-// 处理构建产物
-gx.artifact {
-  file: "target/release/myapp",
-  dst_path: "artifacts/v1.0.0/"
-}
-```
+建议将该能力放在 `_gal/mods` 中以模块调用方式维护。

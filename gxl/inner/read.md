@@ -1,47 +1,47 @@
-# gx.read
+# gx.read_file / gx.read_cmd / gx.read_stdin
 
-## 功能描述
-从不同来源读取数据并存储到变量中。
+## gx.read_file
 
-## 语法定义
+读取配置文件到变量空间。
+
 ```gxl
-// 从文件读取
-gx.read_file {
-  file: <文件路径>,      // 要读取的文件路径
-  name: <变量名>         // 存储文件内容的变量名
-}
-
-// 从标准输入读取
-gx.read_stdin {
-  name: <变量名>,        // 存储输入内容的变量名
-  prompt: <提示文本>     // 输入提示文本（可选）
-}
-
-// 从命令输出读取
-gx.read_cmd {
-  cmd: <命令字符串>,     // 要执行的命令
-  name: <变量名>,        // 存储命令输出的变量名
-  shell: <Shell类型>     // 指定使用的Shell（可选）
-}
+gx.read_file(
+  file: "./var.yml",
+  name: "DATA"
+);
 ```
 
-## 示例代码
+参数：
+- `file`（或匿名首参数）
+- `name`：可选；不传时对象字段会并入全局变量
+- `entity`：解析层接受，当前执行层未使用
+
+格式支持：
+- `ini`
+- `json`
+- `yml`
+
+## gx.read_cmd
+
+执行命令并把 stdout 写入变量。
+
 ```gxl
-// 从文件读取内容
-gx.read_file {
-  file: "config.json",
-  name: "config_data"
-}
+gx.read_cmd(
+  name: "BRANCH",
+  cmd: "git branch --show-current",
+  err: "ERR_MSG",
+  ok_codes: "0,1",
+  log: "1"
+);
+```
 
-// 从标准输入读取
-gx.read_stdin {
-  name: "user_input",
-  prompt: "请输入您的姓名: "
-}
+## gx.read_stdin
 
-// 从命令输出读取
-gx.read_cmd {
-  cmd: "git rev-parse HEAD",
-  name: "commit_hash"
-}
+从标准输入读取值。
+
+```gxl
+gx.read_stdin(
+  prompt: "input your name:",
+  name: "USER_NAME"
+);
 ```

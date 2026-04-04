@@ -1,34 +1,26 @@
 # gx.shell
 
-## 功能描述
-执行Shell脚本文件。
+## 作用
 
-## 语法定义
+执行 shell 命令/脚本，可加载参数文件，可回填输出变量。
+
+## 语法
+
 ```gxl
-gx.shell {
-  shell: <脚本文件路径>,  // 要执行的Shell脚本文件路径
-  arg_file: <参数文件>,   // 参数文件路径（可选）
-  out_var: <输出变量名>,  // 捕获脚本输出的变量名（可选）
-  default: <默认脚本>     // 默认脚本文件路径（可选，与shell互斥）
-}
+gx.shell(
+  shell: "<command or script>",
+  arg_file: "<json|yml|yaml|toml|ini>",
+  out_var: "<var name>",
+  err: "<err var>",
+  ok_codes: "0,2",
+  log: "1|2|3",
+  sudo: "true|false",
+  silence: "true|false"
+);
 ```
 
-## 示例代码
+也支持匿名首参数：
+
 ```gxl
-// 执行Shell脚本
-gx.shell {
-  shell: "deploy.sh"
-}
-
-// 执行脚本并捕获输出
-gx.shell {
-  shell: "build.sh",
-  out_var: "build_output"
-}
-
-// 使用参数文件
-gx.shell {
-  shell: "install.sh",
-  arg_file: "install.args"
-}
+gx.shell("./demo.sh");
 ```

@@ -1,36 +1,24 @@
 # gx.run
 
-## 功能描述
-运行其他GXL工作流文件。
+## 作用
 
-## 语法定义
+在子目录中执行另一个 GXL 配置。
+
+## 语法
+
 ```gxl
-gx.run {
-  local: <工作流路径>,    // 要运行的工作流文件路径
-  env: <环境配置>,        // 环境配置（可选）
-  flow: <流程列表>,       // 要执行的流程列表（可选）
-  conf: <配置文件>,       // 配置文件路径（可选）
-  isolate: <布尔值>       // 是否隔离环境（可选）
-}
+gx.run(
+  local: "<run dir>",
+  conf: "<gxl file>",
+  env: "<env name>",
+  flow: "a,b,c",
+  isolate: "true|false"
+);
 ```
 
-## 示例代码
-```gxl
-// 运行其他工作流
-gx.run {
-  local: "./subflow.gxl"
-}
-
-// 在特定环境中运行工作流
-gx.run {
-  local: "./deploy.gxl",
-  env: "production",
-  flow: "build,deploy"
-}
-
-// 隔离环境运行
-gx.run {
-  local: "./test.gxl",
-  isolate: true
-}
-```
+参数：
+- `local`：运行目录
+- `conf`：目标配置文件（默认 `./_gal/work.gxl`）
+- `env`：目标环境
+- `isolate`：是否隔离变量空间
+- `flow`：解析层可接受；当前执行层未实际覆盖 flow 列表（保留参数）

@@ -1,19 +1,20 @@
-# gx.defined
+# defined(...)
 
-## 功能描述
-检查变量是否已定义。
+## 作用
 
-## 语法定义
+条件表达式函数，判断变量是否已定义。
+
+## 语法
+
 ```gxl
-gx.defined(${变量名})
-```
+if defined(${HOME}) {
+  gx.echo(value: "has home");
+}
 
-## 示例代码
-```gxl
-// 检查变量是否已定义
-if (gx.defined(${MY_VAR})) {
-  gx.echo { value: "MY_VAR已定义，值为: ${MY_VAR}" }
-} else {
-  gx.echo { value: "MY_VAR未定义" }
+if !defined(${NO_SUCH_VAR}) {
+  gx.echo(value: "missing");
 }
 ```
+
+说明：
+- 这是表达式函数，不是 `gx.defined` 命令。

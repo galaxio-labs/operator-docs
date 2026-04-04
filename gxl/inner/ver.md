@@ -1,35 +1,22 @@
 # gx.ver
 
-## 功能描述
-管理和操作版本信息。
+## 作用
 
-## 语法定义
+读取并递增版本号（写回文件，并导出变量）。
+
+## 语法
+
 ```gxl
-gx.ver {
-  value: <版本值>,       // 版本值
-  default: <默认值>,     // 默认版本值（可选）
-  file: <文件路径>,      // 版本文件路径（可选）
-  export: <变量名>,      // 导出版本信息的变量名（可选）
-  inc: <递增类型>        // 版本递增类型（可选，可选值：build/bugfix/feature/main）
-}
+gx.ver(
+  file: "./version.txt",
+  inc: "build|bugfix|feature|main|null"
+);
 ```
 
-## 示例代码
-```gxl
-// 设置版本值
-gx.ver {
-  value: "1.2.3"
-}
+版本格式：
+- `major.minor.patch`
+- `major.minor.patch.build`
 
-// 从文件读取版本并递增
-gx.ver {
-  file: "VERSION",
-  inc: "feature"
-}
-
-// 导出版本信息
-gx.ver {
-  value: "2.0.0",
-  export: "APP_VERSION"
-}
-```
+说明：
+- 默认导出变量为 `VERSION`。
+- `export` 参数在当前解析层存在实现偏差，不建议使用。
