@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>内置命令 - galaxio-labs operator ecosystem</title>
+        <title>docker-compose 示例 - galaxio-labs operator ecosystem</title>
 
 
         <!-- Custom HTML head -->
@@ -12,34 +12,34 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon-de23e50b.svg">
-        <link rel="shortcut icon" href="favicon-8114d1fc.png">
-        <link rel="stylesheet" href="css/variables-8adf115d.css">
-        <link rel="stylesheet" href="css/general-e96d0476.css">
-        <link rel="stylesheet" href="css/chrome-d279d366.css">
-        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+        <link rel="icon" href="../../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../../css/general-e96d0476.css">
+        <link rel="stylesheet" href="../../../css/chrome-d279d366.css">
+        <link rel="stylesheet" href="../../../css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+        <link rel="stylesheet" href="../../../fonts/fonts-9644e21d.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
-        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
-        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="./mermaid.css">
+        <link rel="stylesheet" href="../../.././mermaid.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "";
+            const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-abd8e62c.js";
+            window.path_to_searchindex_js = "../../../searchindex-abd8e62c.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-3505d4ea.js"></script>
+        <script src="../../../toc-3505d4ea.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -106,7 +106,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../../../toc.html"></iframe>
             </noscript>
             <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -141,7 +141,7 @@
                     <h1 class="menu-title">galaxio-labs operator ecosystem</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../../../print.html" title="Print this book" aria-label="Print this book">
                             <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
                         </a>
 
@@ -175,17 +175,95 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="buildin"><a class="header" href="#buildin">BUILDIN</a></h1>
+                        <h1 id="system-示例纯-docker-compose-系统"><a class="header" href="#system-示例纯-docker-compose-系统">System 示例：纯 docker-compose 系统</a></h1>
+<p>纯 compose 系统不组合模块、不使用 GXL 工作流，<code>gops sys</code> 直接驱动本机 <code>docker compose</code>。</p>
+<h2 id="1-创建系统"><a class="header" href="#1-创建系统">1. 创建系统</a></h2>
+<pre><code class="language-bash">gops sys new --name gateway --kind docker-compose
+cd gateway
+</code></pre>
+<p>生成的是精简结构（无 <code>_gal/</code>、<code>mod_list.yml</code>、<code>workflows/</code>、<code>setting/list.yml</code>），见 <a href="../structure/directory.html">目录结构</a>。</p>
+<p><code>sys/sys_model.yml</code>：</p>
+<pre><code class="language-yaml">name: gateway
+kind: docker-compose
+vender: ''
+</code></pre>
+<h2 id="2-编写-compose-与变量定义"><a class="header" href="#2-编写-compose-与变量定义">2. 编写 compose 与变量定义</a></h2>
+<p><code>docker-compose.yml</code> 用 Docker Compose 原生 <code>${VAR}</code> 占位（<code>sys new</code> 会生成一份可修改的模板）：</p>
+<pre><code class="language-yaml">services:
+  app:
+    image: ${SERVICE_IMAGE}
+    ports:
+      - "${SERVICE_PORT}:80"
+    deploy:
+      replicas: ${REPLICAS}
+</code></pre>
+<p>非密钥变量在 <code>sys/setting/vars.yml</code> 的 <code>system:</code> 段声明（源定义，随系统版本化）：</p>
+<pre><code class="language-yaml">system:
+  - name: SERVICE_IMAGE
+    value: nginx:alpine
+  - name: SERVICE_PORT
+    value: 8080
+  - name: REPLICAS
+    value: 1
+</code></pre>
+<p>密钥不要写在这里：在 compose 里用 <code>${SEC_xxx}</code> 占位，运行时由 <code>gops sys start</code> 从 <code>~/.galaxy/sec_value.yml</code> 注入（不落盘）。</p>
+<pre><code class="language-yaml">services:
+  db:
+    environment:
+      POSTGRES_PASSWORD: ${SEC_POSTGRES_PASSWORD}
+</code></pre>
+<p><code>~/.galaxy/sec_value.yml</code>（不在项目里、不入库）：</p>
+<pre><code class="language-yaml">postgres_password: "your-secret"
+</code></pre>
+<p>key 会归一化为大写并加 <code>SEC_</code> 前缀：<code>postgres_password</code> → <code>SEC_POSTGRES_PASSWORD</code>。</p>
+<h2 id="3-生成-env"><a class="header" href="#3-生成-env">3. 生成 <code>.env</code></a></h2>
+<pre><code class="language-bash">gops sys localize        # 缺 merged_vars.yml 时会自动先 update
+cat .env
+</code></pre>
+<p>规则：</p>
+<pre><code class="language-text">.env = sys/merged_vars.yml 默认值 ⊕ values/sys_value.yml ⊕ values/value.yml
+</code></pre>
+<ul>
+<li><code>values/sys_value.yml</code> 是 <code>sys update</code> 生成的<strong>注释模板</strong>：取消注释要覆盖的项即可，其余取默认值。</li>
+<li><code>values/value.yml</code> 是更高优先级的覆盖层。</li>
+</ul>
+<p>例如只想改端口与副本数：</p>
+<pre><code class="language-yaml"># values/sys_value.yml
+SERVICE_PORT: 9090
+REPLICAS: 3
+</code></pre>
+<p><code>.env</code> 只包含非密钥配置，随时可以用 <code>docker compose config</code> 校验。</p>
+<h2 id="4-部署"><a class="header" href="#4-部署">4. 部署</a></h2>
+<p><code>kind: docker-compose</code> 下，部署命令映射到 <code>docker compose</code>：</p>
+<pre><code class="language-bash">gops sys diagnose    # docker compose config（密钥以 ******** 掩码注入）
+gops sys download    # docker compose pull
+gops sys install     # docker compose create
+gops sys start       # docker compose up -d（密钥注入子进程环境）
+gops sys status      # docker compose ps
+gops sys stop        # docker compose stop
+gops sys uninstall   # docker compose down
+</code></pre>
+<h2 id="5-交付给客户运维项目"><a class="header" href="#5-交付给客户运维项目">5. 交付给客户（运维项目）</a></h2>
+<pre><code class="language-bash">gops sys package                          # 先 update 再打包 -&gt; ../gateway-&lt;version&gt;.tar.gz
+cd ..
+gops prj new --name customer-a
+cd customer-a
+gops prj import --path ../gateway-0.1.0.tar.gz
+cd gateway
+gops sys localize                         # 使用 &lt;project&gt;/values/gateway/ 下的客户值
+gops sys start
+</code></pre>
+<p>客户差异写在 <code>&lt;project&gt;/values/gateway/</code>（例如 <code>value.yml</code>）。在项目内的系统目录执行 <code>gops sys localize</code> / <code>sys update</code> 时，会依据上层 <code>ops-prj.yml</code> 直接使用该项目值目录。</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="cmd/gprj.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../../operator/sys/examples/microservices.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="operator/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../../operator/sys/structure/directory.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -195,11 +273,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="cmd/gprj.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../../operator/sys/examples/microservices.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="operator/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../../operator/sys/structure/directory.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
@@ -219,16 +297,16 @@
         </script>
 
 
-        <script src="elasticlunr-ef4e11c1.min.js"></script>
-        <script src="mark-09e88c2c.min.js"></script>
-        <script src="searcher-09f2665d.js"></script>
+        <script src="../../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../../mark-09e88c2c.min.js"></script>
+        <script src="../../../searcher-09f2665d.js"></script>
 
-        <script src="clipboard-1626706a.min.js"></script>
-        <script src="highlight-abc7f01d.js"></script>
-        <script src="book-609e4cb8.js"></script>
+        <script src="../../../clipboard-1626706a.min.js"></script>
+        <script src="../../../highlight-abc7f01d.js"></script>
+        <script src="../../../book-609e4cb8.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="./mermaid.min.js"></script>
+        <script src="../../.././mermaid.min.js"></script>
 
 
 

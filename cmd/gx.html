@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>内置命令 - galaxio-labs operator ecosystem</title>
+        <title>gx - galaxio-labs operator ecosystem</title>
 
 
         <!-- Custom HTML head -->
@@ -12,34 +12,34 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon-de23e50b.svg">
-        <link rel="shortcut icon" href="favicon-8114d1fc.png">
-        <link rel="stylesheet" href="css/variables-8adf115d.css">
-        <link rel="stylesheet" href="css/general-e96d0476.css">
-        <link rel="stylesheet" href="css/chrome-d279d366.css">
-        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-e96d0476.css">
+        <link rel="stylesheet" href="../css/chrome-d279d366.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
-        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
-        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="./mermaid.css">
+        <link rel="stylesheet" href=".././mermaid.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "";
+            const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-abd8e62c.js";
+            window.path_to_searchindex_js = "../searchindex-abd8e62c.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-3505d4ea.js"></script>
+        <script src="../toc-3505d4ea.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -106,7 +106,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
             </noscript>
             <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -141,7 +141,7 @@
                     <h1 class="menu-title">galaxio-labs operator ecosystem</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
                         </a>
 
@@ -175,17 +175,112 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="buildin"><a class="header" href="#buildin">BUILDIN</a></h1>
+                        <h1 id="gx-命令使用文档"><a class="header" href="#gx-命令使用文档">gx 命令使用文档</a></h1>
+<blockquote>
+<p><strong><code>gx</code> 是 <code>gflow</code> 的新名字</strong>（<code>galaxy-flow</code> 的执行器 CLI）。本文档按当前 <code>gx</code> CLI 编写。</p>
+</blockquote>
+<h2 id="概述"><a class="header" href="#概述">概述</a></h2>
+<p><code>gx</code> 用于运行 GXL 工作流，并提供运行环境 / 项目初始化与模块管理。它负责“执行”这一层：</p>
+<ul>
+<li><code>galaxy-flow</code>（<code>gx</code>）：定义并执行工作流</li>
+<li><code>galaxy-ops</code>（<code>gops</code>）：组织与交付模块、系统、运维项目</li>
+</ul>
+<h2 id="基本用法"><a class="header" href="#基本用法">基本用法</a></h2>
+<pre><code class="language-bash">gx &lt;COMMAND&gt;
+</code></pre>
+<h2 id="命令列表"><a class="header" href="#命令列表">命令列表</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>命令</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>gx run [FLOWS]...</code></td><td>运行工作流（默认 <code>./_gal/work.gxl</code>）</td></tr>
+<tr><td><code>gx adm [FLOWS]...</code></td><td>运行管理流程（默认 <code>./_gal/adm.gxl</code>）</td></tr>
+<tr><td><code>gx init env</code></td><td>初始化本地 Galaxy 环境（<code>~/.galaxy</code>、网络访问控制等）</td></tr>
+<tr><td><code>gx init project [--repo URL] [--path SUBDIR] [--branch B] [--tag T]</code></td><td>初始化项目（默认用本地模板；<code>--path</code>/<code>--repo</code> 走远程）</td></tr>
+<tr><td><code>gx mod update</code></td><td>更新项目模块（依据本地 <code>_gal</code> 配置）</td></tr>
+<tr><td><code>gx doc [TOPIC]</code></td><td>查看内置文档</td></tr>
+<tr><td><code>gx check</code></td><td>打印当前运行环境信息</td></tr>
+<tr><td><code>gx self check|update|rollback</code></td><td>自更新管理</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="参数说明"><a class="header" href="#参数说明">参数说明</a></h2>
+<h3 id="位置参数"><a class="header" href="#位置参数">位置参数</a></h3>
+<ul>
+<li><code>FLOWS...</code>：流程名称列表（用于 <code>gx run</code> / <code>gx adm</code>）</li>
+</ul>
+<h3 id="选项参数"><a class="header" href="#选项参数">选项参数</a></h3>
+<ul>
+<li><code>-e, --env &lt;ENV&gt;</code>：环境名称（默认 <code>default</code>）</li>
+<li><code>-d, --debug &lt;DEBUG&gt;</code>：调试级别（默认 <code>0</code>）</li>
+<li><code>-c, --conf &lt;CONF&gt;</code>：GXL 配置文件路径（默认值由子命令决定）</li>
+<li><code>--log &lt;LOG&gt;</code>：日志配置，例如 <code>--log cmd=debug,parse=info</code></li>
+<li><code>--cmd-arg &lt;ARG&gt;</code>：传递给流程的命令行参数</li>
+<li><code>-q, --quiet</code>：静默模式</li>
+<li><code>-h, --help</code> / <code>-V, --version</code></li>
+</ul>
+<h2 id="使用示例"><a class="header" href="#使用示例">使用示例</a></h2>
+<pre><code class="language-bash"># 运行默认工作流
+gx run
+
+# 运行指定流程
+gx run conf ver
+
+# 运行管理流程
+gx adm package
+
+# 指定环境与调试级别
+gx adm -e dev -d 2 start
+
+# 初始化项目（默认模板仓库）
+gx init project --path &lt;subdir&gt;
+
+# 更新模块 / 查看环境
+gx mod update
+gx check
+</code></pre>
+<h2 id="目录约定"><a class="header" href="#目录约定">目录约定</a></h2>
+<ul>
+<li><code>./_gal/work.gxl</code>：工作流入口（<code>gx run</code>）</li>
+<li><code>./_gal/adm.gxl</code>：管理流程入口（<code>gx adm</code>）</li>
+<li><code>./_gal/mods/</code>：本地项目模块</li>
+</ul>
+<blockquote>
+<p>注意：旧文档里的 <code>./_rg/</code> 已改为 <code>./_gal/</code>。</p>
+</blockquote>
+<h2 id="环境变量"><a class="header" href="#环境变量">环境变量</a></h2>
+<ul>
+<li><code>RUST_LOG</code>：Rust 日志级别</li>
+<li>GXL 模块渠道等变量按具体工作流约定（例如模板里的 <code>GXL_CHANNEL</code>）</li>
+</ul>
+<h2 id="返回值"><a class="header" href="#返回值">返回值</a></h2>
+<ul>
+<li><code>0</code>：执行成功</li>
+<li>非 <code>0</code>：执行失败，返回错误码</li>
+</ul>
+<h2 id="常见问题"><a class="header" href="#常见问题">常见问题</a></h2>
+<h3 id="找不到配置文件"><a class="header" href="#找不到配置文件">找不到配置文件</a></h3>
+<p><code>gx run</code> / <code>gx adm</code> 默认读取当前目录下的 <code>./_gal/work.gxl</code> / <code>./_gal/adm.gxl</code>，请在项目根目录执行，或用 <code>-c</code> 指定配置文件。</p>
+<h3 id="权限问题"><a class="header" href="#权限问题">权限问题</a></h3>
+<pre><code class="language-bash">chmod +x gx
+</code></pre>
+<h3 id="模块加载失败"><a class="header" href="#模块加载失败">模块加载失败</a></h3>
+<p>检查网络连接与模块路径配置（<code>_gal</code> 中的 <code>extern mod</code>）。</p>
+<h3 id="与-gops-的关系"><a class="header" href="#与-gops-的关系">与 <code>gops</code> 的关系</a></h3>
+<p><code>kind: gxl</code> 的系统在 <code>gops sys start/stop/status/...</code> 时委托外部执行器执行系统的管理流程；
+<code>kind: docker-compose</code> 的系统不需要 <code>gx</code>，直接映射到本机 <code>docker compose</code>。</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="cmd/gprj.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../cmd/ops/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="operator/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../cmd/gops.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -195,11 +290,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="cmd/gprj.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../cmd/ops/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="operator/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../cmd/gops.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
@@ -219,16 +314,16 @@
         </script>
 
 
-        <script src="elasticlunr-ef4e11c1.min.js"></script>
-        <script src="mark-09e88c2c.min.js"></script>
-        <script src="searcher-09f2665d.js"></script>
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-09f2665d.js"></script>
 
-        <script src="clipboard-1626706a.min.js"></script>
-        <script src="highlight-abc7f01d.js"></script>
-        <script src="book-609e4cb8.js"></script>
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-609e4cb8.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="./mermaid.min.js"></script>
+        <script src=".././mermaid.min.js"></script>
 
 
 

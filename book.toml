@@ -1,9 +1,8 @@
 [book]
 authors = ["wukong"]
 language = "zh"
-multilingual = true
 src = "./"
-title = "galaxy-sec operator ecosystem"
+title = "galaxio-labs operator ecosystem"
 
 [preprocessor.mermaid]
 command = "mdbook-mermaid"

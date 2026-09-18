@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>gops - galaxy-sec operator ecosystem</title>
+        <title>gops - galaxio-labs operator ecosystem</title>
 
 
         <!-- Custom HTML head -->
@@ -12,21 +12,20 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../favicon.svg">
-        <link rel="shortcut icon" href="../favicon.png">
-        <link rel="stylesheet" href="../css/variables.css">
-        <link rel="stylesheet" href="../css/general.css">
-        <link rel="stylesheet" href="../css/chrome.css">
-        <link rel="stylesheet" href="../css/print.css" media="print">
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-e96d0476.css">
+        <link rel="stylesheet" href="../css/chrome-d279d366.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="../fonts/fonts.css">
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
         <link rel="stylesheet" href=".././mermaid.css">
@@ -37,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex.js";
+            window.path_to_searchindex_js = "../searchindex-abd8e62c.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc.js"></script>
+        <script src="../toc-3505d4ea.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -54,7 +53,7 @@
             </div>
         </div>
     </div>
-    <div id="body-container">
+    <div id="mdbook-body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script>
             try {
@@ -83,12 +82,12 @@
             html.classList.add("js");
         </script>
 
-        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             let sidebar = null;
-            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
@@ -103,78 +102,78 @@
             }
         </script>
 
-        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
                 <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
             </noscript>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
             </div>
         </nav>
 
-        <div id="page-wrapper" class="page-wrapper">
+        <div id="mdbook-page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
-                            <i class="fa fa-bars"></i>
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
                         </label>
-                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
-                            <i class="fa fa-paint-brush"></i>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
                         </button>
-                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
                         </ul>
-                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
-                            <i class="fa fa-search"></i>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
                         </button>
                     </div>
 
-                    <h1 class="menu-title">galaxy-sec operator ecosystem</h1>
+                    <h1 class="menu-title">galaxio-labs operator ecosystem</h1>
 
                     <div class="right-buttons">
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
-                            <i id="print-button" class="fa fa-print"></i>
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
                         </a>
 
                     </div>
                 </div>
 
-                <div id="search-wrapper" class="hidden">
-                    <form id="searchbar-outer" class="searchbar-outer">
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
                         <div class="search-wrapper">
-                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
                             <div class="spinner-wrapper">
-                                <i class="fa fa-spinner fa-spin"></i>
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
                             </div>
                         </div>
                     </form>
-                    <div id="searchresults-outer" class="searchresults-outer hidden">
-                        <div id="searchresults-header" class="searchresults-header"></div>
-                        <ul id="searchresults">
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
                         </ul>
                     </div>
                 </div>
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
                 <script>
-                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
-                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
-                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
                         link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
                     });
                 </script>
 
-                <div id="content" class="content">
+                <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="gops---galaxy-operations-system-系统操作管理工具"><a class="header" href="#gops---galaxy-operations-system-系统操作管理工具">gops - Galaxy Operations System 系统操作管理工具</a></h1>
 <h2 id="概述"><a class="header" href="#概述">概述</a></h2>
@@ -182,7 +181,7 @@
 <h2 id="基本用法"><a class="header" href="#基本用法">基本用法</a></h2>
 <h3 id="显示版本信息"><a class="header" href="#显示版本信息">显示版本信息</a></h3>
 <pre><code class="language-bash">gops
-# 输出示例：gops: 0.12.0
+# 输出示例：gops: 1.3.0
 </code></pre>
 <h3 id="显示帮助信息"><a class="header" href="#显示帮助信息">显示帮助信息</a></h3>
 <pre><code class="language-bash">gops --help
@@ -203,13 +202,12 @@ gops &lt;command&gt; &lt;subcommand&gt; --help
 <p>所有命令都支持以下全局选项：</p>
 <h3 id="调试选项"><a class="header" href="#调试选项">调试选项</a></h3>
 <ul>
-<li><code>-d, --debug &lt;LEVEL&gt;</code> - 调试级别（0-4）
+<li><code>-d, --debug &lt;LEVEL&gt;</code> - 调试级别（0-3）
 <ul>
 <li><code>0</code>: 关闭调试输出</li>
 <li><code>1</code>: 基础调试信息</li>
 <li><code>2</code>: 详细调试信息</li>
 <li><code>3</code>: 跟踪调试信息</li>
-<li><code>4</code>: 完整调试信息</li>
 </ul>
 </li>
 </ul>
@@ -304,30 +302,22 @@ gops prj update --force 2
 # 详细调试更新过程
 gops prj update --debug 3 --log update=debug
 </code></pre>
-<h3 id="工程设置"><a class="header" href="#工程设置">工程设置</a></h3>
-<pre><code class="language-bash">gops prj setting [OPTIONS]
+<h3 id="重新导入系统"><a class="header" href="#重新导入系统">重新导入系统</a></h3>
+<pre><code class="language-bash">gops prj reimport [OPTIONS]
 </code></pre>
 <p><strong>选项：</strong></p>
 <ul>
-<li><code>-i, --interactive</code> - 启用交互模式（默认：true）</li>
 <li><code>-d, --debug &lt;LEVEL&gt;</code> - 调试级别</li>
 <li><code>--log &lt;LOG&gt;</code> - 日志配置</li>
+<li><code>-f, --force &lt;LEVEL&gt;</code> - 强制更新级别</li>
 </ul>
 <p><strong>功能：</strong></p>
 <ul>
-<li>管理工程级别的变量设置</li>
-<li>支持交互式和非交互式配置</li>
-<li>自动保存配置到 value.yml 文件</li>
+<li>按 <code>ops-prj.yml</code> 记录的 <code>sys_models</code> 重新导入系统</li>
+<li>保留 <code>values/</code> 客户值（适用于“删除了已导入系统目录、但保留了 values/ + ops-prj.yml”的场景）</li>
 </ul>
 <p><strong>示例：</strong></p>
-<pre><code class="language-bash"># 基于默认值，生成value.yml
-gops prj setting
-
-
-
-# 显式启用交互模式
-gops prj setting -i
-
+<pre><code class="language-bash">gops prj reimport
 </code></pre>
 <h2 id="模块管理命令-gops-mod"><a class="header" href="#模块管理命令-gops-mod">模块管理命令 (gops mod)</a></h2>
 <h3 id="创建示例模块结构"><a class="header" href="#创建示例模块结构">创建示例模块结构</a></h3>
@@ -400,7 +390,7 @@ gops mod update
 gops mod update --force 1
 
 # 详细调试更新过程
-gops mod update --debug 4 --log mod=debug
+gops mod update --debug 3 --log mod=debug
 </code></pre>
 <h3 id="本地化模块配置"><a class="header" href="#本地化模块配置">本地化模块配置</a></h3>
 <pre><code class="language-bash">gops mod localize [OPTIONS]
@@ -439,20 +429,24 @@ gops mod localize --value dev-values.yml --debug 2
 <li>支持字母数字、连字符和下划线</li>
 </ul>
 </li>
+<li><code>--kind &lt;KIND&gt;</code> - 部署类型：<code>gxl</code>（默认）或 <code>docker-compose</code>；不指定时交互式选择</li>
 </ul>
 <p><strong>功能：</strong></p>
 <ul>
 <li>创建新的系统规范</li>
-<li>初始化系统目录结构</li>
-<li>生成所有必要的配置文件和模板</li>
-<li>交互式选择系统型号配置（测试环境下自动选择）</li>
+<li>初始化系统目录结构（<code>kind</code> 决定是否生成 GXL 骨架）</li>
+<li><code>gxl</code>：交互式选择系统型号（测试环境下设 <code>TEST_MODE=1</code> 自动选择）</li>
+<li><code>docker-compose</code>：无型号，只生成精简骨架</li>
 </ul>
 <p><strong>示例：</strong></p>
-<pre><code class="language-bash"># 创建新系统（交互式选择型号）
+<pre><code class="language-bash"># 默认：GXL 系统（交互式选择型号）
 gops sys new --name my-system
 
+# 纯 docker-compose 系统
+gops sys new --name gateway --kind docker-compose
+
 # 在测试环境中创建系统
-TEST_MODE=true gops sys new --name test-system
+TEST_MODE=1 gops sys new --name test-system
 </code></pre>
 <h3 id="更新系统配置"><a class="header" href="#更新系统配置">更新系统配置</a></h3>
 <pre><code class="language-bash">gops sys update [OPTIONS]
@@ -479,6 +473,23 @@ gops sys update --force 1
 # 详细调试更新过程
 gops sys update --debug 3 --log sys=debug
 </code></pre>
+<h3 id="打包系统"><a class="header" href="#打包系统">打包系统</a></h3>
+<pre><code class="language-bash">gops sys package [OPTIONS]
+</code></pre>
+<p><strong>选项：</strong></p>
+<ul>
+<li><code>-f, --force &lt;LEVEL&gt;</code> - 强制更新级别</li>
+<li><code>--output &lt;PATH&gt;</code> - 输出路径（默认：父目录下 <code>&lt;name&gt;-&lt;version&gt;.tar.gz</code>）</li>
+</ul>
+<p><strong>功能：</strong></p>
+<ul>
+<li>先执行一次 <code>update</code>（解析变量、生成 <code>sys/merged_vars.yml</code>），保证交付包可被 <code>gops prj import</code> 完整导入</li>
+<li>再把系统打包为 <code>.tar.gz</code></li>
+</ul>
+<p><strong>示例：</strong></p>
+<pre><code class="language-bash">gops sys package
+gops sys package --output /tmp/gateway-0.1.0.tar.gz
+</code></pre>
 <h3 id="为环境本地化系统配置"><a class="header" href="#为环境本地化系统配置">为环境本地化系统配置</a></h3>
 <pre><code class="language-bash">gops sys localize [OPTIONS]
 </code></pre>
@@ -486,25 +497,27 @@ gops sys update --debug 3 --log sys=debug
 <ul>
 <li><code>-d, --debug &lt;LEVEL&gt;</code> - 调试级别</li>
 <li><code>--log &lt;LOG&gt;</code> - 日志配置</li>
-<li><code>--value &lt;PATH&gt;</code> - 包含环境特定值的 YAML/JSON 文件路径</li>
-<li><code>--default</code> - 使用内置默认值而不是用户提供的 value.yml</li>
+<li><code>--mod &lt;MODULE&gt;</code> - 只处理指定模块</li>
+<li><code>--only</code> - 只 localize，跳过 update（不解析/下载模块）</li>
 </ul>
 <p><strong>功能：</strong></p>
 <ul>
-<li>基于环境特定值生成本地化系统配置文件</li>
-<li>适配不同部署环境的系统配置</li>
-<li>支持自定义值或默认值选择</li>
+<li>生成 <code>.env</code>：<code>sys/merged_vars.yml</code> 默认值 ⊕ <code>values/sys_value.yml</code> ⊕ <code>values/value.yml</code></li>
+<li>两个值文件都是可选、可部分覆盖：只写需要修改的项，其余取系统默认值</li>
+<li>系统变量尚未解析（缺 <code>sys/merged_vars.yml</code>）时会自动先执行 <code>update</code>；<code>--only</code> 跳过该步骤</li>
+<li><code>kind: docker-compose</code> 时，<code>.env</code> 供同目录的 <code>docker-compose.yml</code> 消费</li>
 </ul>
 <p><strong>示例：</strong></p>
-<pre><code class="language-bash"># 使用默认值本地化系统配置
-gops sys localize --default
+<pre><code class="language-bash"># 生成本地化配置（必要时自动先 update）
+gops sys localize
 
-# 使用自定义值文件本地化
-gops sys localize --value prod-config.yml
+# 只 localize，不解析/下载（变量未解析时会明确报错）
+gops sys localize --only
 
-# 使用自定义值文件并启用调试
-gops sys localize --value dev-config.yml --debug 2
+# 只处理某个模块
+gops sys localize --mod gateway
 </code></pre>
+<p><strong>值文件说明：</strong> <code>values/sys_value.yml</code> 由 <code>sys update</code> 首次生成，整份是<strong>注释模板</strong>——取消注释需要覆盖的项即可；<code>values/value.yml</code> 优先级更高，适合入库的客户覆盖。</p>
 <h2 id="环境变量"><a class="header" href="#环境变量">环境变量</a></h2>
 <h3 id="调试环境变量"><a class="header" href="#调试环境变量">调试环境变量</a></h3>
 <ul>
@@ -527,17 +540,19 @@ gops sys localize --value dev-config.yml --debug 2
 <h2 id="配置文件结构"><a class="header" href="#配置文件结构">配置文件结构</a></h2>
 <h3 id="工程目录结构"><a class="header" href="#工程目录结构">工程目录结构</a></h3>
 <pre><code>my-project/
-├── ops-prj.yml              # 工程主配置文件
-├── values/                  # 配置值目录
-│   └── {system-name}/      # 系统特定值
-│       └── value.yml       # 系统变量值文件
-├── ops-systems.yml          # 系统引用配置
-└── {system-name}/          # 系统目录
-    ├── sys/                 # 系统配置
-    │   ├── sys.yml          # 系统规范
-    │   └── vars.yml         # 系统变量定义
-    └── values/              # 系统值链接（指向 values/{system-name}/）
+├── ops-prj.yml              # 工程 manifest：name + work_envs + sys_models
+├── version.txt
+├── _gal/                    # GXL 工程文件
+├── values/                  # 客户值目录
+│   └── {system-name}/
+│       ├── sys_value.yml    # 值文件（只写需要覆盖的项）
+│       └── value.yml        # 额外覆盖层（可选）
+└── {system-name}/           # 已导入的系统目录
+    └── values -&gt; ../values/{system-name}   # 符号链接（prj import/reimport 建立）
 </code></pre>
+<blockquote>
+<p>历史：原 <code>ops-systems.yml</code> 已合并进 <code>ops-prj.yml</code>；加载时会兼容合并旧文件，保存后写入单文件。</p>
+</blockquote>
 <h3 id="模块目录结构"><a class="header" href="#模块目录结构">模块目录结构</a></h3>
 <pre><code>my-module/
 ├── mod.yml                  # 模块配置文件
@@ -549,15 +564,21 @@ gops sys localize --value dev-config.yml --debug 2
 </code></pre>
 <h3 id="系统目录结构"><a class="header" href="#系统目录结构">系统目录结构</a></h3>
 <pre><code>my-system/
-├── sys/                     # 系统配置
-│   ├── sys.yml              # 系统规范
-│   ├── model.yml            # 系统模型
-│   └── vars.yml             # 系统变量定义
-├── workflow/                # 工作流配置
-├── templates/               # 模板文件
-├── examples/                # 示例配置
-└── scripts/                 # 脚本文件
+├── sys-prj.yml              # 系统根配置
+├── docker-compose.yml       # 系统级 compose 定义（${VAR} 占位）
+├── version.txt
+├── _gal/                    # GXL 工程文件（仅 kind: gxl）
+├── values/                  # 值文件目录
+└── sys/
+    ├── sys_model.yml        # name / model / kind / vender
+    ├── mod_list.yml         # 模块列表（GXL；可选）
+    ├── merged_vars.yml      # 聚合变量（sys update 生成，需入库）
+    ├── workflows/           # GXL 工作流（可选）
+    └── setting/
+        ├── list.yml         # 可选
+        └── vars.yml         # 系统设置变量定义（源）
 </code></pre>
+<p>纯 docker-compose 系统只保留 <code>sys_model.yml</code> 与 <code>setting/vars.yml</code>（详见 <a href="../operator/sys/structure/directory.html">System 目录结构</a>）。</p>
 <h2 id="最佳实践"><a class="header" href="#最佳实践">最佳实践</a></h2>
 <h3 id="工程管理"><a class="header" href="#工程管理">工程管理</a></h3>
 <pre><code class="language-bash"># 1. 创建新工程
@@ -569,11 +590,10 @@ gops prj import --path /path/to/system --force 1
 # 3. 更新工程
 gops prj update
 
-# 4. 配置工程变量（交互模式）
-gops prj setting
+# 4. 按 ops-prj.yml 重新导入并保留 values/
+gops prj reimport
 
-# 5. 配置工程变量（非交互模式）
-gops prj setting --no-interactive
+# 5. 客户差异写在 values/&lt;system&gt;/value.yml（只写要覆盖的项）
 </code></pre>
 <h3 id="模块开发"><a class="header" href="#模块开发">模块开发</a></h3>
 <pre><code class="language-bash"># 1. 创建示例模块（学习结构）
@@ -592,15 +612,15 @@ gops mod localize --value dev-values.yml
 <pre><code class="language-bash"># 1. 创建新系统
 gops sys new --name my-system
 
-# 2. 更新系统
+# 2. 解析变量 / 初始化值文件
 gops sys update --force 1
 
-# 3. 本地化系统配置
-gops sys localize --value prod-config.yml
+# 3. 本地化（生成 .env）
+gops sys localize
 </code></pre>
 <h3 id="调试技巧"><a class="header" href="#调试技巧">调试技巧</a></h3>
 <pre><code class="language-bash"># 启用详细调试
-gops prj import --path /test --debug 4 --log all=debug
+gops prj import --path /test --debug 3 --log all=debug
 
 # 调试特定模块
 gops mod update --debug 3 --log mod=debug
@@ -609,7 +629,7 @@ gops mod update --debug 3 --log mod=debug
 gops sys update --debug 3 --log sys=debug
 
 # 调试设置操作
-gops prj setting --debug 2 --log setting=debug
+gops sys setting --init --debug 2 --log setting=debug
 </code></pre>
 <h2 id="故障排除"><a class="header" href="#故障排除">故障排除</a></h2>
 <h3 id="常见错误及解决方案"><a class="header" href="#常见错误及解决方案">常见错误及解决方案</a></h3>
@@ -625,15 +645,15 @@ gops prj import --path /path/to/system --debug 3
 <p><strong>Q: 模块更新失败</strong></p>
 <pre><code>错误：无法加载模块配置
 解决：确保在正确的模块目录中执行命令
-gops mod update --debug 4 --log mod=debug
+gops mod update --debug 3 --log mod=debug
 </code></pre>
 <p><strong>Q: 系统创建卡在选择界面</strong></p>
 <pre><code>解决：在测试环境中设置 TEST_MODE 环境变量
-TEST_MODE=true gops sys new --name test-system
+TEST_MODE=1 gops sys new --name test-system
 </code></pre>
 <p><strong>Q: 设置命令在非交互模式下失败</strong></p>
-<pre><code>解决：确保 value.yml 文件存在且格式正确
-gops prj setting --no-interactive --debug 2
+<pre><code>解决：确保 sys/setting/ 目录存在，并在系统根目录执行
+gops sys setting --init --debug 2
 </code></pre>
 <h3 id="调试模式使用"><a class="header" href="#调试模式使用">调试模式使用</a></h3>
 <pre><code class="language-bash"># 基础调试
@@ -645,8 +665,8 @@ gops mod update --debug 2 --log mod=debug
 # 跟踪级别调试
 gops sys update --debug 3 --log sys=trace
 
-# 完整调试
-gops prj setting --debug 4 --log all=debug
+# 跟踪级别调试（工程）
+gops prj update --debug 3 --log all=debug
 </code></pre>
 <h3 id="日志配置示例"><a class="header" href="#日志配置示例">日志配置示例</a></h3>
 <pre><code class="language-bash"># 调试特定模块
@@ -690,8 +710,8 @@ gops prj import --path /path/to/dev-system --force 1
 # 3. 更新工程依赖
 gops prj update --debug 2
 
-# 4. 配置开发变量（非交互模式）
-gops prj setting --no-interactive
+# 4. 写客户差异（项目值目录，只写要覆盖的项）
+#    dev-project/values/dev-system/value.yml
 
 # 5. 创建开发模块
 gops mod new --name dev-module
@@ -703,31 +723,41 @@ gops mod localize --value dev-values.yml
 <pre><code class="language-bash"># 1. 创建生产工程
 gops prj new --name prod-project
 
-# 2. 导入生产系统
-gops prj import --path /path/to/prod-system --force 3
+# 2. 导入生产系统（打包产物：.tar.gz 或 git/http 地址）
+gops prj import --path /path/to/prod-system-0.1.0.tar.gz --force 3
 
-# 3. 配置生产变量（使用默认值）
-gops prj setting --no-interactive
+# 3. 在项目值目录里写客户差异（只写需要覆盖的项）
+#    prod-project/values/prod-system/value.yml
 
-# 4. 本地化生产配置
-gops sys localize --value prod-config.yml --default
+# 4. 本地化生产配置（在系统目录内执行，自动使用项目值）
+cd prod-system
+gops sys localize
 </code></pre>
 <h2 id="版本信息"><a class="header" href="#版本信息">版本信息</a></h2>
-<p>当前版本：<code>0.12.0</code></p>
+<p>当前版本：<code>1.3.0</code></p>
 <h2 id="功能状态"><a class="header" href="#功能状态">功能状态</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>命令</th><th>子命令</th><th>状态</th><th>说明</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>命令</th><th>子命令</th><th>状态</th><th>说明</th></tr>
+</thead>
+<tbody>
 <tr><td><code>gops prj</code></td><td><code>new</code></td><td>✅ 完成</td><td>创建维护工程</td></tr>
-<tr><td><code>gops prj</code></td><td><code>import</code></td><td>✅ 完成</td><td>导入系统到工程</td></tr>
+<tr><td><code>gops prj</code></td><td><code>import</code></td><td>✅ 完成</td><td>导入系统到工程（打包产物）</td></tr>
 <tr><td><code>gops prj</code></td><td><code>update</code></td><td>✅ 完成</td><td>更新工程</td></tr>
-<tr><td><code>gops prj</code></td><td><code>setting</code></td><td>✅ 完成</td><td>工程设置（支持交互/非交互模式）</td></tr>
+<tr><td><code>gops prj</code></td><td><code>reimport</code></td><td>✅ 完成</td><td>按 <code>ops-prj.yml</code> 重新导入（保留 <code>values/</code>）</td></tr>
 <tr><td><code>gops mod</code></td><td><code>example</code></td><td>✅ 完成</td><td>创建示例模块结构</td></tr>
 <tr><td><code>gops mod</code></td><td><code>new</code></td><td>✅ 完成</td><td>定义新模块操作符</td></tr>
 <tr><td><code>gops mod</code></td><td><code>update</code></td><td>✅ 完成</td><td>更新现有模块操作符</td></tr>
 <tr><td><code>gops mod</code></td><td><code>localize</code></td><td>✅ 完成</td><td>本地化模块配置</td></tr>
-<tr><td><code>gops sys</code></td><td><code>new</code></td><td>✅ 完成</td><td>创建新的系统操作符</td></tr>
-<tr><td><code>gops sys</code></td><td><code>update</code></td><td>✅ 完成</td><td>更新系统配置</td></tr>
-<tr><td><code>gops sys</code></td><td><code>localize</code></td><td>✅ 完成</td><td>为环境本地化系统配置</td></tr>
-</tbody></table>
+<tr><td><code>gops sys</code></td><td><code>new</code></td><td>✅ 完成</td><td>创建系统（<code>--kind gxl</code> / <code>docker-compose</code>）</td></tr>
+<tr><td><code>gops sys</code></td><td><code>update</code></td><td>✅ 完成</td><td>解析变量、初始化值文件</td></tr>
+<tr><td><code>gops sys</code></td><td><code>package</code></td><td>✅ 完成</td><td>先 update 再打包交付产物</td></tr>
+<tr><td><code>gops sys</code></td><td><code>localize</code></td><td>✅ 完成</td><td>生成 <code>.env</code>（<code>--only</code> 跳过 update）</td></tr>
+<tr><td><code>gops sys</code></td><td><code>setting</code></td><td>✅ 完成</td><td>初始化系统设置</td></tr>
+<tr><td><code>gops sys</code></td><td><code>download/install/start/stop/uninstall/status/diagnose</code></td><td>✅ 完成</td><td>按 <code>kind</code> 分派（gxl→gx；docker-compose→docker compose）</td></tr>
+</tbody>
+</table>
 </div>
 <h2 id="许可证"><a class="header" href="#许可证">许可证</a></h2>
 <p>本项目采用 MIT 许可证 - 详见项目根目录的 LICENSE 文件</p>
@@ -736,12 +766,12 @@ gops sys localize --value prod-config.yml --default
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../cmd/gmod.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
-                                <i class="fa fa-angle-left"></i>
+                            <a rel="prev" href="../cmd/gx.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
                             <a rel="next prefetch" href="../cmd/gprj.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
                         <div style="clear: both"></div>
@@ -750,17 +780,22 @@ gops sys localize --value prod-config.yml --default
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../cmd/gmod.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
-                        <i class="fa fa-angle-left"></i>
+                    <a rel="prev" href="../cmd/gx.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
                     <a rel="next prefetch" href="../cmd/gprj.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
 
         </div>
 
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
 
 
 
@@ -769,13 +804,13 @@ gops sys localize --value prod-config.yml --default
         </script>
 
 
-        <script src="../elasticlunr.min.js"></script>
-        <script src="../mark.min.js"></script>
-        <script src="../searcher.js"></script>
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-09f2665d.js"></script>
 
-        <script src="../clipboard.min.js"></script>
-        <script src="../highlight.js"></script>
-        <script src="../book.js"></script>
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-609e4cb8.js"></script>
 
         <!-- Custom JS scripts -->
         <script src=".././mermaid.min.js"></script>
