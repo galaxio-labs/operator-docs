@@ -45,7 +45,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-644c4574.js";
+            window.path_to_searchindex_js = "../searchindex-9b6f73ba.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-d41e496b.js"></script>
@@ -187,9 +187,7 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="galaxy-ops-operator-文档"><a class="header" href="#galaxy-ops-operator-文档">Galaxy-Ops Operator 文档</a></h1>
-<p>这里的 <code>operator</code> 文档以当前 <code>galaxy-ops</code> 仓库实现为准，不再沿用早期的 <code>gmod</code>、<code>gsys</code>、<code>gops project</code> 等旧工具拆分说法。</p>
-<p>当前 CLI 只有一个入口：</p>
+                        <h1 id="galaxy-ops-文档"><a class="header" href="#galaxy-ops-文档">Galaxy-Ops 文档</a></h1>
 <pre><code class="language-bash">gops &lt;COMMAND&gt;
 </code></pre>
 <p>一级命令：</p>
@@ -200,12 +198,12 @@
 </ul>
 <h2 id="对象模型"><a class="header" href="#对象模型">对象模型</a></h2>
 <p><code>galaxy-ops</code> 围绕三层对象工作：</p>
-<pre><code class="language-text">Module -&gt; System -&gt; Ops Project
+<pre><code class="language-text">Module -&gt; System -&gt; Project
 </code></pre>
 <ul>
 <li><code>Module</code>：最小可复用运维单元</li>
 <li><code>System</code>：由多个模块组合形成的系统定义</li>
-<li><code>Ops Project</code>：面向具体客户或环境的交付项目</li>
+<li><code>Project</code>：面向具体客户环境的交付项目</li>
 </ul>
 <p>这三层分别对应当前 CLI 的三组命令：</p>
 <ul>
@@ -214,12 +212,13 @@
 <li><code>gops prj ...</code></li>
 </ul>
 <h2 id="当前命令面"><a class="header" href="#当前命令面">当前命令面</a></h2>
-<h3 id="模块命令"><a class="header" href="#模块命令">模块命令</a></h3>
-<pre><code class="language-bash">gops mod example
-gops mod new --name &lt;name&gt;
-gops mod update
-gops mod localize [--value &lt;file&gt; | --default]
+<h3 id="部署项目命令"><a class="header" href="#部署项目命令">部署项目命令</a></h3>
+<pre><code class="language-bash">gops prj new --name &lt;name&gt;
+gops prj import --path &lt;system-path&gt;
+gops prj update
+gops prj reimport
 </code></pre>
+<p><code>gops prj reimport</code> 按 <code>ops-prj.yml</code> 记录的 <code>sys_models</code> 重新导入系统，保留 <code>values/</code> 客户值。</p>
 <h3 id="系统命令"><a class="header" href="#系统命令">系统命令</a></h3>
 <pre><code class="language-bash">gops sys new --name &lt;name&gt; [--kind gxl|docker-compose]
 gops sys update
@@ -235,13 +234,12 @@ gops sys status [--mod &lt;module&gt;] [--env &lt;env&gt;]
 gops sys diagnose [--mod &lt;module&gt;] [--env &lt;env&gt;]
 </code></pre>
 <p><code>sys/sys_model.yml</code> 的 <code>kind</code> 决定部署行为：<code>gxl</code>（默认）委托 <code>gx</code> 执行；<code>docker-compose</code> 直接映射到本机 <code>docker compose</code>。</p>
-<h3 id="运维项目命令"><a class="header" href="#运维项目命令">运维项目命令</a></h3>
-<pre><code class="language-bash">gops prj new --name &lt;name&gt;
-gops prj import --path &lt;system-path&gt;
-gops prj update
-gops prj reimport
+<h3 id="模块命令"><a class="header" href="#模块命令">模块命令</a></h3>
+<pre><code class="language-bash">gops mod example
+gops mod new --name &lt;name&gt;
+gops mod update
+gops mod localize [--value &lt;file&gt; | --default]
 </code></pre>
-<p><code>gops prj reimport</code> 按 <code>ops-prj.yml</code> 记录的 <code>sys_models</code> 重新导入系统，保留 <code>values/</code> 客户值。</p>
 <h2 id="文档索引"><a class="header" href="#文档索引">文档索引</a></h2>
 <ul>
 <li><a href="./mod/README.html">mod/README.md</a>：模块对象说明与 <code>gops mod</code> 使用方式</li>

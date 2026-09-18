@@ -46,7 +46,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-644c4574.js";
+            window.path_to_searchindex_js = "searchindex-9b6f73ba.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d41e496b.js"></script>
@@ -189,22 +189,15 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="galaxio-labs-operator-ecosystem"><a class="header" href="#galaxio-labs-operator-ecosystem">galaxio-labs Operator Ecosystem</a></h1>
-<h2 id="包括"><a class="header" href="#包括">包括</a></h2>
-<ul>
-<li>DSL 语言：GXL</li>
-<li>维护器（模块 / 系统 / 运维项目）</li>
-<li>命令行工具
-<ul>
-<li><code>gx</code>：GXL 执行器（<code>galaxy-flow</code>）</li>
-<li><code>gops</code>：模块 / 系统 / 运维项目管理（<code>galaxy-ops</code>）</li>
-</ul>
-</li>
-</ul>
-<blockquote>
-<p>命名变更：早期的独立命令已收敛或更名——
-<code>gflow</code> → <strong><code>gx</code></strong>；<code>gmod</code> / <code>gsys</code> → <strong><code>gops mod</code> / <code>gops sys</code></strong>；
-<code>gprj</code> 的项目脚手架能力 → <strong><code>gx init project</code></strong>。</p>
-</blockquote>
+<h2 id="核心流程"><a class="header" href="#核心流程">核心流程</a></h2>
+<ol>
+<li><code>gops mod</code> 创建模块维护器，用 GXL 编写维护器的 workflow</li>
+<li><code>gops sys</code> 创建系统维护器，组合多个模块维护器，用 GXL 编写 workflow</li>
+<li>系统维护器保存到配置管理库中，待发布到客户环境</li>
+<li>在客户环境中，使用 <code>gops prj</code> 创建维护工程，并加载系统维护器</li>
+<li>在客户环境中，使用 <code>gx</code> 执行维护器的 workflow</li>
+<li>保存维护工程到配置管理库中</li>
+</ol>
 <h2 id="gxl-文档的来源"><a class="header" href="#gxl-文档的来源">GXL 文档的来源</a></h2>
 <p><code>gxl/</code> 下的页面大部分是 <a href="https://github.com/galaxio-labs/galaxy-flow">galaxy-flow</a> 仓库 <code>docs/gxl/</code> 的<strong>镜像</strong>，
 单一真源在 galaxy-flow，请不要在这里直接改这些页面（改动会在下次同步时被覆盖）。</p>
@@ -224,43 +217,6 @@ scripts/sync-gxl-docs.sh check --dest &lt;operator-docs&gt;/gxl
 <p>上线前提：该 workflow 调用的是 galaxy-flow 仓库里的 <code>scripts/sync-gxl-docs.sh</code>。
 在它并入 galaxy-flow <code>main</code> 之前，workflow 会给出 warning 并跳过校验（不会误报红）。</p>
 </blockquote>
-<h2 id="核心流程"><a class="header" href="#核心流程">核心流程</a></h2>
-<ol>
-<li><code>gops mod</code> 创建模块维护器，用 GXL 编写维护器的 workflow</li>
-<li><code>gops sys</code> 创建系统维护器，组合多个模块维护器，用 GXL 编写 workflow</li>
-<li>系统维护器保存到配置管理库中，待发布到客户环境</li>
-<li>在客户环境中，使用 <code>gops prj</code> 创建维护工程，并加载系统维护器</li>
-<li>在客户环境中，使用 <code>gx</code> 执行维护器的 workflow</li>
-<li>保存维护工程到配置管理库中</li>
-</ol>
-<h2 id="文档索引"><a class="header" href="#文档索引">文档索引</a></h2>
-<ul>
-<li>命令行工具
-<ul>
-<li><a href="#gops---galaxy-operations-system-系统操作管理工具">gops</a>：模块 / 系统 / 运维项目管理</li>
-<li><a href="#gx-命令使用文档">gx</a>：GXL 执行器</li>
-</ul>
-</li>
-<li>维护器
-<ul>
-<li><a href="operator/README.html">概述</a></li>
-<li><a href="operator/sys/README.html">系统维护器</a></li>
-<li><a href="operator/mod/README.html">模块维护器</a></li>
-</ul>
-</li>
-<li>GXL
-<ul>
-<li><a href="#gxl-帮助对齐当前实现">语法</a></li>
-<li><a href="#变量定义">变量定义</a></li>
-<li><a href="#gxl-内置常量">内置常量</a></li>
-</ul>
-</li>
-<li>配置
-<ul>
-<li><a href="#-netaccessctrl-简约配置指南非开发者版">网络访问控制</a></li>
-</ul>
-</li>
-</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="changelog"><a class="header" href="#changelog">Changelog</a></h1>
 <h1 id="页面风格-2026-09-18--对齐-wp-docs-主题"><a class="header" href="#页面风格-2026-09-18--对齐-wp-docs-主题">页面风格 2026-09-18 —— 对齐 wp-docs 主题</a></h1>
@@ -366,7 +322,7 @@ scripts/sync-gxl-docs.sh check --dest &lt;operator-docs&gt;/gxl
 <p>早期的 <code>gflow</code>、<code>gmod</code>、<code>gsys</code>、<code>gprj</code> 已更名或合并：
 <code>gflow</code> → <strong><code>gx</code></strong>；<code>gmod</code> / <code>gsys</code> → <strong><code>gops mod</code> / <code>gops sys</code></strong>；
 <code>gprj</code> → <strong><code>gx init project</code></strong>。
-<a href="#gprj-命令使用文档"><code>gprj.md</code></a> 仅作历史参考。</p>
+<a href="#gprj"><code>gprj.md</code></a> 仅作历史参考。</p>
 </blockquote>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="gx-命令使用文档"><a class="header" href="#gx-命令使用文档">gx 命令使用文档</a></h1>
@@ -485,7 +441,7 @@ gops &lt;command&gt; &lt;subcommand&gt; --help
 </code></pre>
 <h3 id="主命令"><a class="header" href="#主命令">主命令</a></h3>
 <ol>
-<li><strong><code>gops prj</code></strong> - 工程管理命令</li>
+<li><strong><code>gops prj</code></strong> - 部署管理命令</li>
 <li><strong><code>gops mod</code></strong> - 模块管理命令</li>
 <li><strong><code>gops sys</code></strong> - 系统管理命令</li>
 </ol>
@@ -522,7 +478,7 @@ gops &lt;command&gt; &lt;subcommand&gt; --help
 </ul>
 </li>
 </ul>
-<h2 id="工程管理命令-gops-prj"><a class="header" href="#工程管理命令-gops-prj">工程管理命令 (gops prj)</a></h2>
+<h2 id="部署工程管理命令-gops-prj"><a class="header" href="#部署工程管理命令-gops-prj">部署工程管理命令 (gops prj)</a></h2>
 <h3 id="创建维护工程"><a class="header" href="#创建维护工程">创建维护工程</a></h3>
 <pre><code class="language-bash">gops prj new [OPTIONS]
 </code></pre>
@@ -1053,198 +1009,11 @@ gops sys localize
 <h2 id="许可证"><a class="header" href="#许可证">许可证</a></h2>
 <p>本项目采用 MIT 许可证 - 详见项目根目录的 LICENSE 文件</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="gprj-命令使用文档"><a class="header" href="#gprj-命令使用文档">gprj 命令使用文档</a></h1>
-<blockquote>
-<p>⚠️ <strong>已过时（legacy）</strong>：<code>gprj</code> 已被 <code>gx</code> 取代——项目脚手架用 <code>gx init project</code>，
-模块更新用 <code>gx mod update</code>，管理流程用 <code>gx adm</code>，环境检查用 <code>gx check</code>。
-本文档仅作历史参考，当前 CLI 请见 <a href="#gx-命令使用文档">gx</a> 与 <a href="#gops---galaxy-operations-system-系统操作管理工具">gops</a>。</p>
-</blockquote>
-<h2 id="概述-2"><a class="header" href="#概述-2">概述</a></h2>
-<p><code>gprj</code> 是 Galaxy Flow 的项目管理工具，用于初始化和管理 Galaxy 项目环境。</p>
-<h2 id="基本用法-2"><a class="header" href="#基本用法-2">基本用法</a></h2>
-<pre><code class="language-bash">gprj &lt;COMMAND&gt; [OPTIONS]
-</code></pre>
-<h2 id="命令列表-1"><a class="header" href="#命令列表-1">命令列表</a></h2>
-<h3 id="1-init---初始化命令"><a class="header" href="#1-init---初始化命令">1. init - 初始化命令</a></h3>
-<p>用于初始化 Galaxy 环境和项目。</p>
-<h4 id="init-env---初始化-galaxy-环境"><a class="header" href="#init-env---初始化-galaxy-环境">init env - 初始化 Galaxy 环境</a></h4>
-<pre><code class="language-bash">gprj init env
-</code></pre>
-<p>初始化系统级的 Galaxy 运行环境。</p>
-<h4 id="init-prj-with-local---使用本地模块初始化项目"><a class="header" href="#init-prj-with-local---使用本地模块初始化项目">init prj-with-local - 使用本地模块初始化项目</a></h4>
-<pre><code class="language-bash">gprj init prj-with-local
-</code></pre>
-<p>创建新项目并使用本地模块作为依赖。</p>
-<h4 id="init-prj---使用远程模板初始化项目"><a class="header" href="#init-prj---使用远程模板初始化项目">init prj - 使用远程模板初始化项目</a></h4>
-<pre><code class="language-bash">gprj init prj [OPTIONS]
-</code></pre>
-<h5 id="参数"><a class="header" href="#参数">参数</a></h5>
-<ul>
-<li><code>--tpl &lt;TPL&gt;</code>: 选择模板名称（默认：simple）
-<ul>
-<li>可选值：simple, open_pages, rust_prj 等</li>
-</ul>
-</li>
-<li><code>--branch &lt;BRANCH&gt;</code>: 指定模板仓库分支</li>
-<li><code>--tag &lt;TAG&gt;</code>: 指定模板仓库标签
-<ul>
-<li>可选值：alpha, develop, beta, release/1.0</li>
-</ul>
-</li>
-<li><code>--repo &lt;REPO&gt;</code>: 模板仓库地址（默认：https://gal-tpl.git）</li>
-<li><code>-d, --debug &lt;DEBUG&gt;</code>: 调试级别（默认：0）</li>
-<li><code>--log &lt;LOG&gt;</code>: 日志配置</li>
-<li><code>-p, --cmd-print</code>: 打印执行的命令</li>
-</ul>
-<h5 id="示例"><a class="header" href="#示例">示例</a></h5>
-<pre><code class="language-bash"># 使用默认模板初始化
-gprj init prj
-
-# 使用特定模板
-gprj init prj --tpl rust_prj
-
-# 使用特定分支
-gprj init prj --branch develop
-
-# 使用特定标签
-gprj init prj --tag release/1.0
-</code></pre>
-<h3 id="2-update---更新命令"><a class="header" href="#2-update---更新命令">2. update - 更新命令</a></h3>
-<p>用于更新项目模块。</p>
-<h4 id="update-mod---更新模块"><a class="header" href="#update-mod---更新模块">update mod - 更新模块</a></h4>
-<pre><code class="language-bash">gprj update mod [OPTIONS]
-</code></pre>
-<h5 id="参数-1"><a class="header" href="#参数-1">参数</a></h5>
-<ul>
-<li><code>-d, --debug &lt;DEBUG&gt;</code>: 调试级别（默认：0）</li>
-<li><code>-f, --conf-work &lt;CONF_WORK&gt;</code>: 工作配置文件（默认：./_gal/work.gxl）</li>
-<li><code>--conf-adm &lt;CONF_ADM&gt;</code>: 管理配置文件（默认：./_gal/adm.gxl）</li>
-<li><code>--log &lt;LOG&gt;</code>: 日志配置</li>
-<li><code>-q, --quiet</code>: 静默模式（默认：true）</li>
-</ul>
-<h5 id="示例-1"><a class="header" href="#示例-1">示例</a></h5>
-<pre><code class="language-bash"># 更新模块
-gprj update mod
-
-# 使用自定义配置更新
-gprj update mod -f ./config/work.gxl
-</code></pre>
-<h3 id="3-conf---配置管理"><a class="header" href="#3-conf---配置管理">3. conf - 配置管理</a></h3>
-<p>用于管理配置文件。</p>
-<h4 id="conf-init---初始化配置"><a class="header" href="#conf-init---初始化配置">conf init - 初始化配置</a></h4>
-<pre><code class="language-bash">gprj conf init [OPTIONS]
-</code></pre>
-<h5 id="参数-2"><a class="header" href="#参数-2">参数</a></h5>
-<ul>
-<li><code>-r, --remote</code>: 使用远程配置（默认：false）</li>
-</ul>
-<h5 id="示例-2"><a class="header" href="#示例-2">示例</a></h5>
-<pre><code class="language-bash"># 初始化本地配置
-gprj conf init
-
-# 初始化远程配置
-gprj conf init --remote
-</code></pre>
-<h3 id="4-check---检查命令"><a class="header" href="#4-check---检查命令">4. check - 检查命令</a></h3>
-<p>检查当前项目配置和环境。</p>
-<pre><code class="language-bash">gprj check
-</code></pre>
-<h3 id="5-adm---管理命令"><a class="header" href="#5-adm---管理命令">5. adm - 管理命令</a></h3>
-<p>执行管理任务，等同于 gx 的管理流程。</p>
-<pre><code class="language-bash">gprj adm [OPTIONS]
-</code></pre>
-<h2 id="配置文件"><a class="header" href="#配置文件">配置文件</a></h2>
-<h3 id="默认配置文件"><a class="header" href="#默认配置文件">默认配置文件</a></h3>
-<ul>
-<li><code>./_gal/work.gxl</code> - 工作流配置</li>
-<li><code>./_gal/adm.gxl</code> - 管理配置</li>
-<li><code>./_gal/head.gxl</code> - 头部配置</li>
-</ul>
-<h3 id="配置内容"><a class="header" href="#配置内容">配置内容</a></h3>
-<ul>
-<li>项目元数据</li>
-<li>模块依赖</li>
-<li>环境变量</li>
-<li>执行策略</li>
-</ul>
-<h2 id="使用流程"><a class="header" href="#使用流程">使用流程</a></h2>
-<h3 id="1-初始化新项目"><a class="header" href="#1-初始化新项目">1. 初始化新项目</a></h3>
-<pre><code class="language-bash"># 1. 初始化环境
-gprj init env
-
-# 2. 初始化项目
-gprj init prj --tpl simple
-
-# 3. 检查配置
-gprj check
-</code></pre>
-<h3 id="2-更新项目"><a class="header" href="#2-更新项目">2. 更新项目</a></h3>
-<pre><code class="language-bash"># 更新所有模块
-gprj update mod
-
-# 使用自定义配置更新
-gprj update mod -f ./my-config.gxl
-</code></pre>
-<h3 id="3-配置管理"><a class="header" href="#3-配置管理">3. 配置管理</a></h3>
-<pre><code class="language-bash"># 初始化配置
-gprj conf init
-
-# 使用远程配置
-gprj conf init --remote
-</code></pre>
-<h2 id="模板仓库"><a class="header" href="#模板仓库">模板仓库</a></h2>
-<h3 id="默认模板仓库"><a class="header" href="#默认模板仓库">默认模板仓库</a></h3>
-<ul>
-<li>地址：https://gal-tpl.git</li>
-<li>包含模板：simple, open_pages, rust_prj 等</li>
-</ul>
-<h3 id="自定义模板仓库"><a class="header" href="#自定义模板仓库">自定义模板仓库</a></h3>
-<pre><code class="language-bash">gprj init prj --repo https://my-tpl.git --tpl my-template
-</code></pre>
-<h2 id="环境变量-2"><a class="header" href="#环境变量-2">环境变量</a></h2>
-<ul>
-<li><code>GALAXY_FLOW_HOME</code>: Galaxy Flow 主目录</li>
-<li><code>RUST_LOG</code>: Rust 日志级别</li>
-</ul>
-<h2 id="返回值-1"><a class="header" href="#返回值-1">返回值</a></h2>
-<ul>
-<li><code>0</code>: 执行成功</li>
-<li><code>非0</code>: 执行失败，返回错误码</li>
-</ul>
-<h2 id="常见问题-1"><a class="header" href="#常见问题-1">常见问题</a></h2>
-<h3 id="权限问题-1"><a class="header" href="#权限问题-1">权限问题</a></h3>
-<p>确保有执行权限：</p>
-<pre><code class="language-bash">chmod +x gprj
-</code></pre>
-<h3 id="网络连接"><a class="header" href="#网络连接">网络连接</a></h3>
-<p>初始化项目时需要网络连接以下载模板。</p>
-<h3 id="模板选择"><a class="header" href="#模板选择">模板选择</a></h3>
-<p>使用 <code>gprj init prj --help</code> 查看所有可用模板。</p>
-<h3 id="配置冲突"><a class="header" href="#配置冲突">配置冲突</a></h3>
-<p>如果配置文件已存在，先备份再重新初始化：</p>
-<pre><code class="language-bash">mv _gal/work.gxl _gal/work.gxl.backup
-gprj conf init
-</code></pre>
-<h2 id="最佳实践-1"><a class="header" href="#最佳实践-1">最佳实践</a></h2>
-<h3 id="项目初始化"><a class="header" href="#项目初始化">项目初始化</a></h3>
-<ol>
-<li>先初始化环境：<code>gprj init env</code></li>
-<li>选择合适的模板：<code>gprj init prj --tpl &lt;template&gt;</code></li>
-<li>检查配置：<code>gprj check</code></li>
-<li>更新模块：<code>gprj update mod</code></li>
-</ol>
-<h3 id="团队协作"><a class="header" href="#团队协作">团队协作</a></h3>
-<ul>
-<li>使用统一的模板仓库</li>
-<li>定期更新模块：<code>gprj update mod</code></li>
-<li>使用版本控制管理配置文件</li>
-</ul>
+<h1 id="gprj"><a class="header" href="#gprj">gprj</a></h1>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="buildin"><a class="header" href="#buildin">BUILDIN</a></h1>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="galaxy-ops-operator-文档"><a class="header" href="#galaxy-ops-operator-文档">Galaxy-Ops Operator 文档</a></h1>
-<p>这里的 <code>operator</code> 文档以当前 <code>galaxy-ops</code> 仓库实现为准，不再沿用早期的 <code>gmod</code>、<code>gsys</code>、<code>gops project</code> 等旧工具拆分说法。</p>
-<p>当前 CLI 只有一个入口：</p>
+<h1 id="galaxy-ops-文档"><a class="header" href="#galaxy-ops-文档">Galaxy-Ops 文档</a></h1>
 <pre><code class="language-bash">gops &lt;COMMAND&gt;
 </code></pre>
 <p>一级命令：</p>
@@ -1255,12 +1024,12 @@ gprj conf init
 </ul>
 <h2 id="对象模型"><a class="header" href="#对象模型">对象模型</a></h2>
 <p><code>galaxy-ops</code> 围绕三层对象工作：</p>
-<pre><code class="language-text">Module -&gt; System -&gt; Ops Project
+<pre><code class="language-text">Module -&gt; System -&gt; Project
 </code></pre>
 <ul>
 <li><code>Module</code>：最小可复用运维单元</li>
 <li><code>System</code>：由多个模块组合形成的系统定义</li>
-<li><code>Ops Project</code>：面向具体客户或环境的交付项目</li>
+<li><code>Project</code>：面向具体客户环境的交付项目</li>
 </ul>
 <p>这三层分别对应当前 CLI 的三组命令：</p>
 <ul>
@@ -1269,12 +1038,13 @@ gprj conf init
 <li><code>gops prj ...</code></li>
 </ul>
 <h2 id="当前命令面"><a class="header" href="#当前命令面">当前命令面</a></h2>
-<h3 id="模块命令"><a class="header" href="#模块命令">模块命令</a></h3>
-<pre><code class="language-bash">gops mod example
-gops mod new --name &lt;name&gt;
-gops mod update
-gops mod localize [--value &lt;file&gt; | --default]
+<h3 id="部署项目命令"><a class="header" href="#部署项目命令">部署项目命令</a></h3>
+<pre><code class="language-bash">gops prj new --name &lt;name&gt;
+gops prj import --path &lt;system-path&gt;
+gops prj update
+gops prj reimport
 </code></pre>
+<p><code>gops prj reimport</code> 按 <code>ops-prj.yml</code> 记录的 <code>sys_models</code> 重新导入系统，保留 <code>values/</code> 客户值。</p>
 <h3 id="系统命令"><a class="header" href="#系统命令">系统命令</a></h3>
 <pre><code class="language-bash">gops sys new --name &lt;name&gt; [--kind gxl|docker-compose]
 gops sys update
@@ -1290,14 +1060,13 @@ gops sys status [--mod &lt;module&gt;] [--env &lt;env&gt;]
 gops sys diagnose [--mod &lt;module&gt;] [--env &lt;env&gt;]
 </code></pre>
 <p><code>sys/sys_model.yml</code> 的 <code>kind</code> 决定部署行为：<code>gxl</code>（默认）委托 <code>gx</code> 执行；<code>docker-compose</code> 直接映射到本机 <code>docker compose</code>。</p>
-<h3 id="运维项目命令"><a class="header" href="#运维项目命令">运维项目命令</a></h3>
-<pre><code class="language-bash">gops prj new --name &lt;name&gt;
-gops prj import --path &lt;system-path&gt;
-gops prj update
-gops prj reimport
+<h3 id="模块命令"><a class="header" href="#模块命令">模块命令</a></h3>
+<pre><code class="language-bash">gops mod example
+gops mod new --name &lt;name&gt;
+gops mod update
+gops mod localize [--value &lt;file&gt; | --default]
 </code></pre>
-<p><code>gops prj reimport</code> 按 <code>ops-prj.yml</code> 记录的 <code>sys_models</code> 重新导入系统，保留 <code>values/</code> 客户值。</p>
-<h2 id="文档索引-1"><a class="header" href="#文档索引-1">文档索引</a></h2>
+<h2 id="文档索引"><a class="header" href="#文档索引">文档索引</a></h2>
 <ul>
 <li><a href="operator/mod/README.html">mod/README.md</a>：模块对象说明与 <code>gops mod</code> 使用方式</li>
 <li><a href="#module-operator-配置说明">mod/CONFIGURATION.md</a>：模块配置与文件结构</li>
@@ -1321,7 +1090,7 @@ gops prj reimport
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="system-operator-指南"><a class="header" href="#system-operator-指南">System Operator 指南</a></h1>
-<h2 id="概述-3"><a class="header" href="#概述-3">概述</a></h2>
+<h2 id="概述-2"><a class="header" href="#概述-2">概述</a></h2>
 <p>在当前 <code>galaxy-ops</code> 实现里，系统通过 <code>gops sys</code> 管理，不存在独立的 <code>gsys</code> CLI。</p>
 <p><code>System</code> 是模块之上的组合层。它负责：</p>
 <ul>
@@ -1874,7 +1643,7 @@ gops sys start --mod &lt;module&gt;
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="module-operator-指南"><a class="header" href="#module-operator-指南">Module Operator 指南</a></h1>
-<h2 id="概述-4"><a class="header" href="#概述-4">概述</a></h2>
+<h2 id="概述-3"><a class="header" href="#概述-3">概述</a></h2>
 <p>在当前 <code>galaxy-ops</code> 实现里，模块通过 <code>gops mod</code> 管理，不存在独立的 <code>gmod</code> CLI。</p>
 <p><code>Module</code> 是最小可复用运维单元。它负责沉淀：</p>
 <ul>
@@ -1934,7 +1703,7 @@ gops sys   -&gt; 组合模块形成系统
 gops prj   -&gt; 导入系统形成具体交付项目
 galaxy-flow -&gt; 执行工作流
 </code></pre>
-<h2 id="文档索引-2"><a class="header" href="#文档索引-2">文档索引</a></h2>
+<h2 id="文档索引-1"><a class="header" href="#文档索引-1">文档索引</a></h2>
 <ul>
 <li><a href="#module-operator-配置说明">CONFIGURATION.md</a></li>
 <li><a href="#module-operator-开发流程">DEVELOPMENT.md</a></li>
@@ -2359,7 +2128,7 @@ curl -I "https://github.com/user/repo/releases"
 
 # 查看是否重定向到镜像服务器
 </code></pre>
-<h2 id="常见问题-2"><a class="header" href="#常见问题-2">常见问题</a></h2>
+<h2 id="常见问题-1"><a class="header" href="#常见问题-1">常见问题</a></h2>
 <h3 id="q-如何添加多个镜像服务器"><a class="header" href="#q-如何添加多个镜像服务器">Q: 如何添加多个镜像服务器？</a></h3>
 <p>A: 在 <code>units</code> 中添加多个配置单元，系统会按顺序尝试：</p>
 <pre><code class="language-yaml">enable: true
@@ -2526,7 +2295,7 @@ curl -v "https://github.com/user/repo"
 </code></pre>
 <h4 id="检查配置加载"><a class="header" href="#检查配置加载">检查配置加载</a></h4>
 <p>如果可能，查看应用程序启动时的日志，确认配置文件是否正确加载。</p>
-<h2 id="最佳实践-2"><a class="header" href="#最佳实践-2">最佳实践</a></h2>
+<h2 id="最佳实践-1"><a class="header" href="#最佳实践-1">最佳实践</a></h2>
 <h3 id="安全性建议"><a class="header" href="#安全性建议">安全性建议</a></h3>
 <ol>
 <li><strong>使用环境变量</strong>: 避免在配置文件中硬编码敏感信息</li>
@@ -3508,7 +3277,7 @@ gx obj_do
 <li><code>err</code>：失败时消息（可选）</li>
 <li><code>result</code>：<code>"true"</code> 表示期望相等；<code>"false"</code> 表示期望不相等</li>
 </ul>
-<h2 id="示例-3"><a class="header" href="#示例-3">示例</a></h2>
+<h2 id="示例"><a class="header" href="#示例">示例</a></h2>
 <pre><code class="language-gxl">gx.assert(value: "${ENV}", expect: "prod");
 gx.assert(value: "${ENV}", expect: "prod", result: "false");
 </code></pre>
@@ -3537,7 +3306,7 @@ cp a b
 ls -al
 ```
 </code></pre>
-<h2 id="示例-4"><a class="header" href="#示例-4">示例</a></h2>
+<h2 id="示例-1"><a class="header" href="#示例-1">示例</a></h2>
 <pre><code class="language-gxl">gx.cmd(cmd: "git branch --show-current");
 gx.cmd("echo ${HOME}");
 gx.cmd(cmd: "grep foo missing.txt", ok_codes: "0,1");
@@ -3657,7 +3426,7 @@ if !defined(${NO_SUCH_VAR}) {
 <ul>
 <li><code>comment_prefix</code> 不能为空字符串。</li>
 </ul>
-<h2 id="示例-5"><a class="header" href="#示例-5">示例</a></h2>
+<h2 id="示例-2"><a class="header" href="#示例-2">示例</a></h2>
 <h3 id="1-set"><a class="header" href="#1-set">1) set</a></h3>
 <pre><code class="language-toml">version = "0.12.2"   # @gxl:set(version)
 </code></pre>
@@ -3794,7 +3563,7 @@ gx.patch_file(file: "./Cargo.toml", action: "uncomment_line", marker: "res_depen
 <li><code>file</code>：JSON 数据文件（可选）</li>
 <li><code>engine</code>：<code>handlebars|helm</code>（当前执行层仅支持 <code>handlebars</code>）</li>
 </ul>
-<h2 id="示例-6"><a class="header" href="#示例-6">示例</a></h2>
+<h2 id="示例-3"><a class="header" href="#示例-3">示例</a></h2>
 <pre><code class="language-gxl">gx.tpl(
   tpl: "./conf/tpls",
   dst: "./conf/used",

@@ -45,7 +45,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-644c4574.js";
+            window.path_to_searchindex_js = "searchindex-9b6f73ba.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d41e496b.js"></script>
@@ -188,22 +188,15 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="galaxio-labs-operator-ecosystem"><a class="header" href="#galaxio-labs-operator-ecosystem">galaxio-labs Operator Ecosystem</a></h1>
-<h2 id="包括"><a class="header" href="#包括">包括</a></h2>
-<ul>
-<li>DSL 语言：GXL</li>
-<li>维护器（模块 / 系统 / 运维项目）</li>
-<li>命令行工具
-<ul>
-<li><code>gx</code>：GXL 执行器（<code>galaxy-flow</code>）</li>
-<li><code>gops</code>：模块 / 系统 / 运维项目管理（<code>galaxy-ops</code>）</li>
-</ul>
-</li>
-</ul>
-<blockquote>
-<p>命名变更：早期的独立命令已收敛或更名——
-<code>gflow</code> → <strong><code>gx</code></strong>；<code>gmod</code> / <code>gsys</code> → <strong><code>gops mod</code> / <code>gops sys</code></strong>；
-<code>gprj</code> 的项目脚手架能力 → <strong><code>gx init project</code></strong>。</p>
-</blockquote>
+<h2 id="核心流程"><a class="header" href="#核心流程">核心流程</a></h2>
+<ol>
+<li><code>gops mod</code> 创建模块维护器，用 GXL 编写维护器的 workflow</li>
+<li><code>gops sys</code> 创建系统维护器，组合多个模块维护器，用 GXL 编写 workflow</li>
+<li>系统维护器保存到配置管理库中，待发布到客户环境</li>
+<li>在客户环境中，使用 <code>gops prj</code> 创建维护工程，并加载系统维护器</li>
+<li>在客户环境中，使用 <code>gx</code> 执行维护器的 workflow</li>
+<li>保存维护工程到配置管理库中</li>
+</ol>
 <h2 id="gxl-文档的来源"><a class="header" href="#gxl-文档的来源">GXL 文档的来源</a></h2>
 <p><code>gxl/</code> 下的页面大部分是 <a href="https://github.com/galaxio-labs/galaxy-flow">galaxy-flow</a> 仓库 <code>docs/gxl/</code> 的<strong>镜像</strong>，
 单一真源在 galaxy-flow，请不要在这里直接改这些页面（改动会在下次同步时被覆盖）。</p>
@@ -223,43 +216,6 @@ scripts/sync-gxl-docs.sh check --dest &lt;operator-docs&gt;/gxl
 <p>上线前提：该 workflow 调用的是 galaxy-flow 仓库里的 <code>scripts/sync-gxl-docs.sh</code>。
 在它并入 galaxy-flow <code>main</code> 之前，workflow 会给出 warning 并跳过校验（不会误报红）。</p>
 </blockquote>
-<h2 id="核心流程"><a class="header" href="#核心流程">核心流程</a></h2>
-<ol>
-<li><code>gops mod</code> 创建模块维护器，用 GXL 编写维护器的 workflow</li>
-<li><code>gops sys</code> 创建系统维护器，组合多个模块维护器，用 GXL 编写 workflow</li>
-<li>系统维护器保存到配置管理库中，待发布到客户环境</li>
-<li>在客户环境中，使用 <code>gops prj</code> 创建维护工程，并加载系统维护器</li>
-<li>在客户环境中，使用 <code>gx</code> 执行维护器的 workflow</li>
-<li>保存维护工程到配置管理库中</li>
-</ol>
-<h2 id="文档索引"><a class="header" href="#文档索引">文档索引</a></h2>
-<ul>
-<li>命令行工具
-<ul>
-<li><a href="cmd/gops.html">gops</a>：模块 / 系统 / 运维项目管理</li>
-<li><a href="cmd/gx.html">gx</a>：GXL 执行器</li>
-</ul>
-</li>
-<li>维护器
-<ul>
-<li><a href="operator/README.html">概述</a></li>
-<li><a href="operator/sys/README.html">系统维护器</a></li>
-<li><a href="operator/mod/README.html">模块维护器</a></li>
-</ul>
-</li>
-<li>GXL
-<ul>
-<li><a href="gxl/help.html">语法</a></li>
-<li><a href="gxl/var_def.html">变量定义</a></li>
-<li><a href="gxl/const.html">内置常量</a></li>
-</ul>
-</li>
-<li>配置
-<ul>
-<li><a href="config/net-access-ctrl-guide.html">网络访问控制</a></li>
-</ul>
-</li>
-</ul>
 
                     </main>
 
