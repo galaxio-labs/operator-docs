@@ -1,5 +1,9 @@
 # gprj 命令使用文档
 
+> ⚠️ **已过时（legacy）**：`gprj` 已被 `gx` 取代——项目脚手架用 `gx init project`，
+> 模块更新用 `gx mod update`，管理流程用 `gx adm`，环境检查用 `gx check`。
+> 本文档仅作历史参考，当前 CLI 请见 [gx](gx.md) 与 [gops](gops.md)。
+
 ## 概述
 `gprj` 是 Galaxy Flow 的项目管理工具，用于初始化和管理 Galaxy 项目环境。
 
@@ -109,7 +113,7 @@ gprj check
 ```
 
 ### 5. adm - 管理命令
-执行管理任务，等同于 gflow 的管理模式。
+执行管理任务，等同于 gx 的管理流程。
 
 ```bash
 gprj adm [OPTIONS]

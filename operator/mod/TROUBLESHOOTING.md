@@ -68,9 +68,9 @@ gops mod localize --default --debug 2
 原因：
 
 - `galaxy-ops` 负责组织和生成
-- 真正的工作流执行依赖 `galaxy-flow` / `gflow`
+- 真正的工作流执行依赖 `galaxy-flow` / `gx`
 
 建议：
 
 - 先确认模块和系统对象已本地化成功
-- 再检查 `gflow` 是否可执行、工作流入口是否存在
+- 再检查 `gx` 是否可执行、工作流入口是否存在

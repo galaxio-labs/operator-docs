@@ -46,9 +46,10 @@ gops mod localize [--value <file> | --default]
 ### 系统命令
 
 ```bash
-gops sys new --name <name>
+gops sys new --name <name> [--kind gxl|docker-compose]
 gops sys update
-gops sys localize [--mod <module>]
+gops sys package
+gops sys localize [--mod <module>] [--only]
 gops sys setting --init
 gops sys download [--mod <module>] [--env <env>]
 gops sys install [--mod <module>] [--env <env>]
@@ -59,13 +60,18 @@ gops sys status [--mod <module>] [--env <env>]
 gops sys diagnose [--mod <module>] [--env <env>]
 ```
 
+`sys/sys_model.yml` 的 `kind` 决定部署行为：`gxl`（默认）委托 `gx` 执行；`docker-compose` 直接映射到本机 `docker compose`。
+
 ### 运维项目命令
 
 ```bash
 gops prj new --name <name>
 gops prj import --path <system-path>
 gops prj update
+gops prj reimport
 ```
+
+`gops prj reimport` 按 `ops-prj.yml` 记录的 `sys_models` 重新导入系统，保留 `values/` 客户值。
 
 ## 文档索引
 
@@ -75,6 +81,11 @@ gops prj update
 - [mod/REFERENCE.md](./mod/REFERENCE.md)：当前 CLI / 目录 / 概念参考
 - [mod/TROUBLESHOOTING.md](./mod/TROUBLESHOOTING.md)：常见问题排查
 - [sys/README.md](./sys/README.md)：系统对象说明与 `gops sys` 使用方式
+- [sys/configuration/sys-model.md](./sys/configuration/sys-model.md)：`sys_model.yml` 字段与 `kind`
+- [sys/structure/directory.md](./sys/structure/directory.md)：GXL / docker-compose 两种目录结构
+- [sys/examples/microservices.md](./sys/examples/microservices.md)：GXL 多模块系统示例
+- [sys/examples/docker-compose.md](./sys/examples/docker-compose.md)：纯 docker-compose 系统示例（含密钥与 `.env`）
+- [sys/troubleshooting/common-issues.md](./sys/troubleshooting/common-issues.md)：常见问题排查
 
 ## 对齐说明
 

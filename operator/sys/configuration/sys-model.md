@@ -6,27 +6,45 @@
 sys/sys_model.yml
 ```
 
-## 当前定位
+## 字段
 
-它负责描述系统模型本身，而不是客户项目值文件，也不是模块明细列表。
+```yaml
+name: web-stack          # 系统名（必填）
+kind: gxl                # 部署类型：gxl（默认）| docker-compose
+model: arm-mac14-host    # 目标型号（kind=gxl 必填；docker-compose 无型号）
+vender: ''               # 供应商标记（可选）
+```
 
-和它配合的两个文件通常是：
+纯 docker-compose 系统的实际内容示例：
 
-- `sys/mod_list.yml`
-- `sys/setting/vars.yml`
+```yaml
+name: gateway
+kind: docker-compose
+vender: ''
+```
+
+## `kind`
+
+`kind` 决定 `gops sys` 的行为：
+
+| `kind` | 说明 |
+| --- | --- |
+| `gxl`（默认） | 模块式系统，部署命令委托外部 `gx` 执行 |
+| `docker-compose` | 声明式 compose 系统，部署命令直接映射到 `docker compose`（无需 `gx`） |
+
+- `kind` 缺省时按 `gxl` 处理（兼容 1.2.0 及更早的系统）
+- `kind` 只在此文件里声明，不要写进 `sys-prj.yml`
+
+## 与其它文件的关系
+
+- `sys/mod_list.yml`：模块列表（仅 `gxl` 需要）
+- `sys/setting/vars.yml`：系统设置变量定义（源）
+- `sys/merged_vars.yml`：`gops sys update` 解析出的聚合变量（需入库）
 
 ## 在流程中的作用
 
-- `gops sys new` 会初始化它
-- `gops sys localize` 会读取它
-- 系统级工作流会通过它理解当前系统模型
+- `gops sys new` 会初始化它；`--kind docker-compose` 会写入 `kind: docker-compose` 且不生成 GXL 骨架
+- `gops sys` 的部署命令按 `kind` 分派
+- `gops prj import` / `prj reimport` 用它确定系统名与类型
 
-## 当前文档边界
-
-因为 `sys_model.yml` 的内部字段可能随着代码演进变化，这里只保留稳定结论：
-
-- 它属于系统定义层
-- 它和 `mod_list.yml` 分工不同
-- 它是当前系统目录中必须存在的核心文件之一
-
-如果要核对字段细节，优先以当前仓库代码和生成结果为准，而不是旧版文档示例。
+如果要核对字段细节，优先以当前仓库代码和 `gops sys new` 的生成结果为准，而不是旧版文档示例。

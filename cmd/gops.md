@@ -10,7 +10,7 @@
 
 ```bash
 gops
-# 输出示例：gops: 0.12.0
+# 输出示例：gops: 1.3.0
 ```
 
 ### 显示帮助信息
@@ -40,12 +40,11 @@ gops [全局选项] <主命令> [子命令选项] <子命令>
 所有命令都支持以下全局选项：
 
 ### 调试选项
-- `-d, --debug <LEVEL>` - 调试级别（0-4）
+- `-d, --debug <LEVEL>` - 调试级别（0-3）
   - `0`: 关闭调试输出
   - `1`: 基础调试信息
   - `2`: 详细调试信息
   - `3`: 跟踪调试信息
-  - `4`: 完整调试信息
 
 ### 日志选项
 - `--log <LOG>` - 日志级别配置
@@ -140,32 +139,24 @@ gops prj update --force 2
 gops prj update --debug 3 --log update=debug
 ```
 
-### 工程设置
+### 重新导入系统
 
 ```bash
-gops prj setting [OPTIONS]
+gops prj reimport [OPTIONS]
 ```
 
 **选项：**
-- `-i, --interactive` - 启用交互模式（默认：true）
 - `-d, --debug <LEVEL>` - 调试级别
 - `--log <LOG>` - 日志配置
+- `-f, --force <LEVEL>` - 强制更新级别
 
 **功能：**
-- 管理工程级别的变量设置
-- 支持交互式和非交互式配置
-- 自动保存配置到 value.yml 文件
+- 按 `ops-prj.yml` 记录的 `sys_models` 重新导入系统
+- 保留 `values/` 客户值（适用于“删除了已导入系统目录、但保留了 values/ + ops-prj.yml”的场景）
 
 **示例：**
 ```bash
-# 基于默认值，生成value.yml
-gops prj setting
-
-
-
-# 显式启用交互模式
-gops prj setting -i
-
+gops prj reimport
 ```
 
 ## 模块管理命令 (gops mod)
@@ -245,7 +236,7 @@ gops mod update
 gops mod update --force 1
 
 # 详细调试更新过程
-gops mod update --debug 4 --log mod=debug
+gops mod update --debug 3 --log mod=debug
 ```
 
 ### 本地化模块配置
@@ -288,20 +279,24 @@ gops sys new [OPTIONS]
 **选项：**
 - `-n, --name <NAME>` - 系统名称（必填）
   - 支持字母数字、连字符和下划线
+- `--kind <KIND>` - 部署类型：`gxl`（默认）或 `docker-compose`；不指定时交互式选择
 
 **功能：**
 - 创建新的系统规范
-- 初始化系统目录结构
-- 生成所有必要的配置文件和模板
-- 交互式选择系统型号配置（测试环境下自动选择）
+- 初始化系统目录结构（`kind` 决定是否生成 GXL 骨架）
+- `gxl`：交互式选择系统型号（测试环境下设 `TEST_MODE=1` 自动选择）
+- `docker-compose`：无型号，只生成精简骨架
 
 **示例：**
 ```bash
-# 创建新系统（交互式选择型号）
+# 默认：GXL 系统（交互式选择型号）
 gops sys new --name my-system
 
+# 纯 docker-compose 系统
+gops sys new --name gateway --kind docker-compose
+
 # 在测试环境中创建系统
-TEST_MODE=true gops sys new --name test-system
+TEST_MODE=1 gops sys new --name test-system
 ```
 
 ### 更新系统配置
@@ -332,6 +327,26 @@ gops sys update --force 1
 gops sys update --debug 3 --log sys=debug
 ```
 
+### 打包系统
+
+```bash
+gops sys package [OPTIONS]
+```
+
+**选项：**
+- `-f, --force <LEVEL>` - 强制更新级别
+- `--output <PATH>` - 输出路径（默认：父目录下 `<name>-<version>.tar.gz`）
+
+**功能：**
+- 先执行一次 `update`（解析变量、生成 `sys/merged_vars.yml`），保证交付包可被 `gops prj import` 完整导入
+- 再把系统打包为 `.tar.gz`
+
+**示例：**
+```bash
+gops sys package
+gops sys package --output /tmp/gateway-0.1.0.tar.gz
+```
+
 ### 为环境本地化系统配置
 
 ```bash
@@ -341,25 +356,28 @@ gops sys localize [OPTIONS]
 **选项：**
 - `-d, --debug <LEVEL>` - 调试级别
 - `--log <LOG>` - 日志配置
-- `--value <PATH>` - 包含环境特定值的 YAML/JSON 文件路径
-- `--default` - 使用内置默认值而不是用户提供的 value.yml
+- `--mod <MODULE>` - 只处理指定模块
+- `--only` - 只 localize，跳过 update（不解析/下载模块）
 
 **功能：**
-- 基于环境特定值生成本地化系统配置文件
-- 适配不同部署环境的系统配置
-- 支持自定义值或默认值选择
+- 生成 `.env`：`sys/merged_vars.yml` 默认值 ⊕ `values/sys_value.yml` ⊕ `values/value.yml`
+- 两个值文件都是可选、可部分覆盖：只写需要修改的项，其余取系统默认值
+- 系统变量尚未解析（缺 `sys/merged_vars.yml`）时会自动先执行 `update`；`--only` 跳过该步骤
+- `kind: docker-compose` 时，`.env` 供同目录的 `docker-compose.yml` 消费
 
 **示例：**
 ```bash
-# 使用默认值本地化系统配置
-gops sys localize --default
+# 生成本地化配置（必要时自动先 update）
+gops sys localize
 
-# 使用自定义值文件本地化
-gops sys localize --value prod-config.yml
+# 只 localize，不解析/下载（变量未解析时会明确报错）
+gops sys localize --only
 
-# 使用自定义值文件并启用调试
-gops sys localize --value dev-config.yml --debug 2
+# 只处理某个模块
+gops sys localize --mod gateway
 ```
+
+**值文件说明：** `values/sys_value.yml` 由 `sys update` 首次生成，整份是**注释模板**——取消注释需要覆盖的项即可；`values/value.yml` 优先级更高，适合入库的客户覆盖。
 
 ## 环境变量
 
@@ -378,17 +396,18 @@ gops sys localize --value dev-config.yml --debug 2
 ### 工程目录结构
 ```
 my-project/
-├── ops-prj.yml              # 工程主配置文件
-├── values/                  # 配置值目录
-│   └── {system-name}/      # 系统特定值
-│       └── value.yml       # 系统变量值文件
-├── ops-systems.yml          # 系统引用配置
-└── {system-name}/          # 系统目录
-    ├── sys/                 # 系统配置
-    │   ├── sys.yml          # 系统规范
-    │   └── vars.yml         # 系统变量定义
-    └── values/              # 系统值链接（指向 values/{system-name}/）
+├── ops-prj.yml              # 工程 manifest：name + work_envs + sys_models
+├── version.txt
+├── _gal/                    # GXL 工程文件
+├── values/                  # 客户值目录
+│   └── {system-name}/
+│       ├── sys_value.yml    # 值文件（只写需要覆盖的项）
+│       └── value.yml        # 额外覆盖层（可选）
+└── {system-name}/           # 已导入的系统目录
+    └── values -> ../values/{system-name}   # 符号链接（prj import/reimport 建立）
 ```
+
+> 历史：原 `ops-systems.yml` 已合并进 `ops-prj.yml`；加载时会兼容合并旧文件，保存后写入单文件。
 
 ### 模块目录结构
 ```
@@ -404,15 +423,22 @@ my-module/
 ### 系统目录结构
 ```
 my-system/
-├── sys/                     # 系统配置
-│   ├── sys.yml              # 系统规范
-│   ├── model.yml            # 系统模型
-│   └── vars.yml             # 系统变量定义
-├── workflow/                # 工作流配置
-├── templates/               # 模板文件
-├── examples/                # 示例配置
-└── scripts/                 # 脚本文件
+├── sys-prj.yml              # 系统根配置
+├── docker-compose.yml       # 系统级 compose 定义（${VAR} 占位）
+├── version.txt
+├── _gal/                    # GXL 工程文件（仅 kind: gxl）
+├── values/                  # 值文件目录
+└── sys/
+    ├── sys_model.yml        # name / model / kind / vender
+    ├── mod_list.yml         # 模块列表（GXL；可选）
+    ├── merged_vars.yml      # 聚合变量（sys update 生成，需入库）
+    ├── workflows/           # GXL 工作流（可选）
+    └── setting/
+        ├── list.yml         # 可选
+        └── vars.yml         # 系统设置变量定义（源）
 ```
+
+纯 docker-compose 系统只保留 `sys_model.yml` 与 `setting/vars.yml`（详见 [System 目录结构](../operator/sys/structure/directory.md)）。
 
 ## 最佳实践
 
@@ -427,11 +453,10 @@ gops prj import --path /path/to/system --force 1
 # 3. 更新工程
 gops prj update
 
-# 4. 配置工程变量（交互模式）
-gops prj setting
+# 4. 按 ops-prj.yml 重新导入并保留 values/
+gops prj reimport
 
-# 5. 配置工程变量（非交互模式）
-gops prj setting --no-interactive
+# 5. 客户差异写在 values/<system>/value.yml（只写要覆盖的项）
 ```
 
 ### 模块开发
@@ -454,17 +479,17 @@ gops mod localize --value dev-values.yml
 # 1. 创建新系统
 gops sys new --name my-system
 
-# 2. 更新系统
+# 2. 解析变量 / 初始化值文件
 gops sys update --force 1
 
-# 3. 本地化系统配置
-gops sys localize --value prod-config.yml
+# 3. 本地化（生成 .env）
+gops sys localize
 ```
 
 ### 调试技巧
 ```bash
 # 启用详细调试
-gops prj import --path /test --debug 4 --log all=debug
+gops prj import --path /test --debug 3 --log all=debug
 
 # 调试特定模块
 gops mod update --debug 3 --log mod=debug
@@ -473,7 +498,7 @@ gops mod update --debug 3 --log mod=debug
 gops sys update --debug 3 --log sys=debug
 
 # 调试设置操作
-gops prj setting --debug 2 --log setting=debug
+gops sys setting --init --debug 2 --log setting=debug
 ```
 
 ## 故障排除
@@ -497,19 +522,19 @@ gops prj import --path /path/to/system --debug 3
 ```
 错误：无法加载模块配置
 解决：确保在正确的模块目录中执行命令
-gops mod update --debug 4 --log mod=debug
+gops mod update --debug 3 --log mod=debug
 ```
 
 **Q: 系统创建卡在选择界面**
 ```
 解决：在测试环境中设置 TEST_MODE 环境变量
-TEST_MODE=true gops sys new --name test-system
+TEST_MODE=1 gops sys new --name test-system
 ```
 
 **Q: 设置命令在非交互模式下失败**
 ```
-解决：确保 value.yml 文件存在且格式正确
-gops prj setting --no-interactive --debug 2
+解决：确保 sys/setting/ 目录存在，并在系统根目录执行
+gops sys setting --init --debug 2
 ```
 
 ### 调试模式使用
@@ -524,8 +549,8 @@ gops mod update --debug 2 --log mod=debug
 # 跟踪级别调试
 gops sys update --debug 3 --log sys=trace
 
-# 完整调试
-gops prj setting --debug 4 --log all=debug
+# 跟踪级别调试（工程）
+gops prj update --debug 3 --log all=debug
 ```
 
 ### 日志配置示例
@@ -580,8 +605,8 @@ gops prj import --path /path/to/dev-system --force 1
 # 3. 更新工程依赖
 gops prj update --debug 2
 
-# 4. 配置开发变量（非交互模式）
-gops prj setting --no-interactive
+# 4. 写客户差异（项目值目录，只写要覆盖的项）
+#    dev-project/values/dev-system/value.yml
 
 # 5. 创建开发模块
 gops mod new --name dev-module
@@ -596,35 +621,39 @@ gops mod localize --value dev-values.yml
 # 1. 创建生产工程
 gops prj new --name prod-project
 
-# 2. 导入生产系统
-gops prj import --path /path/to/prod-system --force 3
+# 2. 导入生产系统（打包产物：.tar.gz 或 git/http 地址）
+gops prj import --path /path/to/prod-system-0.1.0.tar.gz --force 3
 
-# 3. 配置生产变量（使用默认值）
-gops prj setting --no-interactive
+# 3. 在项目值目录里写客户差异（只写需要覆盖的项）
+#    prod-project/values/prod-system/value.yml
 
-# 4. 本地化生产配置
-gops sys localize --value prod-config.yml --default
+# 4. 本地化生产配置（在系统目录内执行，自动使用项目值）
+cd prod-system
+gops sys localize
 ```
 
 ## 版本信息
 
-当前版本：`0.12.0`
+当前版本：`1.3.0`
 
 ## 功能状态
 
 | 命令 | 子命令 | 状态 | 说明 |
 |------|--------|------|------|
 | `gops prj` | `new` | ✅ 完成 | 创建维护工程 |
-| `gops prj` | `import` | ✅ 完成 | 导入系统到工程 |
+| `gops prj` | `import` | ✅ 完成 | 导入系统到工程（打包产物） |
 | `gops prj` | `update` | ✅ 完成 | 更新工程 |
-| `gops prj` | `setting` | ✅ 完成 | 工程设置（支持交互/非交互模式） |
+| `gops prj` | `reimport` | ✅ 完成 | 按 `ops-prj.yml` 重新导入（保留 `values/`） |
 | `gops mod` | `example` | ✅ 完成 | 创建示例模块结构 |
 | `gops mod` | `new` | ✅ 完成 | 定义新模块操作符 |
 | `gops mod` | `update` | ✅ 完成 | 更新现有模块操作符 |
 | `gops mod` | `localize` | ✅ 完成 | 本地化模块配置 |
-| `gops sys` | `new` | ✅ 完成 | 创建新的系统操作符 |
-| `gops sys` | `update` | ✅ 完成 | 更新系统配置 |
-| `gops sys` | `localize` | ✅ 完成 | 为环境本地化系统配置 |
+| `gops sys` | `new` | ✅ 完成 | 创建系统（`--kind gxl` / `docker-compose`） |
+| `gops sys` | `update` | ✅ 完成 | 解析变量、初始化值文件 |
+| `gops sys` | `package` | ✅ 完成 | 先 update 再打包交付产物 |
+| `gops sys` | `localize` | ✅ 完成 | 生成 `.env`（`--only` 跳过 update） |
+| `gops sys` | `setting` | ✅ 完成 | 初始化系统设置 |
+| `gops sys` | `download/install/start/stop/uninstall/status/diagnose` | ✅ 完成 | 按 `kind` 分派（gxl→gx；docker-compose→docker compose） |
 
 
 

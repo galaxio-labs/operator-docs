@@ -1,5 +1,26 @@
 # Changelog
 
+# 文档更新 2026-09-18 —— 对齐当前工具集与 galaxy-ops 实现
+
+## 命令行工具
+- `gflow` → **`gx`**：`cmd/gflow.md` 重写为 `cmd/gx.md`（命令表按实机 `gx --help` 校正；补 `-c/--conf`、`--cmd-arg`、`--dryrun`；目录 `./_rg/` → `./_gal/`）
+- 移除已不存在的 `gmod` / `gsys` 条目；`gprj` 标注为 legacy（能力已并入 `gx init project` / `gx mod update` / `gx adm` / `gx check`）
+- `cmd/gops.md`：修正 `ops-systems.yml`（已并入 `ops-prj.yml`）、`gops sys localize` 参数（`--mod` / `--only`）、新增 `sys package` / `prj reimport` / `sys new --kind`；目录树、调试级别、版本号与功能表按当前实现重写
+- `cmd/ops/README.md`：补当前命令索引
+
+## 维护器（operator/）
+- `operator/sys/README.md`：新增 `kind`（gxl / docker-compose）分派表、值/本地化流程、`${SEC_xxx}` 密钥说明
+- `operator/sys/configuration/sys-model.md`：补齐字段（`name` / `kind` / `model` / `vender`）与 `kind` 语义
+- `operator/sys/structure/*`：拆出 GXL 与 docker-compose 两套真实目录结构；新增 `sys/merged_vars.yml`、`values/sys_value.yml`（注释模板）、`values/value.yml`、`.env`
+- `operator/sys/troubleshooting/common-issues.md`：重写常见问题（未解析变量报错、值文件未生效、未展开 `${GXL_PRJ_ROOT}`、compose 变量未定义）
+- 新增 `operator/sys/examples/docker-compose.md`（纯 docker-compose 系统示例：变量/密钥/`.env`/部署/交付）
+- `operator/mod/*`、`operator/README.md`：同步 `gx` 名称与命令面
+
+## 工程
+- `SUMMARY.md`：移除指向不存在文件的条目（`cmd/gmod.md`、`cmd/gsys.md`、`gxl/gxl.md`），注册新页面
+- `book.toml`：移除 mdBook 不认识的字段 `multilingual`，`mdbook build` 恢复可用
+- 并入既有的 `galaxy-sec` → `galaxio-labs` 署名与链接更新
+
 
 # Galaxy Flow v0.8.3 → v0.8.6 发布说明
 ## 🚀 版本信息
@@ -105,10 +126,9 @@
  ```
  extern mod head { path = "${GXL_START_ROOT}/_gal/"; }
  ```
-[0.5.3 下载](https://github.com/galaxy-sec/galaxy-flow/releases/tag/v0.5.3)
+[0.5.3 下载](https://github.com/galaxio-labs/galaxy-flow/releases/tag/v0.5.3)
 
 # 0.5.2
 ## 内置环境变量
 - GXL_START_ROOT:  GXL 启动处理的目录
 - GXL_CUR_DIR:  GXL 当前所在目录，在调用gx.run时，与GXL_START_ROOT可能不同
-

@@ -89,4 +89,4 @@ gops mod localize --debug 3
 - `gops mod new` 只生成骨架，不会一次性补齐所有业务文件
 - `localize` 依赖值文件和变量定义，先补齐 `vars.yml` 再做本地化
 - 模块是系统的输入，不是交付终点
-- 执行类工作流能力最终仍由 `galaxy-flow` / `gflow` 承担
+- 执行类工作流能力最终仍由 `galaxy-flow` / `gx` 承担

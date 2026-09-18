@@ -21,16 +21,17 @@ cd microservice-stack
 
 在 `sys/mod_list.yml` 中把需要的模块加入系统。
 
-## 4. 初始化系统设置
+## 4. 初始化系统设置（可选）
 
 ```bash
 gops sys setting --init
 ```
 
-## 5. 本地化系统
+## 5. 解析变量并本地化
 
 ```bash
-gops sys localize
+gops sys update      # 解析变量 -> sys/merged_vars.yml，并生成 values/sys_value.yml（注释模板）
+gops sys localize    # 生成 .env（缺 merged_vars.yml 时会自动先 update）
 ```
 
 如果只想处理某个模块：
@@ -39,7 +40,33 @@ gops sys localize
 gops sys localize --mod gateway
 ```
 
-## 6. 执行系统操作
+值文件采用“只写差异”的风格：
+
+```yaml
+# values/sys_value.yml —— 整份默认是注释，取消注释即覆盖
+HTTP_PORT: 8081
+```
+
+也可以在同目录放 `values/value.yml` 作为额外覆盖层（优先级最高，适合入库的客户覆盖）。
+
+## 6. 打包交付
+
+```bash
+gops sys package     # -> ../microservice-stack-<version>.tar.gz
+```
+
+## 7. 在运维项目中使用（客户差异）
+
+```bash
+cd ..
+gops prj new --name customer-a
+cd customer-a
+gops prj import --path ../microservice-stack-0.1.0.tar.gz
+cd microservice-stack
+gops sys localize    # 值取自 <project>/values/microservice-stack/
+```
+
+## 8. 执行系统操作
 
 ```bash
 gops sys download --env default

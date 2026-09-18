@@ -35,7 +35,7 @@
     - 添加了图表可视化高级功能章节
     - 将工作任务移动到附录部分
     - 补充了所有缺失的markdown文件链接：
-      * 命令行工具：gmod.md, gops.md, gprj.md, gsys.md, buildin.md
+    * 命令行工具：gx.md, gops.md, buildin.md
       * 配置：net-access-ctrl-guide.md
       * 模块维护器详细文档：DEVELOPMENT.md, CONFIGURATION.md, REFERENCE.md, TROUBLESHOOTING.md
 []  更新operator/sys下的文档， 更新相应的SUMMARY.md
