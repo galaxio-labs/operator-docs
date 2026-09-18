@@ -1,13 +1,18 @@
 [book]
 authors = ["wukong"]
-language = "zh"
+language = "zh-CN"
 src = "./"
 title = "galaxio-labs operator ecosystem"
+
+[build]
+build-dir = "book"
 
 [preprocessor.mermaid]
 command = "mdbook-mermaid"
 
-
 [output.html]
-additional-css = ["./mermaid.css"]
-additional-js = ["./mermaid.min.js"]
+default-theme = "light"
+preferred-dark-theme = "navy"
+git-repository-url = "https://github.com/galaxio-labs/operator-docs"
+additional-css = ["theme/site.css"]
+additional-js = ["theme/site.js"]
