@@ -45,7 +45,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-741bfb75.js";
+            window.path_to_searchindex_js = "searchindex-4a6734f9.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-8a341037.js"></script>
@@ -188,6 +188,13 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="changelog"><a class="header" href="#changelog">Changelog</a></h1>
+<h1 id="工程-2026-09-18--站点源移入-src避免-git-被拷进产物"><a class="header" href="#工程-2026-09-18--站点源移入-src避免-git-被拷进产物">工程 2026-09-18 —— 站点源移入 src/，避免 .git 被拷进产物</a></h1>
+<ul>
+<li><code>book.toml</code> 的 <code>src</code> 由 <code>./</code> 改为 <code>src</code>，站点内容（<code>SUMMARY.md</code>、<code>README.md</code>、<code>CHANGELOG.md</code>、<code>cmd/</code>、<code>gxl/</code>、<code>operator/</code>、<code>config/</code>、<code>buildin.md</code>、<code>work.md</code>、<code>mermaid.min.js</code>、<code>favicon.svg</code>）平移至 <code>src/</code></li>
+<li>原因：站点源为仓库根时，mdBook 会把 <code>.git/</code>（约 5.2MB，含 objects/refs）、<code>.github/</code>、<code>.gitignore</code> 一并拷进 <code>book/</code> 产物（并且遍历 <code>.git</code> 时会撞上 git 临时 index 文件而偶发构建失败）。移入子目录后这些落在站点源之外</li>
+<li><code>theme/</code> 保留在 <code>book.toml</code> 同级（mdBook 从 book root 取 <code>theme/</code>，已实测确认）；产物不再包含 <code>book.toml</code></li>
+<li>galaxy-flow 的 <code>scripts/sync-gxl-docs.sh</code> 默认 <code>--dest</code> 与 <code>GXL docs sync check</code> workflow 同步改为 <code>src/gxl</code></li>
+</ul>
 <h1 id="页面风格-2026-09-18--对齐-wp-docs-主题"><a class="header" href="#页面风格-2026-09-18--对齐-wp-docs-主题">页面风格 2026-09-18 —— 对齐 wp-docs 主题</a></h1>
 <ul>
 <li>移植 wp-docs 的 VitePress 风格 mdBook 主题：新增 <code>theme/</code>（<code>site.css</code> 与上游一致；<code>site.js</code> 裁掉 wp 专有的顶栏/中英切换/版本横幅，保留侧栏折叠、侧栏宽度持久化、本页目录、mermaid 主题联动），<code>book.toml</code> 设 <code>default-theme</code> / <code>preferred-dark-theme</code> 并指向该目录</li>

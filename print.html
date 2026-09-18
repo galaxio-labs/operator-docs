@@ -46,7 +46,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-741bfb75.js";
+            window.path_to_searchindex_js = "searchindex-4a6734f9.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-8a341037.js"></script>
@@ -204,21 +204,31 @@
 <p>例外：<code>gxl/example/*.md</code> 是<strong>本仓库自有</strong>的运维向改写（补充“对应目录 / 运行方式 / 这个示例验证了什么”等），
 不属于镜像，不会被同步覆盖。</p>
 <p>同步与校验：</p>
-<pre><code class="language-bash"># 在 galaxy-flow 仓库执行同步（默认写入 ../operator-docs/gxl）
-scripts/sync-gxl-docs.sh sync --dest &lt;operator-docs&gt;/gxl
+<pre><code class="language-bash"># 在 galaxy-flow 仓库执行同步（默认写入 ../operator-docs/src/gxl）
+scripts/sync-gxl-docs.sh sync --dest &lt;operator-docs&gt;/src/gxl
 
 # 只校验是否已同步
-scripts/sync-gxl-docs.sh check --dest &lt;operator-docs&gt;/gxl
+scripts/sync-gxl-docs.sh check --dest &lt;operator-docs&gt;/src/gxl
 </code></pre>
 <p>本仓库的 <code>GXL docs sync check</code> workflow 会每天定时、以及在 push / PR 时
 用 galaxy-flow <code>main</code> 的 <code>docs/gxl/</code> 校验上述镜像是否已同步。
 新增镜像页面后，记得同时把条目加进 <code>SUMMARY.md</code>，否则该页不会出现在侧边栏。</p>
+<h2 id="目录约定"><a class="header" href="#目录约定">目录约定</a></h2>
+<p>站点源（mdBook 的 <code>src</code>）在 <code>src/</code>，<code>book.toml</code> 留在仓库根：这样 <code>.git/</code>、<code>.github/</code> 落在站点源之外，
+不会被 mdBook 当作站点资源拷进 <code>book/</code> 产物。<code>theme/</code> 按 mdBook 约定放在 <code>book.toml</code> 同级。</p>
 <blockquote>
 <p>上线前提：该 workflow 调用的是 galaxy-flow 仓库里的 <code>scripts/sync-gxl-docs.sh</code>。
 在它并入 galaxy-flow <code>main</code> 之前，workflow 会给出 warning 并跳过校验（不会误报红）。</p>
 </blockquote>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="changelog"><a class="header" href="#changelog">Changelog</a></h1>
+<h1 id="工程-2026-09-18--站点源移入-src避免-git-被拷进产物"><a class="header" href="#工程-2026-09-18--站点源移入-src避免-git-被拷进产物">工程 2026-09-18 —— 站点源移入 src/，避免 .git 被拷进产物</a></h1>
+<ul>
+<li><code>book.toml</code> 的 <code>src</code> 由 <code>./</code> 改为 <code>src</code>，站点内容（<code>SUMMARY.md</code>、<code>README.md</code>、<code>CHANGELOG.md</code>、<code>cmd/</code>、<code>gxl/</code>、<code>operator/</code>、<code>config/</code>、<code>buildin.md</code>、<code>work.md</code>、<code>mermaid.min.js</code>、<code>favicon.svg</code>）平移至 <code>src/</code></li>
+<li>原因：站点源为仓库根时，mdBook 会把 <code>.git/</code>（约 5.2MB，含 objects/refs）、<code>.github/</code>、<code>.gitignore</code> 一并拷进 <code>book/</code> 产物（并且遍历 <code>.git</code> 时会撞上 git 临时 index 文件而偶发构建失败）。移入子目录后这些落在站点源之外</li>
+<li><code>theme/</code> 保留在 <code>book.toml</code> 同级（mdBook 从 book root 取 <code>theme/</code>，已实测确认）；产物不再包含 <code>book.toml</code></li>
+<li>galaxy-flow 的 <code>scripts/sync-gxl-docs.sh</code> 默认 <code>--dest</code> 与 <code>GXL docs sync check</code> workflow 同步改为 <code>src/gxl</code></li>
+</ul>
 <h1 id="页面风格-2026-09-18--对齐-wp-docs-主题"><a class="header" href="#页面风格-2026-09-18--对齐-wp-docs-主题">页面风格 2026-09-18 —— 对齐 wp-docs 主题</a></h1>
 <ul>
 <li>移植 wp-docs 的 VitePress 风格 mdBook 主题：新增 <code>theme/</code>（<code>site.css</code> 与上游一致；<code>site.js</code> 裁掉 wp 专有的顶栏/中英切换/版本横幅，保留侧栏折叠、侧栏宽度持久化、本页目录、mermaid 主题联动），<code>book.toml</code> 设 <code>default-theme</code> / <code>preferred-dark-theme</code> 并指向该目录</li>
@@ -390,7 +400,7 @@ gx init project --path &lt;subdir&gt;
 gx mod update
 gx check
 </code></pre>
-<h2 id="目录约定"><a class="header" href="#目录约定">目录约定</a></h2>
+<h2 id="目录约定-1"><a class="header" href="#目录约定-1">目录约定</a></h2>
 <ul>
 <li><code>./_gal/work.gxl</code>：工作流入口（<code>gx run</code>）</li>
 <li><code>./_gal/adm.gxl</code>：管理流程入口（<code>gx adm</code>）</li>
