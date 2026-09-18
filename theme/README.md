@@ -11,7 +11,7 @@
 | `site.css` | VitePress 风格主题。**与上游逐字节一致**，未做修改。它定义了一组 `--wp-*` 设计变量，并映射到 mdBook 的 `--bg` / `--fg` / `--sidebar-*` 等变量 |
 | `site.js` | 交互增强，基于上游 `site.js` 裁剪（见下） |
 | `head.hbs` | 首屏前恢复侧栏宽度，避免闪烁。mdBook 会自动识别 `theme/head.hbs` 并注入 `<head>` |
-| `favicon.svg` | 站点图标。mdBook 只从 `theme/` 取 favicon（`[output.html] favicon` 并不是合法配置项）；它与仓库根目录的 `favicon.svg` 内容相同，**生效的是 `theme/` 这份** |
+| `favicon.svg` | 站点图标。mdBook 只从 `theme/` 取 favicon（`[output.html] favicon` 并不是合法配置项）；`src/favicon.svg` 是同一份内容的副本，**生效的是 `theme/` 这份** |
 
 由 `book.toml` 的 `additional-css` / `additional-js` 引用；mdBook 会把 `theme/` 原样拷贝到构建产物。
 
@@ -36,11 +36,14 @@
 因此 `book.toml` 的 `additional-js` **不再**包含 `mermaid.min.js`：
 
 - 当前 operator-docs 的源码里没有任何 mermaid 图，eager 加载等于每页白搭 2.9MB；
-- 以后真有图时，懒加载会自动生效（`mermaid.min.js` 仍在仓库根目录，mdBook 会把它拷进产物）。
+- 以后真有图时，懒加载会自动生效（`mermaid.min.js` 在站点源 `src/` 下，mdBook 会把它拷进产物根目录）。
 
 `[preprocessor.mermaid]`（mdbook-mermaid）保留，它负责把 ` ```mermaid ` 块转成 `.mermaid` 元素。
 
 ## 与主题相关的 book.toml 设置
+
+本目录按 mdBook 约定放在 `book.toml` 同级（即仓库根）；站点源在 `src/`。
+这样 `.git/` / `.github/` 落在站点源之外，不会被 mdBook 当作站点资源拷进 `book/` 产物。
 
 主题依赖以下设置（详见 `book.toml`）：`default-theme = "light"`、`preferred-dark-theme = "navy"`。
 `site.css` 只为 `light` / `rust` 与 `ayu` / `navy` / `coal` 提供变量，`site.js` 的

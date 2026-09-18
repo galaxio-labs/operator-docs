@@ -1,5 +1,12 @@
 # Changelog
 
+# 工程 2026-09-18 —— 站点源移入 src/，避免 .git 被拷进产物
+
+- `book.toml` 的 `src` 由 `./` 改为 `src`，站点内容（`SUMMARY.md`、`README.md`、`CHANGELOG.md`、`cmd/`、`gxl/`、`operator/`、`config/`、`buildin.md`、`work.md`、`mermaid.min.js`、`favicon.svg`）平移至 `src/`
+- 原因：站点源为仓库根时，mdBook 会把 `.git/`（约 5.2MB，含 objects/refs）、`.github/`、`.gitignore` 一并拷进 `book/` 产物（并且遍历 `.git` 时会撞上 git 临时 index 文件而偶发构建失败）。移入子目录后这些落在站点源之外
+- `theme/` 保留在 `book.toml` 同级（mdBook 从 book root 取 `theme/`，已实测确认）；产物不再包含 `book.toml`
+- galaxy-flow 的 `scripts/sync-gxl-docs.sh` 默认 `--dest` 与 `GXL docs sync check` workflow 同步改为 `src/gxl`
+
 # 页面风格 2026-09-18 —— 对齐 wp-docs 主题
 
 - 移植 wp-docs 的 VitePress 风格 mdBook 主题：新增 `theme/`（`site.css` 与上游一致；`site.js` 裁掉 wp 专有的顶栏/中英切换/版本横幅，保留侧栏折叠、侧栏宽度持久化、本页目录、mermaid 主题联动），`book.toml` 设 `default-theme` / `preferred-dark-theme` 并指向该目录

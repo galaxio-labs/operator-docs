@@ -1,7 +1,7 @@
 [book]
 authors = ["wukong"]
 language = "zh-CN"
-src = "./"
+src = "src"
 title = "galaxio-labs operator ecosystem"
 
 [build]

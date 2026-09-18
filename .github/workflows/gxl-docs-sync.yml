@@ -1,6 +1,6 @@
 name: GXL docs sync check
 
-# gxl/ 下的大部分页面是 galaxy-flow 仓库 docs/gxl/ 的镜像，单一真源在 galaxy-flow。
+# src/gxl/ 下的大部分页面是 galaxy-flow 仓库 docs/gxl/ 的镜像，单一真源在 galaxy-flow。
 # 这个 workflow 用 galaxy-flow main 分支的 docs/gxl/ 校验镜像是否已同步，
 # 防止 operator-docs 发布出过期的 GXL 文档。
 #
@@ -46,7 +46,7 @@ jobs:
 
           bash "$SCRIPT" check \
             --src .upstream-galaxy-flow/docs/gxl \
-            --dest gxl
+            --dest src/gxl
 
       - name: Check every mirrored page is listed in SUMMARY.md
         run: |
@@ -64,13 +64,13 @@ jobs:
               *.md) ;;
               *) continue ;;
             esac
-            if ! grep -qF "gxl/$rel" SUMMARY.md; then
+            if ! grep -qF "gxl/$rel" src/SUMMARY.md; then
               echo "::error::gxl/$rel 未收录进 SUMMARY.md，该页不会被发布"
               missing=1
             fi
           done < /tmp/mirrored.txt
 
           if [ "$missing" -ne 0 ]; then
-            echo "请在 SUMMARY.md 中补上缺失的条目。"
+            echo "请在 src/SUMMARY.md 中补上缺失的条目。"
           fi
           exit "$missing"

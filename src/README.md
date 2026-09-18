@@ -20,16 +20,21 @@
 同步与校验：
 
 ```bash
-# 在 galaxy-flow 仓库执行同步（默认写入 ../operator-docs/gxl）
-scripts/sync-gxl-docs.sh sync --dest <operator-docs>/gxl
+# 在 galaxy-flow 仓库执行同步（默认写入 ../operator-docs/src/gxl）
+scripts/sync-gxl-docs.sh sync --dest <operator-docs>/src/gxl
 
 # 只校验是否已同步
-scripts/sync-gxl-docs.sh check --dest <operator-docs>/gxl
+scripts/sync-gxl-docs.sh check --dest <operator-docs>/src/gxl
 ```
 
 本仓库的 `GXL docs sync check` workflow 会每天定时、以及在 push / PR 时
 用 galaxy-flow `main` 的 `docs/gxl/` 校验上述镜像是否已同步。
 新增镜像页面后，记得同时把条目加进 `SUMMARY.md`，否则该页不会出现在侧边栏。
+
+## 目录约定
+
+站点源（mdBook 的 `src`）在 `src/`，`book.toml` 留在仓库根：这样 `.git/`、`.github/` 落在站点源之外，
+不会被 mdBook 当作站点资源拷进 `book/` 产物。`theme/` 按 mdBook 约定放在 `book.toml` 同级。
 
 > 上线前提：该 workflow 调用的是 galaxy-flow 仓库里的 `scripts/sync-gxl-docs.sh`。
 > 在它并入 galaxy-flow `main` 之前，workflow 会给出 warning 并跳过校验（不会误报红）。
