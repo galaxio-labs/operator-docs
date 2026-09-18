@@ -8,4 +8,3 @@
 > 早期的 `gflow`、`gmod`、`gsys`、`gprj` 已更名或合并：
 > `gflow` → **`gx`**；`gmod` / `gsys` → **`gops mod` / `gops sys`**；
 > `gprj` → **`gx init project`**。
-> [`gprj.md`](../gprj.md) 仅作历史参考。

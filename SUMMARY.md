@@ -5,7 +5,6 @@
 * [命令行工具](cmd/ops/README.md)
     * [gx](cmd/gx.md)
     * [gops](cmd/gops.md)
-    * [gprj](cmd/gprj.md)
     * [内置命令](buildin.md)
 * [维护器](operator/README.md)
     * [系统维护器](operator/sys/README.md)
