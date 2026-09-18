@@ -45,7 +45,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-b52906f4.js";
+            window.path_to_searchindex_js = "searchindex-644c4574.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d41e496b.js"></script>
@@ -201,105 +201,38 @@
 <li><strong>维护器</strong>：<code>operator/sys/*</code> 补齐 <code>kind</code>（gxl / docker-compose）分派、<code>sys-model</code> 字段、GXL 与 docker-compose 两套目录结构、<code>merged_vars.yml</code> / <code>sys_value.yml</code> / <code>.env</code> 与常见问题，并新增 docker-compose 示例；<code>operator/mod/*</code> 与 README 同步 <code>gx</code> 名称</li>
 <li><strong>工程</strong>：<code>SUMMARY.md</code> 清掉指向不存在文件的条目并注册新页；<code>book.toml</code> 移除非法字段 <code>multilingual</code>（<code>mdbook build</code> 恢复可用）；并入 <code>galaxy-sec</code> → <code>galaxio-labs</code> 署名</li>
 </ul>
-<h1 id="galaxy-flow-v083--v086-发布说明"><a class="header" href="#galaxy-flow-v083--v086-发布说明">Galaxy Flow v0.8.3 → v0.8.6 发布说明</a></h1>
-<h2 id="-版本信息"><a class="header" href="#-版本信息">🚀 版本信息</a></h2>
-<ul>
-<li>起始版本 : v0.8.3</li>
-<li>目标版本 : v0.8.6</li>
-<li>当前版本 : 0.8.6</li>
-</ul>
-<h2 id="-主要新功能"><a class="header" href="#-主要新功能">✨ 主要新功能</a></h2>
-<h3 id="1-日志重定向系统重构"><a class="header" href="#1-日志重定向系统重构">1. 日志重定向系统重构</a></h3>
-<ul>
-<li>新增 : 使用管道(pip)进行日志重定向的全新实现</li>
-<li>优化 : 改进了日志处理机制，提高了性能和稳定性</li>
-<li>提交 : a5bf576 , deea236 , 2e1ce2c , be686b1 , 4e3f1a7</li>
-</ul>
-<h3 id="2-逻辑表达式支持"><a class="header" href="#2-逻辑表达式支持">2. 逻辑表达式支持</a></h3>
-<ul>
-<li>新增 : 逻辑表达式( logic_exp )功能实现</li>
-<li>实现 : 完整的逻辑表达式解析和执行能力</li>
-<li>提交 : d646fd4 , fc7c975</li>
-</ul>
-<h3 id="3-归档功能增强"><a class="header" href="#3-归档功能增强">3. 归档功能增强</a></h3>
-<ul>
-<li>新增 : gx.tar 和 gx.untar 命令支持</li>
-<li>用途 : 提供原生的压缩和解压缩能力</li>
-<li>提交 : 1755d4d</li>
-</ul>
-<h2 id="-改进与优化"><a class="header" href="#-改进与优化">🔧 改进与优化</a></h2>
-<h3 id="代码质量"><a class="header" href="#代码质量">代码质量</a></h3>
-<ul>
-<li>重构 : 成功状态处理逻辑重构 ( 6dce866 )</li>
-<li>优化 : 表达式逻辑更新 ( 73dcb46 )</li>
-<li>清理 : 取消taskvalue中的日志信息 ( 523f85b )</li>
-</ul>
-<h3 id="依赖更新"><a class="header" href="#依赖更新">依赖更新</a></h3>
-<ul>
-<li>更新 : clap依赖升级到最新版本 ( 9246378 )</li>
-<li>更新 : 多个crate依赖项更新 ( 1051001 , 352e19a )</li>
-<li>维护 : 代码格式化和clippy修复 ( 08b51f2 , c57879b , b049906 )</li>
-</ul>
-<h2 id="-问题修复"><a class="header" href="#-问题修复">🐛 问题修复</a></h2>
-<h3 id="关键修复"><a class="header" href="#关键修复">关键修复</a></h3>
-<ul>
-<li>修复 : 模块路径错误问题 (#61) - d099a55</li>
-<li>修复 : 多个相关问题 (#62, #61) - 4419cad</li>
-<li>修复 : 模块名称列表问题 - 19bfa32</li>
-</ul>
-<h3 id="其他修复"><a class="header" href="#其他修复">其他修复</a></h3>
-<ul>
-<li>修复 : 通道与启用状态的关联问题 - 5592286</li>
-<li>修复 : 干运行参数传递给子gxl的问题 - 4644a1b</li>
-</ul>
-<h2 id="-其他变更"><a class="header" href="#-其他变更">📋 其他变更</a></h2>
-<h3 id="构建和部署"><a class="header" href="#构建和部署">构建和部署</a></h3>
-<ul>
-<li>更新 : artifact构建更新 ( 9c1193d )</li>
-<li>更新 : 管理配置更新 ( 3dcc127 )</li>
-<li>维护 : 版本号更新到0.8.6 ( 2f4acfe , 5b4dbb0 )</li>
-</ul>
-<h3 id="内部改进"><a class="header" href="#内部改进">内部改进</a></h3>
-<ul>
-<li>重构 : 使用常量字符串优化 ( 64e7d30 , daf17ef )</li>
-<li>新增 : 读取文件日志功能 ( 142b448 )</li>
-</ul>
-<h2 id="-升级建议"><a class="header" href="#-升级建议">📝 升级建议</a></h2>
-<ol>
-<li>
-<ol>
-<li></li>
-</ol>
-平滑升级 : 从v0.8.3升级到v0.8.6是向后兼容的</li>
-<li>
-<ol start="2">
-<li></li>
-</ol>
-新功能试用 : 建议尝试新的日志重定向和逻辑表达式功能</li>
-<li>
-<ol start="3">
-<li></li>
-</ol>
-依赖检查 : 确保所有依赖项已更新到兼容版本</li>
-</ol>
-<h2 id="-变更统计"><a class="header" href="#-变更统计">📊 变更统计</a></h2>
-<ul>
-<li>总提交数 : 30+ 次提交</li>
-<li>功能新增 : 5个主要功能</li>
-<li>问题修复 : 6个关键修复</li>
-<li>代码优化 : 10+ 项改进
-本次发布专注于提升系统稳定性、增加新功能，并修复已知问题，为用户提供更好的DevSecOps自动化体验。</li>
-</ul>
-<h1 id="083"><a class="header" href="#083">0.8.3</a></h1>
+<h1 id="galaxy-flow-v083--v086"><a class="header" href="#galaxy-flow-v083--v086">Galaxy Flow v0.8.3 → v0.8.6</a></h1>
 <h2 id="新增"><a class="header" href="#新增">新增</a></h2>
+<ul>
+<li>日志重定向系统重构：改用管道(pipe)实现，改进处理机制与稳定性</li>
+<li>逻辑表达式（<code>logic_exp</code>）：完整的解析与执行能力</li>
+<li><code>gx.tar</code> / <code>gx.untar</code>：原生压缩与解压缩能力</li>
+</ul>
+<h2 id="改进"><a class="header" href="#改进">改进</a></h2>
+<ul>
+<li>成功状态处理逻辑重构、表达式逻辑更新、清理 taskvalue 中的日志</li>
+<li>依赖更新（clap 等）、代码格式化与 clippy 修复、artifact 构建更新</li>
+<li>新增读取文件日志功能</li>
+</ul>
+<h2 id="修复"><a class="header" href="#修复">修复</a></h2>
+<ul>
+<li>模块路径错误、模块名称列表问题</li>
+<li>通道与启用状态的关联问题</li>
+<li>干运行参数未传递给子 gxl 的问题</li>
+</ul>
+<blockquote>
+<p>从 v0.8.3 升级到 v0.8.6 向后兼容；建议试用新的日志重定向与逻辑表达式功能。</p>
+</blockquote>
+<h1 id="083"><a class="header" href="#083">0.8.3</a></h1>
+<h2 id="新增-1"><a class="header" href="#新增-1">新增</a></h2>
 <ul>
 <li>GXL 支持 数字、BOOL、数组、对象 数据类型</li>
 <li>提供 defined 函数 - 检查变量是否已定义</li>
 <li>提供 gx.shell 方便 shell 调用</li>
 <li>支持 ${VAR:default} 变量定义默认值</li>
-<li>gprj update mod 或 gflow –update mod 支持更新项目依赖的Mod</li>
+<li>gprj update mod 或 gflow –update mod 支持更新项目依赖的 Mod</li>
 </ul>
-<h2 id="改进"><a class="header" href="#改进">改进</a></h2>
+<h2 id="改进-1"><a class="header" href="#改进-1">改进</a></h2>
 <ul>
 <li>gx.read_file 读取内容到对象，便于后续处理</li>
 <li>winnow 升级 0.7</li>
@@ -307,45 +240,45 @@
 <li>修改外部依赖</li>
 </ul>
 <h1 id="070"><a class="header" href="#070">0.7.0</a></h1>
-<h2 id="新增-1"><a class="header" href="#新增-1">新增</a></h2>
-<ul>
-<li>支持事务机制</li>
-<li>支持dryrun机制 - 允许预览操作结果而不实际执行</li>
-</ul>
-<h1 id="064"><a class="header" href="#064">0.6.4</a></h1>
 <h2 id="新增-2"><a class="header" href="#新增-2">新增</a></h2>
 <ul>
-<li>支持 gx.cmd  quiet (静默） - 自定义控制cmd的日志输出与否</li>
+<li>支持事务机制</li>
+<li>支持 dryrun 机制（预览操作结果而不实际执行）</li>
 </ul>
-<h1 id="062"><a class="header" href="#062">0.6.2</a></h1>
+<h1 id="064"><a class="header" href="#064">0.6.4</a></h1>
 <h2 id="新增-3"><a class="header" href="#新增-3">新增</a></h2>
 <ul>
-<li>优化日志输出，增加日志的重定向，支持捕获控制台标准日志输出</li>
+<li><code>gx.cmd</code> 支持 quiet（静默）：自定义控制 cmd 的日志输出</li>
 </ul>
-<h1 id="060"><a class="header" href="#060">0.6.0</a></h1>
+<h1 id="062"><a class="header" href="#062">0.6.2</a></h1>
 <h2 id="新增-4"><a class="header" href="#新增-4">新增</a></h2>
 <ul>
-<li>生成任务报告 - 提供执行过程和结果的详细信息</li>
-<li>支持flow上的Task注解 - 增强流程定义的灵活性</li>
+<li>优化日志输出、增加日志重定向，支持捕获控制台标准日志输出</li>
 </ul>
-<h2 id="改进-1"><a class="header" href="#改进-1">改进</a></h2>
+<h1 id="060"><a class="header" href="#060">0.6.0</a></h1>
+<h2 id="新增-5"><a class="header" href="#新增-5">新增</a></h2>
 <ul>
-<li>改进 flow 编排语法，由: 变为 |  符号</li>
+<li>生成任务报告（执行过程与结果详情）</li>
+<li>支持 flow 上的 Task 注解</li>
+</ul>
+<h2 id="改进-2"><a class="header" href="#改进-2">改进</a></h2>
+<ul>
+<li>flow 编排语法由 <code>:</code> 改为 <code>|</code></li>
 </ul>
 <h1 id="gflow-053"><a class="header" href="#gflow-053">gflow-0.5.3</a></h1>
 <h2 id="内置环境变量"><a class="header" href="#内置环境变量">内置环境变量</a></h2>
 <ul>
-<li>GXL_PRJ_ROOT:    最近定义的 _gal/project.toml 的目录</li>
+<li><code>GXL_PRJ_ROOT</code>：最近定义的 <code>_gal/project.toml</code> 所在目录</li>
 </ul>
 <h2 id="extern-mod-支持变量"><a class="header" href="#extern-mod-支持变量">extern mod 支持变量</a></h2>
-<pre><code>extern mod head { path = "${GXL_START_ROOT}/_gal/"; }
+<pre><code class="language-gxl">extern mod head { path = "${GXL_START_ROOT}/_gal/"; }
 </code></pre>
 <p><a href="https://github.com/galaxio-labs/galaxy-flow/releases/tag/v0.5.3">0.5.3 下载</a></p>
 <h1 id="052"><a class="header" href="#052">0.5.2</a></h1>
 <h2 id="内置环境变量-1"><a class="header" href="#内置环境变量-1">内置环境变量</a></h2>
 <ul>
-<li>GXL_START_ROOT:  GXL 启动处理的目录</li>
-<li>GXL_CUR_DIR:  GXL 当前所在目录，在调用gx.run时，与GXL_START_ROOT可能不同</li>
+<li><code>GXL_START_ROOT</code>：GXL 启动处理的目录</li>
+<li><code>GXL_CUR_DIR</code>：GXL 当前所在目录（调用 <code>gx.run</code> 时可能与 <code>GXL_START_ROOT</code> 不同）</li>
 </ul>
 
                     </main>
