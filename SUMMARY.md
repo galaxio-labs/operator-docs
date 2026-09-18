@@ -43,6 +43,7 @@
         * [defined](gxl/inner/defined.md)
         * [download_upload](gxl/inner/download_upload.md)
         * [echo](gxl/inner/echo.md)
+        * [patch_file](gxl/inner/patch_file.md)
         * [read](gxl/inner/read.md)
         * [run](gxl/inner/run.md)
         * [shell](gxl/inner/shell.md)

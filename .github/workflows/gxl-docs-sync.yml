@@ -1,0 +1,76 @@
+name: GXL docs sync check
+
+# gxl/ 下的大部分页面是 galaxy-flow 仓库 docs/gxl/ 的镜像，单一真源在 galaxy-flow。
+# 这个 workflow 用 galaxy-flow main 分支的 docs/gxl/ 校验镜像是否已同步，
+# 防止 operator-docs 发布出过期的 GXL 文档。
+#
+# 定时触发是必要的：galaxy-flow 的文档变更不会触发本仓库的任何事件，
+# 只有每天跑一次才能在没有 push 的情况下发现漂移。
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    # 每天 UTC 02:23（避开整点高峰）
+    - cron: '23 2 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  sync-check:
+    name: Check GXL docs mirror
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout operator-docs
+        uses: actions/checkout@v4
+
+      - name: Checkout galaxy-flow (source of truth)
+        uses: actions/checkout@v4
+        with:
+          repository: galaxio-labs/galaxy-flow
+          ref: main
+          path: .upstream-galaxy-flow
+
+      - name: Check mirror is in sync
+        run: |
+          SCRIPT=.upstream-galaxy-flow/scripts/sync-gxl-docs.sh
+          if [ ! -f "$SCRIPT" ]; then
+            echo "::warning::galaxy-flow main 上还没有 scripts/sync-gxl-docs.sh，本次跳过镜像校验。该脚本并入 galaxy-flow main 后此门禁会自动生效。"
+            echo "SKIP_GXL_SYNC_CHECK=1" >> "$GITHUB_ENV"
+            exit 0
+          fi
+
+          bash "$SCRIPT" check \
+            --src .upstream-galaxy-flow/docs/gxl \
+            --dest gxl
+
+      - name: Check every mirrored page is listed in SUMMARY.md
+        run: |
+          if [ "${SKIP_GXL_SYNC_CHECK:-0}" = "1" ]; then
+            echo "跳过（上游脚本缺失）"
+            exit 0
+          fi
+
+          bash .upstream-galaxy-flow/scripts/sync-gxl-docs.sh list \
+            --src .upstream-galaxy-flow/docs/gxl > /tmp/mirrored.txt
+
+          missing=0
+          while IFS= read -r rel; do
+            case "$rel" in
+              *.md) ;;
+              *) continue ;;
+            esac
+            if ! grep -qF "gxl/$rel" SUMMARY.md; then
+              echo "::error::gxl/$rel 未收录进 SUMMARY.md，该页不会被发布"
+              missing=1
+            fi
+          done < /tmp/mirrored.txt
+
+          if [ "$missing" -ne 0 ]; then
+            echo "请在 SUMMARY.md 中补上缺失的条目。"
+          fi
+          exit "$missing"
