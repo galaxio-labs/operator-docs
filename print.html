@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-8a530cac.js";
+            window.path_to_searchindex_js = "searchindex-d2ebf2cf.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-3505d4ea.js"></script>
+        <script src="toc-e55c97f0.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -192,6 +192,25 @@
 <p>命名变更：早期的独立命令已收敛或更名——
 <code>gflow</code> → <strong><code>gx</code></strong>；<code>gmod</code> / <code>gsys</code> → <strong><code>gops mod</code> / <code>gops sys</code></strong>；
 <code>gprj</code> 的项目脚手架能力 → <strong><code>gx init project</code></strong>。</p>
+</blockquote>
+<h2 id="gxl-文档的来源"><a class="header" href="#gxl-文档的来源">GXL 文档的来源</a></h2>
+<p><code>gxl/</code> 下的页面大部分是 <a href="https://github.com/galaxio-labs/galaxy-flow">galaxy-flow</a> 仓库 <code>docs/gxl/</code> 的<strong>镜像</strong>，
+单一真源在 galaxy-flow，请不要在这里直接改这些页面（改动会在下次同步时被覆盖）。</p>
+<p>例外：<code>gxl/example/*.md</code> 是<strong>本仓库自有</strong>的运维向改写（补充“对应目录 / 运行方式 / 这个示例验证了什么”等），
+不属于镜像，不会被同步覆盖。</p>
+<p>同步与校验：</p>
+<pre><code class="language-bash"># 在 galaxy-flow 仓库执行同步（默认写入 ../operator-docs/gxl）
+scripts/sync-gxl-docs.sh sync --dest &lt;operator-docs&gt;/gxl
+
+# 只校验是否已同步
+scripts/sync-gxl-docs.sh check --dest &lt;operator-docs&gt;/gxl
+</code></pre>
+<p>本仓库的 <code>GXL docs sync check</code> workflow 会每天定时、以及在 push / PR 时
+用 galaxy-flow <code>main</code> 的 <code>docs/gxl/</code> 校验上述镜像是否已同步。
+新增镜像页面后，记得同时把条目加进 <code>SUMMARY.md</code>，否则该页不会出现在侧边栏。</p>
+<blockquote>
+<p>上线前提：该 workflow 调用的是 galaxy-flow 仓库里的 <code>scripts/sync-gxl-docs.sh</code>。
+在它并入 galaxy-flow <code>main</code> 之前，workflow 会给出 warning 并跳过校验（不会误报红）。</p>
 </blockquote>
 <h2 id="核心流程"><a class="header" href="#核心流程">核心流程</a></h2>
 <ol>
@@ -3644,6 +3663,92 @@ if !defined(${NO_SUCH_VAR}) {
 <li>当前实现仅支持输出文本，不支持旧文档中的 <code>file/export/inc</code> 参数。</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="gxpatch_file"><a class="header" href="#gxpatch_file">gx.patch_file</a></h1>
+<h2 id="作用-4"><a class="header" href="#作用-4">作用</a></h2>
+<p>基于 marker 对文件做受控修改，支持：</p>
+<ul>
+<li><code>set</code></li>
+<li><code>comment_line</code></li>
+<li><code>uncomment_line</code></li>
+<li><code>comment_block</code></li>
+<li><code>uncomment_block</code></li>
+</ul>
+<h2 id="语法-4"><a class="header" href="#语法-4">语法</a></h2>
+<pre><code class="language-gxl">gx.patch_file(
+  file: "./Cargo.toml",
+  action: "set",
+  marker: "version",
+  value: "0.12.3",
+  strict: "true",
+  dry_run: "false",
+  backup: "false",
+  comment_prefix: "#"
+);
+</code></pre>
+<p>参数：</p>
+<ul>
+<li><code>file</code>：目标文件（必填）</li>
+<li><code>action</code>：操作类型（必填）</li>
+<li><code>marker</code>（或 <code>id</code>）：marker id（必填）</li>
+<li><code>value</code>：仅 <code>set</code> 需要</li>
+<li><code>strict</code>：默认 <code>true</code></li>
+<li><code>dry_run</code>：默认 <code>false</code></li>
+<li><code>backup</code>：默认 <code>false</code></li>
+<li><code>comment_prefix</code>（或 <code>comment</code>）：默认 <code>#</code></li>
+</ul>
+<h2 id="marker-约定"><a class="header" href="#marker-约定">marker 约定</a></h2>
+<ul>
+<li>set：<code>@gxl:set(&lt;id&gt;)</code></li>
+<li>line：<code>@gxl:line(&lt;id&gt;)</code></li>
+<li>block start：<code>@gxl:block(&lt;id&gt;)</code></li>
+<li>block end：<code>@gxl:end(&lt;id&gt;)</code></li>
+</ul>
+<p>兼容写法：</p>
+<ul>
+<li><code># @gxl:...</code></li>
+<li><code>#@gxl:...</code></li>
+<li><code>// @gxl:...</code></li>
+<li><code>//@gxl:...</code></li>
+</ul>
+<h2 id="strict-语义"><a class="header" href="#strict-语义">strict 语义</a></h2>
+<p><code>strict=true</code> 时，任何 marker 结构异常都失败，例如：</p>
+<ul>
+<li>marker 命中数不是 1</li>
+<li>block 嵌套</li>
+<li>只有 <code>end</code> 没有 <code>block</code></li>
+<li>缺少 <code>end</code></li>
+</ul>
+<h2 id="comment_prefix-约束"><a class="header" href="#comment_prefix-约束">comment_prefix 约束</a></h2>
+<ul>
+<li><code>comment_prefix</code> 不能为空字符串。</li>
+</ul>
+<h2 id="示例-5"><a class="header" href="#示例-5">示例</a></h2>
+<h3 id="1-set"><a class="header" href="#1-set">1) set</a></h3>
+<pre><code class="language-toml">version = "0.12.2"   # @gxl:set(version)
+</code></pre>
+<pre><code class="language-gxl">gx.patch_file(
+  file: "./Cargo.toml",
+  action: "set",
+  marker: "version",
+  value: "\"0.12.3\""
+);
+</code></pre>
+<h3 id="2-commentuncomment-block"><a class="header" href="#2-commentuncomment-block">2) comment/uncomment block</a></h3>
+<pre><code class="language-toml"># @gxl:block(res_depend_test)
+[features]
+res_depend_test = []
+# @gxl:end(res_depend_test)
+</code></pre>
+<pre><code class="language-gxl">gx.patch_file(file: "./Cargo.toml", action: "comment_block", marker: "res_depend_test");
+gx.patch_file(file: "./Cargo.toml", action: "uncomment_block", marker: "res_depend_test");
+</code></pre>
+<h3 id="3-line-toggle"><a class="header" href="#3-line-toggle">3) line toggle</a></h3>
+<pre><code class="language-toml">res_depend_test = []   # @gxl:line(res_depend_test)
+</code></pre>
+<pre><code class="language-gxl">gx.patch_file(file: "./Cargo.toml", action: "comment_line", marker: "res_depend_test");
+gx.patch_file(file: "./Cargo.toml", action: "uncomment_line", marker: "res_depend_test");
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="gxread_file--gxread_cmd--gxread_stdin"><a class="header" href="#gxread_file--gxread_cmd--gxread_stdin">gx.read_file / gx.read_cmd / gx.read_stdin</a></h1>
 <h2 id="gxread_file"><a class="header" href="#gxread_file">gx.read_file</a></h2>
 <p>读取配置文件到变量空间。</p>
@@ -3683,9 +3788,9 @@ if !defined(${NO_SUCH_VAR}) {
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="gxrun"><a class="header" href="#gxrun">gx.run</a></h1>
-<h2 id="作用-4"><a class="header" href="#作用-4">作用</a></h2>
+<h2 id="作用-5"><a class="header" href="#作用-5">作用</a></h2>
 <p>在子目录中执行另一个 GXL 配置。</p>
-<h2 id="语法-4"><a class="header" href="#语法-4">语法</a></h2>
+<h2 id="语法-5"><a class="header" href="#语法-5">语法</a></h2>
 <pre><code class="language-gxl">gx.run(
   local: "&lt;run dir&gt;",
   conf: "&lt;gxl file&gt;",
@@ -3704,9 +3809,9 @@ if !defined(${NO_SUCH_VAR}) {
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="gxshell"><a class="header" href="#gxshell">gx.shell</a></h1>
-<h2 id="作用-5"><a class="header" href="#作用-5">作用</a></h2>
+<h2 id="作用-6"><a class="header" href="#作用-6">作用</a></h2>
 <p>执行 shell 命令/脚本，可加载参数文件，可回填输出变量。</p>
-<h2 id="语法-5"><a class="header" href="#语法-5">语法</a></h2>
+<h2 id="语法-6"><a class="header" href="#语法-6">语法</a></h2>
 <pre><code class="language-gxl">gx.shell(
   shell: "&lt;command or script&gt;",
   arg_file: "&lt;json|yml|yaml|toml|ini&gt;",
@@ -3735,9 +3840,9 @@ if !defined(${NO_SUCH_VAR}) {
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="gxtpl"><a class="header" href="#gxtpl">gx.tpl</a></h1>
-<h2 id="作用-6"><a class="header" href="#作用-6">作用</a></h2>
+<h2 id="作用-7"><a class="header" href="#作用-7">作用</a></h2>
 <p>模板渲染（当前仅 <code>handlebars</code> 引擎）。</p>
-<h2 id="语法-6"><a class="header" href="#语法-6">语法</a></h2>
+<h2 id="语法-7"><a class="header" href="#语法-7">语法</a></h2>
 <pre><code class="language-gxl">gx.tpl(
   tpl: "&lt;模板文件或模板目录&gt;",
   dst: "&lt;目标文件或目标目录&gt;",
@@ -3754,7 +3859,7 @@ if !defined(${NO_SUCH_VAR}) {
 <li><code>file</code>：JSON 数据文件（可选）</li>
 <li><code>engine</code>：<code>handlebars|helm</code>（当前执行层仅支持 <code>handlebars</code>）</li>
 </ul>
-<h2 id="示例-5"><a class="header" href="#示例-5">示例</a></h2>
+<h2 id="示例-6"><a class="header" href="#示例-6">示例</a></h2>
 <pre><code class="language-gxl">gx.tpl(
   tpl: "./conf/tpls",
   dst: "./conf/used",
@@ -3763,9 +3868,9 @@ if !defined(${NO_SUCH_VAR}) {
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="gxvars"><a class="header" href="#gxvars">gx.vars</a></h1>
-<h2 id="作用-7"><a class="header" href="#作用-7">作用</a></h2>
+<h2 id="作用-8"><a class="header" href="#作用-8">作用</a></h2>
 <p>批量定义变量。</p>
-<h2 id="语法-7"><a class="header" href="#语法-7">语法</a></h2>
+<h2 id="语法-8"><a class="header" href="#语法-8">语法</a></h2>
 <pre><code class="language-gxl">env default {
   gx.vars {
     APP = "galaxy";
@@ -3780,9 +3885,9 @@ if !defined(${NO_SUCH_VAR}) {
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="gxver"><a class="header" href="#gxver">gx.ver</a></h1>
-<h2 id="作用-8"><a class="header" href="#作用-8">作用</a></h2>
+<h2 id="作用-9"><a class="header" href="#作用-9">作用</a></h2>
 <p>读取并递增版本号（写回文件，并导出变量）。</p>
-<h2 id="语法-8"><a class="header" href="#语法-8">语法</a></h2>
+<h2 id="语法-9"><a class="header" href="#语法-9">语法</a></h2>
 <pre><code class="language-gxl">gx.ver(
   file: "./version.txt",
   inc: "build|bugfix|feature|main|null"

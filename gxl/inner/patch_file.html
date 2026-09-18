@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>shell示例 - galaxio-labs operator ecosystem</title>
+        <title>patch_file - galaxio-labs operator ecosystem</title>
 
 
         <!-- Custom HTML head -->
@@ -175,81 +175,101 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="shell-示例"><a class="header" href="#shell-示例">Shell 示例</a></h1>
-<p>对应目录：</p>
+                        <h1 id="gxpatch_file"><a class="header" href="#gxpatch_file">gx.patch_file</a></h1>
+<h2 id="作用"><a class="header" href="#作用">作用</a></h2>
+<p>基于 marker 对文件做受控修改，支持：</p>
 <ul>
-<li><code>galaxy-flow/examples/shell</code></li>
-<li>入口：<code>_gal/work.gxl</code></li>
-<li>常用 flow：<code>conf</code>、<code>do_obj</code></li>
+<li><code>set</code></li>
+<li><code>comment_line</code></li>
+<li><code>uncomment_line</code></li>
+<li><code>comment_block</code></li>
+<li><code>uncomment_block</code></li>
 </ul>
-<p>这个示例演示：</p>
-<ul>
-<li><code>gx.shell(...)</code> 运行脚本并回填 <code>out_var</code></li>
-<li><code>arg_file</code> 的使用</li>
-<li>列表、对象遍历中重复执行 shell</li>
-</ul>
-<p>示例代码：</p>
-<pre><code class="language-gxl">extern mod os { path = "../../_gal/mods"; }
-
-mod envs {
-    env _dev_local {}
-    env default : _dev_local;
-}
-
-mod main {
-    flow conf {
-        gx.read_file(file: "./var.yml", name: "VAR");
-        gx.echo("what:${VAR.MEMBER.JAVA}");
-
-        gx.shell(
-            arg_file: "./var.json",
-            shell: "./demo.sh",
-            out_var: "SYS_OUT");
-
-        gx.echo("what:${SYS_OUT}");
-
-        gx.read_file(file: "./var_list.yml", name: "DATA");
-        for ${CUR} in ${DATA.DEV_LANG} {
-            gx.shell(
-                shell: "./demo_ex.sh ${CUR}",
-                out_var: "SYS_OUT");
-            gx.echo("what:${SYS_OUT}");
-        }
-
-        gx.read_file(file: "./var_obj.yml", name: "DATA");
-        for ${CUR} in ${DATA} {
-            gx.shell(
-                shell: "./demo_ex.sh ${CUR.SYS.NAME}",
-                out_var: "SYS_OUT");
-            gx.echo("what:${SYS_OUT}");
-        }
-    }
-    flow do_obj {
-        gx.read_file(file: "./var_obj.yml", name: "DATA");
-        for ${CUR} in ${DATA} {
-            //gx.echo( "CUR:${CUR.SYS.NAME}" );
-            gx.shell(
-                shell: "./demo_ex.sh ${CUR.SYS.NAME}",
-                out_var: "SYS_OUT");
-            gx.echo("what:${SYS_OUT}");
-        }
-    }
-}
+<h2 id="语法"><a class="header" href="#语法">语法</a></h2>
+<pre><code class="language-gxl">gx.patch_file(
+  file: "./Cargo.toml",
+  action: "set",
+  marker: "version",
+  value: "0.12.3",
+  strict: "true",
+  dry_run: "false",
+  backup: "false",
+  comment_prefix: "#"
+);
 </code></pre>
-<p>运行方式：</p>
-<pre><code class="language-bash">gx conf
-gx do_obj
+<p>参数：</p>
+<ul>
+<li><code>file</code>：目标文件（必填）</li>
+<li><code>action</code>：操作类型（必填）</li>
+<li><code>marker</code>（或 <code>id</code>）：marker id（必填）</li>
+<li><code>value</code>：仅 <code>set</code> 需要</li>
+<li><code>strict</code>：默认 <code>true</code></li>
+<li><code>dry_run</code>：默认 <code>false</code></li>
+<li><code>backup</code>：默认 <code>false</code></li>
+<li><code>comment_prefix</code>（或 <code>comment</code>）：默认 <code>#</code></li>
+</ul>
+<h2 id="marker-约定"><a class="header" href="#marker-约定">marker 约定</a></h2>
+<ul>
+<li>set：<code>@gxl:set(&lt;id&gt;)</code></li>
+<li>line：<code>@gxl:line(&lt;id&gt;)</code></li>
+<li>block start：<code>@gxl:block(&lt;id&gt;)</code></li>
+<li>block end：<code>@gxl:end(&lt;id&gt;)</code></li>
+</ul>
+<p>兼容写法：</p>
+<ul>
+<li><code># @gxl:...</code></li>
+<li><code>#@gxl:...</code></li>
+<li><code>// @gxl:...</code></li>
+<li><code>//@gxl:...</code></li>
+</ul>
+<h2 id="strict-语义"><a class="header" href="#strict-语义">strict 语义</a></h2>
+<p><code>strict=true</code> 时，任何 marker 结构异常都失败，例如：</p>
+<ul>
+<li>marker 命中数不是 1</li>
+<li>block 嵌套</li>
+<li>只有 <code>end</code> 没有 <code>block</code></li>
+<li>缺少 <code>end</code></li>
+</ul>
+<h2 id="comment_prefix-约束"><a class="header" href="#comment_prefix-约束">comment_prefix 约束</a></h2>
+<ul>
+<li><code>comment_prefix</code> 不能为空字符串。</li>
+</ul>
+<h2 id="示例"><a class="header" href="#示例">示例</a></h2>
+<h3 id="1-set"><a class="header" href="#1-set">1) set</a></h3>
+<pre><code class="language-toml">version = "0.12.2"   # @gxl:set(version)
+</code></pre>
+<pre><code class="language-gxl">gx.patch_file(
+  file: "./Cargo.toml",
+  action: "set",
+  marker: "version",
+  value: "\"0.12.3\""
+);
+</code></pre>
+<h3 id="2-commentuncomment-block"><a class="header" href="#2-commentuncomment-block">2) comment/uncomment block</a></h3>
+<pre><code class="language-toml"># @gxl:block(res_depend_test)
+[features]
+res_depend_test = []
+# @gxl:end(res_depend_test)
+</code></pre>
+<pre><code class="language-gxl">gx.patch_file(file: "./Cargo.toml", action: "comment_block", marker: "res_depend_test");
+gx.patch_file(file: "./Cargo.toml", action: "uncomment_block", marker: "res_depend_test");
+</code></pre>
+<h3 id="3-line-toggle"><a class="header" href="#3-line-toggle">3) line toggle</a></h3>
+<pre><code class="language-toml">res_depend_test = []   # @gxl:line(res_depend_test)
+</code></pre>
+<pre><code class="language-gxl">gx.patch_file(file: "./Cargo.toml", action: "comment_line", marker: "res_depend_test");
+gx.patch_file(file: "./Cargo.toml", action: "uncomment_line", marker: "res_depend_test");
 </code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../gxl/example/read.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../gxl/inner/echo.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../gxl/example/template.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../gxl/inner/read.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -259,11 +279,11 @@ gx do_obj
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../gxl/example/read.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../gxl/inner/echo.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../gxl/example/template.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../gxl/inner/read.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-8a530cac.js";
+            window.path_to_searchindex_js = "searchindex-d2ebf2cf.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-3505d4ea.js"></script>
+        <script src="toc-e55c97f0.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -191,6 +191,25 @@
 <p>命名变更：早期的独立命令已收敛或更名——
 <code>gflow</code> → <strong><code>gx</code></strong>；<code>gmod</code> / <code>gsys</code> → <strong><code>gops mod</code> / <code>gops sys</code></strong>；
 <code>gprj</code> 的项目脚手架能力 → <strong><code>gx init project</code></strong>。</p>
+</blockquote>
+<h2 id="gxl-文档的来源"><a class="header" href="#gxl-文档的来源">GXL 文档的来源</a></h2>
+<p><code>gxl/</code> 下的页面大部分是 <a href="https://github.com/galaxio-labs/galaxy-flow">galaxy-flow</a> 仓库 <code>docs/gxl/</code> 的<strong>镜像</strong>，
+单一真源在 galaxy-flow，请不要在这里直接改这些页面（改动会在下次同步时被覆盖）。</p>
+<p>例外：<code>gxl/example/*.md</code> 是<strong>本仓库自有</strong>的运维向改写（补充“对应目录 / 运行方式 / 这个示例验证了什么”等），
+不属于镜像，不会被同步覆盖。</p>
+<p>同步与校验：</p>
+<pre><code class="language-bash"># 在 galaxy-flow 仓库执行同步（默认写入 ../operator-docs/gxl）
+scripts/sync-gxl-docs.sh sync --dest &lt;operator-docs&gt;/gxl
+
+# 只校验是否已同步
+scripts/sync-gxl-docs.sh check --dest &lt;operator-docs&gt;/gxl
+</code></pre>
+<p>本仓库的 <code>GXL docs sync check</code> workflow 会每天定时、以及在 push / PR 时
+用 galaxy-flow <code>main</code> 的 <code>docs/gxl/</code> 校验上述镜像是否已同步。
+新增镜像页面后，记得同时把条目加进 <code>SUMMARY.md</code>，否则该页不会出现在侧边栏。</p>
+<blockquote>
+<p>上线前提：该 workflow 调用的是 galaxy-flow 仓库里的 <code>scripts/sync-gxl-docs.sh</code>。
+在它并入 galaxy-flow <code>main</code> 之前，workflow 会给出 warning 并跳过校验（不会误报红）。</p>
 </blockquote>
 <h2 id="核心流程"><a class="header" href="#核心流程">核心流程</a></h2>
 <ol>
