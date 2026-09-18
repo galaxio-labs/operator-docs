@@ -1,8 +1,4 @@
-# Galaxy-Ops Operator 文档
-
-这里的 `operator` 文档以当前 `galaxy-ops` 仓库实现为准，不再沿用早期的 `gmod`、`gsys`、`gops project` 等旧工具拆分说法。
-
-当前 CLI 只有一个入口：
+# Galaxy-Ops 文档
 
 ```bash
 gops <COMMAND>
@@ -19,12 +15,12 @@ gops <COMMAND>
 `galaxy-ops` 围绕三层对象工作：
 
 ```text
-Module -> System -> Ops Project
+Module -> System -> Project
 ```
 
 - `Module`：最小可复用运维单元
 - `System`：由多个模块组合形成的系统定义
-- `Ops Project`：面向具体客户或环境的交付项目
+- `Project`：面向具体客户环境的交付项目
 
 这三层分别对应当前 CLI 的三组命令：
 
@@ -34,14 +30,17 @@ Module -> System -> Ops Project
 
 ## 当前命令面
 
-### 模块命令
+### 部署项目命令
 
 ```bash
-gops mod example
-gops mod new --name <name>
-gops mod update
-gops mod localize [--value <file> | --default]
+gops prj new --name <name>
+gops prj import --path <system-path>
+gops prj update
+gops prj reimport
 ```
+
+`gops prj reimport` 按 `ops-prj.yml` 记录的 `sys_models` 重新导入系统，保留 `values/` 客户值。
+
 
 ### 系统命令
 
@@ -62,16 +61,15 @@ gops sys diagnose [--mod <module>] [--env <env>]
 
 `sys/sys_model.yml` 的 `kind` 决定部署行为：`gxl`（默认）委托 `gx` 执行；`docker-compose` 直接映射到本机 `docker compose`。
 
-### 运维项目命令
+
+### 模块命令
 
 ```bash
-gops prj new --name <name>
-gops prj import --path <system-path>
-gops prj update
-gops prj reimport
+gops mod example
+gops mod new --name <name>
+gops mod update
+gops mod localize [--value <file> | --default]
 ```
-
-`gops prj reimport` 按 `ops-prj.yml` 记录的 `sys_models` 重新导入系统，保留 `values/` 客户值。
 
 ## 文档索引
 
