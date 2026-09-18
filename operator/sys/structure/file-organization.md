@@ -58,8 +58,7 @@
 
 ## 不再使用的旧说法
 
-- `SYS_BIN = "gsys"`
-- `MOD_BIN = "gmod"`
+- `SYS_BIN = "gsys"` / `MOD_BIN = "gmod"`（GXL 模板中已改为 `"gops sys"` / `"gops mod"`）
 - “系统级 vars.yml 必然位于 sys/ 根目录”
 - “sys/mods/ 是固定初始结构”
 - “系统变量文件叫 `sys/sys_vars.yml`”（已重命名为 `merged_vars.yml`，旧名仅作读取兼容）
