@@ -45,10 +45,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-4a6734f9.js";
+            window.path_to_searchindex_js = "../../searchindex-efd20e26.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-8a341037.js"></script>
+        <script src="../../toc-18d2ed36.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -191,29 +191,35 @@
 <h2 id="1-gops-mod-new-创建后文件很少"><a class="header" href="#1-gops-mod-new-创建后文件很少">1. <code>gops mod new</code> 创建后文件很少</a></h2>
 <p>现象：</p>
 <ul>
-<li>只看到 <code>mod-prj.yml</code></li>
-<li>只看到 <code>_gal/</code> 和少量 <code>vars.yml</code></li>
+<li>每个 <code>mod/&lt;model&gt;/</code> 下只有模板文件（<code>vars.yml</code> / <code>spec/</code> / <code>workflows/operators.gxl</code> / <code>_gal/work.gxl</code>）</li>
+<li>没有 <code>setting.yml</code>，也没有 <code>values/</code></li>
 </ul>
 <p>原因：</p>
 <ul>
-<li>当前 <code>mod new</code> 生成的是最小骨架，不是完整业务模板</li>
+<li>当前 <code>mod new</code> 生成的是模板骨架，不是完整业务模板</li>
+<li><code>setting.yml</code> 和 <code>values/</code> 不由 <code>mod new</code> 生成</li>
 </ul>
 <p>处理：</p>
 <ul>
-<li>继续补齐 <code>spec/</code>、<code>setting.yml</code>、<code>values/</code>、<code>workflows/</code></li>
-<li>之后执行 <code>gops mod update</code></li>
+<li>按需修改 <code>mod/&lt;model&gt;/</code> 下的模板文件</li>
+<li>执行 <code>gops mod update</code> 生成 <code>values/&lt;model&gt;/</code> 值文件模板</li>
+<li>需要自定义本地化行为时再手工补充 <code>setting.yml</code></li>
 </ul>
 <h2 id="2-gops-mod-localize-失败"><a class="header" href="#2-gops-mod-localize-失败">2. <code>gops mod localize</code> 失败</a></h2>
 <p>常见原因：</p>
 <ul>
 <li><code>vars.yml</code> 未定义完整</li>
-<li>指定的 <code>--value</code> 文件不存在</li>
-<li>值文件内容和变量结构不匹配</li>
+<li>模块根 <code>values/&lt;model&gt;/</code> 下的 <code>sys_value.yml</code> / <code>mod_value.yml</code> 缺失或结构不匹配</li>
+<li>尚未执行 <code>gops mod update</code>，导致值文件模板未生成</li>
 </ul>
 <p>建议：</p>
-<pre><code class="language-bash">gops mod localize --default --debug 2
+<pre><code class="language-bash">gops mod update
+gops mod localize --debug 2
 </code></pre>
-<p>先用默认值跑通，再切换到真实值文件。</p>
+<p>先生成 <code>values/&lt;model&gt;/</code> 值文件，再用 <code>--debug 2</code> 定位问题。</p>
+<blockquote>
+<p>注意：<code>gops mod localize</code> 声明的 <code>--value</code> / <code>--default</code> 目前未被实现消费，值始终来自 <code>values/&lt;model&gt;/</code>。</p>
+</blockquote>
 <h2 id="3-gops-mod-update-覆盖了本地内容"><a class="header" href="#3-gops-mod-update-覆盖了本地内容">3. <code>gops mod update</code> 覆盖了本地内容</a></h2>
 <p>原因：</p>
 <ul>

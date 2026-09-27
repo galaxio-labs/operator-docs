@@ -46,10 +46,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-4a6734f9.js";
+            window.path_to_searchindex_js = "searchindex-efd20e26.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-8a341037.js"></script>
+        <script src="toc-18d2ed36.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -1021,6 +1021,9 @@ gops sys localize
 <h1 id="buildin"><a class="header" href="#buildin">BUILDIN</a></h1>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="galaxy-ops-文档"><a class="header" href="#galaxy-ops-文档">Galaxy-Ops 文档</a></h1>
+<blockquote>
+<p>想先了解 <code>gops</code> 的定位与独特价值，见 <a href="#gops-定位与价值">定位与价值</a>。</p>
+</blockquote>
 <pre><code class="language-bash">gops &lt;COMMAND&gt;
 </code></pre>
 <p>一级命令：</p>
@@ -1075,6 +1078,8 @@ gops mod localize [--value &lt;file&gt; | --default]
 </code></pre>
 <h2 id="文档索引"><a class="header" href="#文档索引">文档索引</a></h2>
 <ul>
+<li><a href="#gops-定位与价值">overview.md</a>：<code>gops</code> 定位与独特价值（含对象模型 / 双后端分派图）</li>
+<li><a href="#gops-改进方向">roadmap.md</a>：按性价比排序的改进方向</li>
 <li><a href="operator/mod/README.html">mod/README.md</a>：模块对象说明与 <code>gops mod</code> 使用方式</li>
 <li><a href="#module-operator-配置说明">mod/CONFIGURATION.md</a>：模块配置与文件结构</li>
 <li><a href="#module-operator-开发流程">mod/DEVELOPMENT.md</a>：模块开发与本地调试流程</li>
@@ -1095,6 +1100,565 @@ gops mod localize [--value &lt;file&gt; | --default]
 <li>文件树以真实生成结果为准</li>
 <li>不再保留推断型 Rust API、旧命令名和过时的架构图</li>
 </ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="gops-定位与价值"><a class="header" href="#gops-定位与价值">GOps 定位与价值</a></h1>
+<h2 id="一句话定位"><a class="header" href="#一句话定位">一句话定位</a></h2>
+<p><code>gops</code>（<code>galaxy-ops</code>）不是执行引擎，而是运维能力的<strong>资产化 + 组合 + 交付</strong>层：</p>
+<blockquote>
+<p>把“一套系统交付给 N 个客户“变成有对象模型、有版本、可审计的工程流程。
+执行本身仍然交给 <code>galaxy-flow</code>（<code>gx</code>）或本机 <code>docker compose</code>。</p>
+</blockquote>
+<h2 id="要解决的问题"><a class="header" href="#要解决的问题">要解决的问题</a></h2>
+<p>这一节回答“为什么会有 <code>gops</code>“。这些问题最终都指向同一个主题：<strong>交付中“该共享的“与“该隔离的“没有被分层表达</strong>——能力、值、流程应沉淀到共享层，客户差异与运行形态应隔离到独立层；一旦混在一起，变更就会逃出版本与责任的闭环。</p>
+<h3 id="1-客户环境的部署配置时常修改容易遗忘后果严重"><a class="header" href="#1-客户环境的部署配置时常修改容易遗忘后果严重">1. 客户环境的部署配置：时常修改、容易遗忘、后果严重</a></h3>
+<p><strong>客户环境下的部署配置，是运维交付长期的重灾区：</strong></p>
+<ul>
+<li><strong>时常修改</strong>：客户环境异构、需求会变（扩容、换证书、换域名、合规），配置天生是“活的“。</li>
+<li><strong>容易遗忘</strong>：修改发生在交付之后的现场，脱离产品版本库，没有“谁改了、改成了什么、相对默认差了多少“的记录。</li>
+<li><strong>后果严重</strong>：配置直接驱动运行时，一个错值就是生产事故，而且往往没有回滚点。</li>
+</ul>
+<h4 id="根因配置的三种脱节"><a class="header" href="#根因配置的三种脱节">根因：配置的三种“脱节“</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>脱节</th><th>含义</th></tr>
+</thead>
+<tbody>
+<tr><td>时间脱节</td><td>配置在“交付之后、运行之中“被改，脱离了产品构建时刻</td></tr>
+<tr><td>空间脱节</td><td>配置躺在客户环境中，脱离了产品的版本库</td></tr>
+<tr><td>责任脱节</td><td>产品 / 实施 / 客户运维都可能改，却没人完整拥有</td></tr>
+</tbody>
+</table>
+</div>
+<p>三种脱节合起来，就是“配置改动逃出了版本与责任闭环“。</p>
+<h4 id="gops-的应对"><a class="header" href="#gops-的应对">GOps 的应对</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>症状</th><th>脱节</th><th>GOps 机制</th></tr>
+</thead>
+<tbody>
+<tr><td>时常修改</td><td>时间</td><td>分层值文件（<code>merged_vars</code> 默认 ⊕ <code>sys_value.yml</code> ⊕ <code>value.yml</code>），高频改动被收敛进受控差异层</td></tr>
+<tr><td>容易遗忘</td><td>空间</td><td><code>sys_value.yml</code> 注释模板、<code>merged_vars.yml</code> 入库、<code>prj reimport</code> 保留 <code>values/</code></td></tr>
+<tr><td>后果严重</td><td>责任</td><td>配置与密钥分离（<code>${SEC_xxx}</code> 运行时注入）、<code>diagnose</code> 预校验 + 掩码、打包产物版本化可回滚</td></tr>
+</tbody>
+</table>
+</div>
+<p>一个关键设计：<code>values/sys_value.yml</code> 生成时为<strong>整份注释模板</strong>——“没写“等于“用系统默认值”。于是“复制了一份默认值却忘了改“这类经典事故从根上消失：要覆盖才写，且只写差异。</p>
+<h4 id="边界"><a class="header" href="#边界">边界</a></h4>
+<p>GOps 提供的是“让配置回到版本与责任闭环“的<strong>结构</strong>，但它不包办全部：</p>
+<ul>
+<li>它<strong>不强制</strong>你把 <code>values/</code> 提交进 git——这仍是纪律（好在该提交的东西被压缩到极小、极明确）；</li>
+<li>它<strong>不做漂移检测</strong>——有人绕过 <code>gops</code> 直接改现场文件，不会告警；</li>
+<li><strong>变更审计</strong>依赖 git 提供历史。</li>
+</ul>
+<p>换句话说，它把“需要人管的东西“从“整个客户环境“缩小到“几个值文件 + 一次 commit“。</p>
+<h3 id="2-模块被聚合进多个系统默认要能用集成要能改部署还要能再改"><a class="header" href="#2-模块被聚合进多个系统默认要能用集成要能改部署还要能再改">2. 模块被聚合进多个系统：默认要能用、集成要能改、部署还要能再改</a></h3>
+<p>一个模块（如 <code>postgresql</code>）会被多个系统复用，而它的运行配置需要同时满足三件事：</p>
+<ul>
+<li><strong>默认设定</strong>：模块自带一套能直接跑起来的默认值；</li>
+<li><strong>系统集成时可改写</strong>：被某个系统聚合时，集成者能按该系统需要改写；</li>
+<li><strong>部署时再次修改</strong>：到了客户现场，实施 / 客户还要能再改。</li>
+</ul>
+<p>难点在于：把定制写进模块就会<strong>污染共享资产</strong>（又回到“每系统一份“的老路）；而且三层改写必须有明确优先级，还要区分“哪些值允许被改、哪些不允许“。</p>
+<h4 id="根因共享与定制的冲突--覆盖层级"><a class="header" href="#根因共享与定制的冲突--覆盖层级">根因：共享与定制的冲突 + 覆盖层级</a></h4>
+<ul>
+<li>模块是<strong>共享资产</strong>，被 N 个系统复用；但配置需求是<strong>每个系统 / 每个客户各异</strong>的。</li>
+<li>改写点分布在三层，必须有单一、明确的优先级链。</li>
+<li>并非所有值都该被改：有些是身份 / 常量（如 <code>app_name</code>），必须锁死。</li>
+</ul>
+<h4 id="gops-的应对变量--可变性--分层覆盖点"><a class="header" href="#gops-的应对变量--可变性--分层覆盖点">GOps 的应对：变量 + 可变性 + 分层覆盖点</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>层级</th><th>拥有者</th><th>载体</th><th>作用</th></tr>
+</thead>
+<tbody>
+<tr><td>模块默认</td><td>模块定义者</td><td><code>mod/&lt;model&gt;/vars.yml</code></td><td>能直接运行的默认值</td></tr>
+<tr><td>系统集成覆盖</td><td>系统集成者</td><td><code>sys/setting/vars.yml</code> → merge → <code>sys/merged_vars.yml</code></td><td>按系统需要改写</td></tr>
+<tr><td>部署现场覆盖</td><td>实施 / 客户</td><td><code>values/sys_value.yml</code>、<code>values/value.yml</code></td><td>按客户环境再改</td></tr>
+</tbody>
+</table>
+</div>
+<ul>
+<li><strong>可变性（mutability）</strong>：每个变量声明自己允许在哪些层被改——<code>Immutable</code> / <code>System</code> / <code>Module</code>。定义者用它划定“允许被改写的边界“（例如 <code>app_name</code> 声明为不可变）。部署时的交互式设置只遍历可变项。</li>
+<li><strong>共享复用</strong>：模块以引用形式（<code>ModuleSpecRef</code>：名称 + 地址 + 模型 + 开关）被多个系统聚合，可改名、可选不同 <code>ModelSTD</code>，<strong>无需改动模块本体</strong>。</li>
+</ul>
+<p>这样，同一模块的默认值只写一次，各系统 / 各客户的改写分别落在各自的层上，互不污染。</p>
+<h4 id="边界-1"><a class="header" href="#边界-1">边界</a></h4>
+<ul>
+<li>覆盖优先级的细节由运行时（<code>orion-variate</code> 的变量合并）决定，以实际行为为准；</li>
+<li>“哪些项该在系统层改、哪些该留给客户层“仍需约定，工具不强制。</li>
+</ul>
+<h3 id="3-同一系统需要多种部署形态二进制--k8s--docker-compose"><a class="header" href="#3-同一系统需要多种部署形态二进制--k8s--docker-compose">3. 同一系统需要多种部署形态：二进制 / K8S / Docker Compose</a></h3>
+<p>同一套系统，可能既要在客户机上以<strong>二进制</strong>（裸机 / 进程）部署，又要上 <strong>Kubernetes</strong>，还要能跑 <strong>Docker Compose</strong>。</p>
+<p>难点：三种形态<strong>实现差异极大</strong>（进程 vs 编排 vs 容器），几乎无法复用同一份部署脚本；如果每种形态各自维护一套交付（值文件、操作命令、打包流程），就等于<strong>三份并行的运维体系</strong>——问题 1 的“时常修改、容易遗忘“会被放大三倍。而客户差异（域名、端口、规格）本应与形态无关。</p>
+<h4 id="根因形态差异外溢成了交付体系的分叉"><a class="header" href="#根因形态差异外溢成了交付体系的分叉">根因：形态差异外溢成了交付体系的分叉</a></h4>
+<ul>
+<li>形态的差异本是<strong>实现层</strong>的（怎么落地），却扩散到了<strong>交付层</strong>（值、命令、打包）。</li>
+<li>本应“一份值 + 一套命令“跨越三种形态，实际却变成三套。</li>
+</ul>
+<h4 id="gops-的应对分层表达形态"><a class="header" href="#gops-的应对分层表达形态">GOps 的应对：分层表达形态</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>部署形态</th><th>GOps 表达</th><th>执行者</th></tr>
+</thead>
+<tbody>
+<tr><td>二进制（Host）</td><td><code>kind: gxl</code> + <code>ModelSTD(RunSPC=Host)</code></td><td><code>gx</code> 执行模块的 host 工作流</td></tr>
+<tr><td>Kubernetes</td><td><code>kind: gxl</code> + <code>ModelSTD(RunSPC=K8S)</code></td><td><code>gx</code> 执行模块的 k8s 工作流</td></tr>
+<tr><td>Docker Compose</td><td><code>kind: docker-compose</code>（无 <code>ModelSTD</code>）</td><td>本机 <code>docker compose</code></td></tr>
+</tbody>
+</table>
+</div>
+<ul>
+<li><strong>模块层承载“同一能力的多种落地形式“</strong>：同一模块可同时拥有 Host 与 K8S 的 <code>mod/&lt;model&gt;/</code>（不同 <code>RunSPC</code>），各自的 <code>workflows/operators.gxl</code> 提供该形态的实现。</li>
+<li><strong>系统层选定形态</strong>：<code>ModelSTD</code>（Host / K8S）+ <code>kind</code>（gxl / compose）决定用哪种形态交付。</li>
+<li><strong>三形态共享交付面</strong>：同一套值模型、同一个命令面（<code>gops sys start/stop/status/diagnose</code>）、同一套打包 / 导入 / 保值流程。客户差异不随形态改变。</li>
+</ul>
+<h4 id="边界-2"><a class="header" href="#边界-2">边界</a></h4>
+<ul>
+<li>一个 <code>System</code> 绑定一个 <code>ModelSTD</code> + <code>kind</code>，<strong>没有“一份系统自动产出三种形态“</strong>；切换形态意味着另一个系统对象（但复用同一批模块与值定义）。</li>
+<li>GOps <strong>不做形态间的语义转换</strong>：不会把一份业务逻辑自动生成 host / k8s / compose 三份实现，各形态实现仍由模块作者分别编写；GOps 对齐的是<strong>对象、值、命令与交付流程</strong>，而非实现本身。</li>
+</ul>
+<h2 id="与开源机制的关系"><a class="header" href="#与开源机制的关系">与开源机制的关系</a></h2>
+<p>“已经有 Helm / Ansible 了，为什么还要 GOps？”——先说结论：</p>
+<blockquote>
+<p>开源机制解决的是“<strong>怎么覆盖</strong>“；GOps 想解决的是”<strong>谁来覆盖、覆盖了什么、以及别忘了</strong>“。前者是机制，后者是治理。</p>
+</blockquote>
+<p>问题 2 拆成 7 个要求：R1 默认、R2 集成覆盖、R3 部署覆盖、R4 复用不 fork、R5 优先级链、R6 可变性、R7 记录保值。对照开源机制：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>机制</th><th>复用 + 多层覆盖</th><th>优先级链</th><th>可变性声明</th><th>记录与保值</th><th>跨运行时</th></tr>
+</thead>
+<tbody>
+<tr><td>Helm</td><td>✅ chart 默认 + 覆盖 values</td><td>✅</td><td>❌</td><td>🟡 升级可留用户 values</td><td>❌ 绑 K8s</td></tr>
+<tr><td>Kustomize</td><td>✅ base + overlay</td><td>✅</td><td>❌</td><td>🟡 靠 git</td><td>❌ 绑 K8s</td></tr>
+<tr><td>Ansible</td><td>✅ role defaults + group/host vars</td><td>✅ 20+ 级</td><td>❌</td><td>❌</td><td>🟡 通用但与执行耦合</td></tr>
+<tr><td>Terraform</td><td>✅ module 变量 + tfvars</td><td>✅</td><td>❌</td><td>🟡 state 非交付值</td><td>❌ 面向基础设施</td></tr>
+<tr><td>Nix modules</td><td>✅ options + 覆盖</td><td>✅</td><td>✅ mkDefault/mkForce</td><td>🟡</td><td>❌ 整机配置范式</td></tr>
+<tr><td>CUE / Jsonnet</td><td>✅ 默认值 + 统一</td><td>✅</td><td>🟡 约束可禁覆盖</td><td>❌</td><td>❌ 是语言，不是交付系统</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>开源已解决得很好的</strong>：R1–R5（Helm 式分层 values、Ansible 式 role 复用）。GOps 的覆盖代数并不原创，本质与其同源。</p>
+<p><strong>开源至今的四个空白</strong>：</p>
+<ol>
+<li><strong>可变性 ≠ 所有权边界</strong>：开源工具把覆盖视为“谁在命令行传了什么“，没人把“产品 / 集成者 / 客户“表达成结构；Helm 里客户和集成者都只是传 <code>-f</code>，没有机制阻止客户覆盖集成者认为不可改的值。（只有 Nix 的 <code>mkDefault</code> / <code>mkForce</code> 把优先级做成了一等语义。）</li>
+<li><strong>交付对象模型</strong>：没有“系统 → N 个客户项目、各自维护客户值“的对象层。</li>
+<li><strong>记录与保值</strong>：没有工具原生提供“实际使用的值落盘入库 + 升级保护客户值“。</li>
+<li><strong>跨运行时统一</strong>：Helm / Kustomize 绑 K8s、Terraform 绑基础设施、Nix 绑整机，没有一套对象与覆盖链能在 host / k8s / docker compose 间共享。</li>
+</ol>
+<p><strong>GOps 的位置（诚实版）</strong>：</p>
+<ul>
+<li>覆盖代数<strong>不是原创</strong>——可视为 Helm 式分层值 + Ansible 式复用的运维交付改写；</li>
+<li>真正补的是空白 1–4：把覆盖嵌进 <code>Module → System → Ops Project</code> 对象模型、用 <code>Immutable</code> / <code>System</code> / <code>Module</code> 把可变性变成声明式所有权边界、用 <code>merged_vars.yml</code> + 来源追踪做记录、用 <code>kind</code> 跨运行时统一；</li>
+<li>但它的可变性粒度比 Nix 粗（Nix 可对每个赋值定优先级并合并，GOps 按变量作用域分级），且闭环仍依赖 <strong>git 纪律</strong>。</li>
+</ul>
+<h2 id="有没有满需求的开源方案"><a class="header" href="#有没有满需求的开源方案">有没有“满需求“的开源方案</a></h2>
+<p>把问题 1–3 合起来，“满需求“落在 6 个维度：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>维度</th><th>含义</th></tr>
+</thead>
+<tbody>
+<tr><td>D1 多层覆盖</td><td>默认 → 集成 → 部署三级覆盖 + 优先级链 + 复用不 fork</td></tr>
+<tr><td>D2 可变性 / 所有权</td><td>“某值不允许在某一层被改“作为声明</td></tr>
+<tr><td>D3 记录与保值</td><td>实际用了什么可复现；升级不覆盖客户值</td></tr>
+<tr><td>D4 密钥分离</td><td>密钥不落盘、运行时注入</td></tr>
+<tr><td>D5 多形态</td><td>同一能力支持二进制 / K8S / Compose</td></tr>
+<tr><td>D6 交付对象模型</td><td>产品 → 系统 → 客户项目，含打包 / 导入闭环</td></tr>
+</tbody>
+</table>
+</div>
+<p>主流方案对照：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>方案 / 组合</th><th>D1</th><th>D2</th><th>D3</th><th>D4</th><th>D5</th><th>D6</th></tr>
+</thead>
+<tbody>
+<tr><td>Helm + GitOps(Argo/Flux) + SOPS</td><td>✅</td><td>❌</td><td>🟡</td><td>✅</td><td>❌ 仅 K8s</td><td>🟡</td></tr>
+<tr><td>Ansible + Vault / AWX</td><td>🟡 过程式</td><td>❌</td><td>❌</td><td>✅</td><td>🟡</td><td>❌</td></tr>
+<tr><td>Terraform / Pulumi</td><td>🟡</td><td>❌</td><td>🟡 state</td><td>🟡</td><td>🟡 provider</td><td>❌</td></tr>
+<tr><td>Nix / Colmena</td><td>✅</td><td>✅ mkForce</td><td>🟡</td><td>🟡</td><td>🟡 host 强</td><td>❌</td></tr>
+<tr><td>Crossplane</td><td>🟡</td><td>❌</td><td>🟡</td><td>🟡</td><td>🟡 k8s 原生</td><td>❌</td></tr>
+<tr><td>Dagger</td><td>❌</td><td>❌</td><td>❌</td><td>🟡</td><td>🟡 runner</td><td>❌</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>结论</strong>：</p>
+<ol>
+<li><strong>单一开源项目：没有满需求的。</strong></li>
+<li><strong>K8s 单形态下最接近满需求的是 GitOps 栈</strong>（Git + Helm/Kustomize + SOPS/Sealed-Secrets + Argo CD/Flux）：D1/D3/D4 都做到，甚至靠 reconcile 有了漂移检测；但 <strong>D2 失守</strong>（无可变性声明）、<strong>D5 失守</strong>（只服务 K8s）。</li>
+<li><strong>能横跨三种形态的只有 Ansible / Terraform / Pulumi</strong>，但它们是过程式 / 状态式的，没有 D6 对象模型，D2/D3 基本空白，且配置与执行耦合。</li>
+<li><strong>跨形态没有开源方案同时满足</strong>：要么绑死 K8s，要么退化成过程式的 Ansible。</li>
+</ol>
+<p>GOps 自己也不是“满需求“：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>D1</th><th>D2</th><th>D3</th><th>D4</th><th>D5</th><th>D6</th></tr>
+</thead>
+<tbody>
+<tr><td>✅</td><td>✅（粒度粗）</td><td>🟡 靠 git 纪律</td><td>✅</td><td>🟡 需分别实现</td><td>✅</td></tr>
+</tbody>
+</table>
+</div>
+<p>它缺 GitOps 那种“强制以 Git 为真源 + 漂移检测 + 对账回滚“，也不做形态间自动转换。准确说法：<strong>开源里没有满需求，GOps 也没有；但它把“满需求“需要的维度装进了同一个对象模型，缺口集中在“强制入库 / 漂移检测 / 自动生成“。</strong></p>
+<h2 id="gops-与-gitops-的差距"><a class="header" href="#gops-与-gitops-的差距">GOps 与 GitOps 的差距</a></h2>
+<p>GOps 也依赖 Git，但 Git 在两边角色不同：</p>
+<ul>
+<li><strong>GitOps：Git 是控制回路的输入</strong>——被常驻控制器持续读取、对账、收敛。</li>
+<li><strong>GOps：Git 是版本化的载体</strong>——靠人 / CI 手动触发一次性动作。</li>
+</ul>
+<p>一句话：<strong>GitOps 的 Git 驱动一个 loop，GOps 的 Git 只是仓库。</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>维度</th><th>GitOps（Argo CD / Flux）</th><th>GOps</th></tr>
+</thead>
+<tbody>
+<tr><td>Git 角色</td><td>控制回路输入（活）</td><td>协作 / 版本载体（存）</td></tr>
+<tr><td>真源</td><td>Git 是唯一真源，现场必须服从</td><td>分层：默认来自系统产物，差异来自 <code>values/</code>，现场不强制收敛</td></tr>
+<tr><td>执行方式</td><td>常驻 controller 持续 reconcile</td><td>CLI 手动 / CI 一次性触发</td></tr>
+<tr><td>部署语义</td><td>声明式终态（幂等 converge）</td><td>可重复过程（gx workflow，未必终态）</td></tr>
+<tr><td>漂移检测</td><td>核心能力（OutOfSync → 自愈）</td><td>无</td></tr>
+<tr><td>回滚</td><td>revert commit → 自动回滚</td><td>重跑部署（人工）</td></tr>
+<tr><td>多形态</td><td>主流绑 K8s</td><td>二进制 / K8S / Compose（<code>kind</code>）</td></tr>
+<tr><td>密钥</td><td>加密后仍进 Git（SOPS / Sealed-Secrets）</td><td>不进 Git、不落盘，运行时注入</td></tr>
+<tr><td>对象粒度</td><td>manifest / release / overlay</td><td>Module / System / Ops Project</td></tr>
+</tbody>
+</table>
+</div>
+<p>三个本质差距：</p>
+<ol>
+<li><strong>有没有 reconcile loop</strong>：GitOps 有常驻控制器持续把现场拉回 Git；GOps 没有任何常驻组件，<code>gops sys start</code> 跑完即止，<strong>不知道现场是否偏离默认值</strong>。</li>
+<li><strong>部署能否归约为声明式终态</strong>：GitOps 成立的前提是“期望状态可完整描述 + 幂等收敛“，这成立在容器 / 基础设施领域；二进制部署与 GXL 工作流走的是“可重复过程“，不假装是终态。</li>
+<li><strong>真源的权威性</strong>：GitOps 里现场是从属的，手改会被当 drift 冲掉；GOps 反而承认现场是权威之一——<code>prj reimport</code> 就是“重建系统、保留 <code>values/</code>“。两者哲学相反。</li>
+</ol>
+<h3 id="为什么二进制--gxl-难以-gitops-化"><a class="header" href="#为什么二进制--gxl-难以-gitops-化">为什么二进制 / GXL 难以 GitOps 化</a></h3>
+<p>GitOps 需要四个前提同时成立，二进制 / host / GXL 恰好逐条违反：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>前提</th><th>含义</th><th>二进制 / Host / GXL</th></tr>
+</thead>
+<tbody>
+<tr><td>终态可完整描述</td><td>期望状态是一个 spec</td><td>❌ 安装 / 迁移是“过程 / 历史“（数据库迁移只能按序 apply）</td></tr>
+<tr><td>现实可观测</td><td>能读到实际状态并与期望 diff</td><td>❌ host 没有统一的“部署了什么“状态接口，系统异构</td></tr>
+<tr><td>操作幂等</td><td>可反复收敛而不产生副作用</td><td>❌ 启动 / 迁移 / 一次性初始化不幂等；GXL workflow 是“程序“</td></tr>
+<tr><td>资源可抛弃</td><td>收敛 = 杀掉重建</td><td>❌ 客户机器是有状态资产（数据 / license / 硬件），强收敛危险</td></tr>
+</tbody>
+</table>
+</div>
+<p>同样是部署，Docker Compose 可以而 host 不行：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>前提</th><th>Docker Compose</th><th>二进制 / Host</th></tr>
+</thead>
+<tbody>
+<tr><td>终态可完整描述</td><td>✅ <code>compose.yml</code></td><td>❌ 安装 / 迁移是过程</td></tr>
+<tr><td>可观测</td><td>✅ <code>docker compose ps</code></td><td>❌ 无统一状态接口</td></tr>
+<tr><td>幂等</td><td>✅ <code>up -d</code> 近似幂等</td><td>❌ 启动 / 迁移一次性</td></tr>
+<tr><td>可抛弃</td><td>✅ 容器可重建</td><td>❌ 有状态资产</td></tr>
+</tbody>
+</table>
+</div>
+<p>这也解释了为什么 GOps 的 <code>docker-compose</code> 形态最接近 GitOps——四个前提它占了三个半。</p>
+<p><strong>但并非“绝对不可能“</strong>：Puppet / Chef / Salt 证明了 host 收敛可行（装 agent + 状态模型 + 持续收敛），代价是 agent 重、OS 各异，且迁移 / 一次性步骤仍要退化成 <code>exec</code> / <code>unless</code> 这类逃逸阀。连 K8s 自己都得为非声明式步骤开逃逸阀（Helm hooks、Argo CD sync hooks、Job）——反过来说：凡是“过程“，GitOps 都得打补丁。</p>
+<p><strong>所以 GOps 的选择是取舍</strong>：既然四前提在二进制 / GXL 上凑不齐，就不去假装有终态收敛——部署 = 可重复的过程（GXL workflow），交给 <code>gx</code>；版本化的只是产物（tar.gz）+ 值（<code>values/</code>）；它<strong>不承诺收敛，只承诺可复现与可追溯</strong>。代价是失去漂移检测与自动回滚，换来的是形态自由。</p>
+<p><strong>互补关系</strong>更准确：GitOps 管“收敛“，GOps 管“组织与交付“；GitOps 在单形态里做到极致，GOps 用放弃收敛换来覆盖不可收敛的世界。</p>
+<h2 id="独特价值"><a class="header" href="#独特价值">独特价值</a></h2>
+<h3 id="1-三层对象模型复用与客户差异物理隔离"><a class="header" href="#1-三层对象模型复用与客户差异物理隔离">1. 三层对象模型：复用与客户差异物理隔离</a></h3>
+<p><code>Module → System → Ops Project</code> 三层各司其职：</p>
+<ul>
+<li><code>Module</code>：最小可复用运维单元（变量 / 依赖 / 构件 / 工作流）。</li>
+<li><code>System</code>：由模块组合出的交付单元。</li>
+<li><code>Ops Project</code>：面向具体客户环境的运维项目。</li>
+</ul>
+<p>同一个系统可以被多个客户项目导入，客户差异只落在 <code>&lt;project&gt;/values/&lt;system&gt;/</code>，不写死在系统定义里。</p>
+<pre class="mermaid">flowchart TD
+    M["Module 最小可复用单元"] --&gt; S["System 组合交付单元"]
+    S --&gt; P["Ops Project 客户现场"]
+    S --&gt;|gops sys package| PKG["交付包 tar.gz"]
+    PKG --&gt;|gops prj import| P
+    P --&gt;|gops prj reimport 保留 values| P
+</pre>
+
+<p>关键机制：在项目内的系统目录执行 <code>gops sys localize</code> / <code>sys update</code> 时，会依据上层 <code>ops-prj.yml</code> 反向解析出该项目为该系统维护的值目录，而不是使用系统自带的 <code>values/</code>。产品定义与客户现场在磁盘结构上天然分离。</p>
+<h3 id="2-执行中立同一命令面两种后端"><a class="header" href="#2-执行中立同一命令面两种后端">2. 执行中立：同一命令面，两种后端</a></h3>
+<p><code>sys/sys_model.yml</code> 的 <code>kind</code> 决定行为，但操作员的命令是同一套：</p>
+<pre class="mermaid">flowchart LR
+    CMD["gops sys start / stop / status / diagnose ..."] --&gt; K{"sys_model.yml kind"}
+    K --&gt;|gxl| GX["gx run -e ENV -d N cmd"]
+    K --&gt;|docker-compose| DC["docker compose ..."]
+    GX --&gt; WF["系统工作流 GXL"]
+    DC --&gt; LOCAL["本机 docker compose"]
+</pre>
+
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th><code>gops sys ...</code></th><th><code>gxl</code> 后端</th><th><code>docker-compose</code> 后端</th></tr>
+</thead>
+<tbody>
+<tr><td><code>download</code></td><td><code>gx run download</code></td><td><code>docker compose pull</code></td></tr>
+<tr><td><code>install</code></td><td><code>gx run install</code></td><td><code>docker compose create</code></td></tr>
+<tr><td><code>start</code></td><td><code>gx run start</code></td><td><code>docker compose up -d</code></td></tr>
+<tr><td><code>stop</code></td><td><code>gx run stop</code></td><td><code>docker compose stop</code></td></tr>
+<tr><td><code>uninstall</code></td><td><code>gx run uninstall</code></td><td><code>docker compose down</code></td></tr>
+<tr><td><code>status</code></td><td><code>gx run status</code></td><td><code>docker compose ps</code></td></tr>
+<tr><td><code>diagnose</code></td><td><code>gx run diagnose</code></td><td><code>docker compose config</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>价值点：<strong>纯声明式 compose 系统</strong>（完全不依赖 <code>gx</code>）与<strong>模块化 GXL 工作流系统</strong>共享同一套创建、变量、打包、本地化、交付流程。</p>
+<h3 id="3-多模型模块modelstd一个模块多目标平台"><a class="header" href="#3-多模型模块modelstd一个模块多目标平台">3. 多模型模块（ModelSTD）：一个模块，多目标平台</a></h3>
+<p><code>ModelSTD = CpuArch × OsCPE × RunSPC</code>，例如 <code>x86-ubt22-k8s</code>、<code>arm-mac14-host</code>、<code>x86-ubt22-host</code>。<code>gops mod new</code> 一次生成全部目标模型目录，每个模型有独立的 <code>vars.yml</code> / <code>spec/</code> / <code>workflows/</code>。</p>
+<p>即“一份模块定义，按 CPU / OS / 运行空间派生多套实现“，而不是为每个平台维护一个独立仓库。</p>
+<h3 id="4-值分层--只写差异--可审计"><a class="header" href="#4-值分层--只写差异--可审计">4. 值分层 + “只写差异” + 可审计</a></h3>
+<pre class="mermaid">flowchart TD
+    MV["sys/merged_vars.yml 系统默认值"] --&gt; ENV[".env"]
+    SV["values/sys_value.yml 注释模板"] --&gt; ENV
+    UV["values/value.yml 客户覆盖"] --&gt; ENV
+    ENV --&gt; DC["docker-compose.yml 消费"]
+    SEC["~/.galaxy/sec_value.yml 密钥"] --&gt;|运行时注入子进程环境| DC
+</pre>
+
+<ul>
+<li><code>.env = merged_vars 默认值 ⊕ values/sys_value.yml ⊕ values/value.yml</code></li>
+<li><code>sys update</code> 生成的 <code>values/sys_value.yml</code> 是<strong>整份注释模板</strong>：保持注释即“空覆盖“，取消注释才生效，默认值不会被钉死。</li>
+<li>优先级明确：<code>value.yml</code>（客户覆盖） &gt; <code>sys_value.yml</code>（系统值） &gt; <code>merged_vars</code>（默认）。</li>
+<li>来源可追踪：本地化会写出实际使用的值，能回答“这个最终值是谁给的“。</li>
+</ul>
+<h3 id="5-密钥作为一等公民不落盘运行时注入诊断掩码"><a class="header" href="#5-密钥作为一等公民不落盘运行时注入诊断掩码">5. 密钥作为一等公民：不落盘、运行时注入、诊断掩码</a></h3>
+<p>compose 里用 <code>${SEC_xxx}</code> 占位；<code>gops sys start</code> 运行时从 <code>~/.galaxy/sec_value.yml</code>（或 <code>./.galaxy/sec_value.yml</code>）读取，只注入 <strong>docker compose 子进程环境</strong>，不写 <code>.env</code>、不入库；<code>gops sys diagnose</code>（<code>docker compose config</code>）注入的是掩码值 <code>********</code>。</p>
+<p>配置与敏感值在生命周期上被彻底分开，而不是仅靠 <code>.gitignore</code> 约定。</p>
+<h3 id="6-交付闭环打包--导入--重导入保值"><a class="header" href="#6-交付闭环打包--导入--重导入保值">6. 交付闭环：打包 → 导入 → 重导入保值</a></h3>
+<pre><code class="language-text">gops sys package   -&gt; &lt;name&gt;-&lt;version&gt;.tar.gz（先 update 解析变量）
+gops prj import    -&gt; 导入客户项目
+gops prj reimport  -&gt; 按 ops-prj.yml 重建系统，保留 values/ 客户值
+</code></pre>
+<p><code>reimport</code> 体现了核心主张：<strong>系统目录可被删除重建，但客户值永不丢失</strong>。产品升级与客户现场数据成为两个独立生命周期。</p>
+<h3 id="7-单体-cli无历史包袱"><a class="header" href="#7-单体-cli无历史包袱">7. 单体 CLI，无历史包袱</a></h3>
+<p>一个 <code>gops</code> 二进制覆盖 <code>mod</code> / <code>sys</code> / <code>prj</code>，不存在 <code>gmod</code> / <code>gsys</code> 的历史分裂；文档以当前代码实现为唯一真源。</p>
+<h2 id="与常见工具的边界"><a class="header" href="#与常见工具的边界">与常见工具的边界</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>工具</th><th>主要职责</th><th>与 GOps 的差异</th></tr>
+</thead>
+<tbody>
+<tr><td>Ansible</td><td>过程式配置与编排执行</td><td>GOps 不执行；客户差异靠值文件而非 playbook 分支</td></tr>
+<tr><td>Helm</td><td>Kubernetes 包管理与模板</td><td>GOps 跨 CPU / OS / 运行时，且含“系统 → 客户项目“对象层</td></tr>
+<tr><td>Terraform</td><td>基础设施状态收敛</td><td>GOps 不做状态收敛，面向运维交付资产</td></tr>
+<tr><td>docker compose</td><td>单机声明式编排</td><td>GOps 在其上加对象模型、打包、客户值、密钥、多模型</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="是--不是"><a class="header" href="#是--不是">是 / 不是</a></h2>
+<p><strong>是</strong>：运维能力的组织、配置、组合、交付；跨平台模块与系统的资产化；客户差异的集中管理。</p>
+<p><strong>不是</strong>：工作流执行引擎；配置管理 / 状态收敛工具。<code>kind: gxl</code> 系统的能力上限取决于 <code>galaxy-flow</code> / <code>gx</code>；<code>kind: docker-compose</code> 路径则把门槛降到“只要一台装了 docker 的机器“。</p>
+<h2 id="相关文档"><a class="header" href="#相关文档">相关文档</a></h2>
+<ul>
+<li><a href="operator/README.html">维护器总览</a></li>
+<li><a href="operator/sys/README.html">系统维护器</a></li>
+<li><a href="operator/mod/README.html">模块维护器</a></li>
+<li><a href="#gops---galaxy-operations-system-系统操作管理工具"><code>gops</code> 命令参考</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="gops-改进方向"><a class="header" href="#gops-改进方向">GOps 改进方向</a></h1>
+<p>本文给出一份按“性价比“排序的改进清单。<strong>排序原则：高价值 ≠ 功能多，而是“把’靠人记住’的部分交给工具“。</strong> 因此优先做“把事后才发现变成事前就知道“的项，最后才考虑“再多一种后端 / 再多一套模板“。</p>
+<p>“对应问题“一列指向 <a href="#gops-定位与价值">定位与价值</a> 中的问题 1 / 2 / 3。每条都附<strong>现状证据</strong>，便于核对。</p>
+<h2 id="tier-1直接打痛点代价低收益高"><a class="header" href="#tier-1直接打痛点代价低收益高">Tier 1：直接打痛点、代价低、收益高</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>改进点</th><th>对应问题</th><th>现状（代码证据）</th><th>价值</th></tr>
+</thead>
+<tbody>
+<tr><td>① <code>gops sys new --model &lt;modelsdt&gt;</code>（非交互选型）</td><td>采用前置</td><td><code>ia_model_std()</code> 只能交互；自动选型靠 <code>TEST_MODE=1</code> 这种 hack</td><td>解锁 CI / 自动化，实现极小</td></tr>
+<tr><td>② <code>gops sys check</code> 部署前校验</td><td>问题 1（后果严重）</td><td><code>sys localize</code> 只导出 <code>.env</code>（<code>export_env_file</code>），<strong>不校验</strong> <code>docker-compose.yml</code> 里的 <code>${VAR}</code> 是否都有定义</td><td>把“上线才炸“提前到“localize 前报错“</td></tr>
+<tr><td>③ 密钥缺失 fail-fast</td><td>问题 1（容易遗忘）</td><td><code>run_compose_cmd</code> 无脑 <code>load_sec_dict()</code> 注入，不校验被引用的 <code>${SEC_x}</code> 是否存在</td><td>挡住“空密码静默上线“</td></tr>
+<tr><td>④ <code>gops sys diff</code></td><td>问题 1（容易遗忘）</td><td>有值来源追踪（<code>_used.json</code>），但没有“客户值 vs 系统默认“的差异视图</td><td>一眼看清“改了哪些、哪些还是默认“</td></tr>
+</tbody>
+</table>
+</div>
+<p>这四条是同一主题：<strong>把“事后才发现“变成“事前就知道“</strong>——正是问题 1 的解药。</p>
+<h2 id="tier-2交付闭环与审计"><a class="header" href="#tier-2交付闭环与审计">Tier 2：交付闭环与审计</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>改进点</th><th>对应问题</th><th>现状（代码证据）</th><th>价值</th></tr>
+</thead>
+<tbody>
+<tr><td>⑤ 锁文件 / manifest</td><td>问题 1、2（记录保值）</td><td><code>merged_vars.yml</code> 已入库，但未记录系统版本 / 模块版本 / 值哈希</td><td>“部署的是哪一版、用了什么值“可复现，回滚有依据</td></tr>
+<tr><td>⑥ 轻量漂移报告</td><td>问题 1</td><td><code>status</code> / <code>diagnose</code> 不比对“值文件改动 vs 已生成的 <code>.env</code>“</td><td>报“值变了但没重新 localize“，不必做完整 reconcile</td></tr>
+<tr><td>⑦ <code>values/</code> 提交检查（<code>gops prj doctor</code> 或 CI <code>--check</code>）</td><td>问题 1</td><td>无，全靠 git 纪律（定位页「边界」已承认）</td><td>把“靠纪律“补成“靠工具提醒“</td></tr>
+</tbody>
+</table>
+</div>
+<p>⑤⑥⑦ 的共同作用：把“记录与保值“从<strong>靠纪律</strong>变成<strong>靠工具提醒</strong>。</p>
+<h2 id="tier-3战略级大投入决定上限"><a class="header" href="#tier-3战略级大投入决定上限">Tier 3：战略级（大投入，决定上限）</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>改进点</th><th>对应问题</th><th>现状</th><th>价值</th></tr>
+</thead>
+<tbody>
+<tr><td>⑧ 多形态脚手架 <code>gops sys export --form host / k8s / compose</code></td><td>问题 3</td><td>一个 <code>System</code> 只绑一个 <code>ModelSTD</code> + <code>kind</code></td><td>降低“同能力写三遍“的成本，哪怕只生成骨架 + 提示</td></tr>
+<tr><td>⑨ 可选收敛（仅 <code>docker-compose</code> / k8s 形态）</td><td>GitOps 缺口</td><td>无常驻对账组件</td><td>只在<strong>能声明终态</strong>的形态引入漂移检测 / 自愈，不放弃多形态</td></tr>
+</tbody>
+</table>
+</div>
+<p>⑨ 是关键取舍：它补的正是 <a href="#gops-定位与价值">GOps 与 GitOps 的差距</a> 里那块最短的板，同时不牺牲“覆盖不可收敛的世界“。</p>
+<h2 id="tier-4正确性--一致性小修低价值但该修"><a class="header" href="#tier-4正确性--一致性小修低价值但该修">Tier 4：正确性 / 一致性小修（低价值但该修）</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>改进点</th><th>现状（代码证据）</th></tr>
+</thead>
+<tbody>
+<tr><td><code>gops mod localize --value / --default</code> 要么实现要么移除</td><td><code>handle_localize</code> 未读取这两个参数（声明未消费），文档已被迫标注“无效“</td></tr>
+<tr><td><code>gops sys new</code> 补 <code>--debug / --log</code></td><td><code>SysNewArgs</code> 没有 <code>debug_log</code>，与其他命令不一致</td></tr>
+<tr><td><code>docker-compose</code> 形态支持 <code>--mod</code></td><td><code>run_compose_cmd</code> 直接忽略并打印 note；可映射到 <code>docker compose &lt;service&gt;</code></td></tr>
+<tr><td>清理 <code>todo!()</code> 死代码</td><td><code>ModulesList::add_mod</code> 为 <code>todo!()</code>；若干注释、<code>allow(dead_code)</code></td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="tier-1-特性详述"><a class="header" href="#tier-1-特性详述">Tier 1 特性详述</a></h2>
+<p>下面把价值最高的四项（①–④）展开成可落地的设计：<strong>目标 / 现状证据 / 期望行为 / 代码落点 / 验收 / 成本</strong>。它们共享同一主题：把“事后才发现“变成“事前就知道“——也就是 <a href="#gops-定位与价值">问题 1</a> 的解药。</p>
+<blockquote>
+<p>约定：“现状证据“均以当前 <code>galaxy-ops</code> 代码为准；“期望行为“是设计意图，落地前需再确认实现细节。</p>
+</blockquote>
+<h3 id="①-gops-sys-new---model-modelsdt非交互选型"><a class="header" href="#①-gops-sys-new---model-modelsdt非交互选型">① <code>gops sys new --model &lt;modelsdt&gt;</code>：非交互选型</a></h3>
+<p><strong>目标</strong>：让 <code>sys new</code> 能在 CI / 脚本中无人值守创建系统，不再只能靠人肉点菜单。</p>
+<p><strong>现状证据</strong></p>
+<ul>
+<li><code>app/gops/commands/sys_cmd.rs::SysCommandHandler::handle_new</code> 在 <code>kind = gxl</code> 分支调用 <code>Self::ia_model_std()?</code> 走交互选择。</li>
+<li><code>SysNewArgs</code> 只有 <code>name</code> 与 <code>kind</code>，<strong>没有</strong> <code>model</code>；非交互只能靠 <code>TEST_MODE</code> 环境变量（<code>ia_model_std</code> / <code>ia_kind</code> 内部特判）这种测试后门。</li>
+</ul>
+<p><strong>期望行为</strong></p>
+<ul>
+<li><code>SysNewArgs</code> 新增 <code>--model &lt;modelsdt&gt;</code>（取值须属于 <code>ModelSTD::support()</code>，如 <code>x86-ubt22-k8s</code>）。</li>
+<li>给定 <code>--model</code> 时跳过 <code>ia_model_std</code>，直接 <code>SysOperator::make_new(&amp;prj, name, model)</code>；未给定且非 <code>TEST_MODE</code> 时保持现有交互。</li>
+<li><code>--model</code> 与 <code>--kind docker-compose</code> 互斥：compose 系统没有 <code>ModelSTD</code>，组合出现时报错。</li>
+<li><code>--model</code> 非法时立即非 0 退出，并在 stderr 列出支持项。</li>
+</ul>
+<p><strong>代码落点</strong></p>
+<ul>
+<li><code>SysNewArgs</code> 加字段；<code>handle_new</code> 中 <code>args.model()</code> 优先于 <code>ia_model_std()</code>。</li>
+<li>顺带补 <code>--debug / --log</code>（即 Tier 4 那项），让 <code>configure_dfx_logging</code> 与其他命令一致。</li>
+</ul>
+<p><strong>验收</strong></p>
+<ul>
+<li>非 TTY 下 <code>gops sys new --name demo --model x86-ubt22-k8s</code> 成功生成系统，无 <code>Select</code> 提示。</li>
+<li><code>--model bogus</code> 退出码非 0，stderr 含支持列表。</li>
+<li>回归：无参数 + 真 TTY 时仍弹出交互选择。</li>
+</ul>
+<p><strong>成本 / 风险</strong>：S。低风险；注意 <code>--model</code> × <code>--kind</code> 的互斥校验。</p>
+<h3 id="②-gops-sys-check部署前变量校验"><a class="header" href="#②-gops-sys-check部署前变量校验">② <code>gops sys check</code>：部署前变量校验</a></h3>
+<p><strong>目标</strong>：在 <code>localize</code> 之后、<code>start</code> 之前，把“上线才炸“的未定义变量提前成一条明确报错。</p>
+<p><strong>现状证据</strong></p>
+<ul>
+<li><code>src/system/operator.rs::SysOperator::localize</code> 只把合并后的值无条件写入 <code>&lt;sys&gt;/.env</code>（<code>project::export_env_file(options.evaled_value(), env_path)</code>），<strong>不校验</strong> <code>docker-compose.yml</code> 里引用的 <code>${VAR}</code> 是否都有定义。</li>
+<li>缺失时 <code>docker compose</code> 仅打印 <code>The "X" variable is not set. Defaulting to a blank string.</code> 然后带空值继续——正是“后果严重“的典型现场。</li>
+</ul>
+<p><strong>期望行为</strong></p>
+<ul>
+<li>新增只读命令 <code>gops sys check</code>：扫描系统内 <code>docker-compose*.yml</code> 的插值占位
+<ul>
+<li>形态：<code>${VAR}</code>、<code>${VAR:-default}</code>、<code>${VAR-default}</code>、<code>$VAR</code>；带 <code>:-</code> / <code>-</code> 默认值的视为可选；</li>
+<li>其余必须在“合并值字典（∪ 生成的 <code>.env</code>）“中存在；</li>
+<li>输出缺失清单（<code>文件:行号  变量名</code>），有缺失即非 0 退出。</li>
+</ul>
+</li>
+<li>同逻辑以<strong>软校验</strong>接入 <code>sys localize</code>（默认仅告警；<code>--strict</code> 时失败），避免破坏既有流程。</li>
+<li><code>kind: gxl</code> 系统跳过变量校验。</li>
+</ul>
+<p><strong>代码落点</strong></p>
+<ul>
+<li>直接复用 <code>SysOperator::localize</code> 里已算出的 <code>options.evaled_value()</code>（合并后的 <code>OriginDict</code>），无需另建变量解析。</li>
+<li>只需一个轻量 compose 插值扫描器（正则即可），与 <code>src/project.rs::export_env_file</code> 同族。</li>
+<li>与 <code>diagnose</code>（<code>compose_subcommand</code> → <code>docker compose config</code>）的区别：<code>check</code> 是<strong>不依赖 docker</strong> 的静态校验，能在无 docker 的 CI 机器上运行。</li>
+</ul>
+<p><strong>验收</strong></p>
+<ul>
+<li>造一个引用 <code>${UNDEFINED}</code> 的 compose：<code>check</code> 非 0 并指名到该行；在 <code>values/sys_value.yml</code> 补上后 <code>check</code> 通过。</li>
+<li><code>${OPTIONAL:-1}</code> 不被判为缺失。</li>
+</ul>
+<p><strong>成本 / 风险</strong>：S–M。风险在 compose 插值语法细节（<code>$$</code> 转义、<code>.env</code> 与 shell 语义差异）——须对照官方文档，<strong>宁可漏报不可误报</strong>。</p>
+<h3 id="③-密钥缺失-fail-fast"><a class="header" href="#③-密钥缺失-fail-fast">③ 密钥缺失 fail-fast</a></h3>
+<p><strong>目标</strong>：挡住“空密码静默上线“。</p>
+<p><strong>现状证据</strong></p>
+<ul>
+<li><code>app/gops/commands/sys_cmd.rs::run_compose_cmd</code> 无脑 <code>orion_sec::load_sec_dict()</code> 后 <code>sec_env_pairs_for(cmd_name, &amp;dict)</code> 全量注入子进程环境，<strong>不检查</strong> compose 文件里实际引用的 <code>${SEC_xxx}</code> 是否都在 <code>sec_dict</code> 中。</li>
+<li><code>sec_env_pairs_for</code> 已知 <code>diagnose</code> 需要掩码（<code>SECRET_MASK</code>），说明“密钥注入“这一层已成型，只差一个“存在性“前置校验。</li>
+</ul>
+<p><strong>期望行为</strong></p>
+<ul>
+<li>启动前交集校验：扫描 compose 的 <code>${SEC_*}</code> 占位，逐一确认存在于 <code>sec_dict</code>；缺失则在<strong>真正启动之前</strong>报错，列出变量名与来源文件（<strong>不回显值</strong>）。</li>
+<li>提示语指向 <code>~/.galaxy/sec_value.yml</code>（或 <code>./.galaxy/sec_value.yml</code>）补键，但<strong>不得</strong>回显文件内容或密钥值。</li>
+<li><code>diagnose</code> 保持只读可运行：缺密钥时仅告警（不阻断诊断）。</li>
+</ul>
+<p><strong>代码落点</strong></p>
+<ul>
+<li>与 ② 共用占位扫描器，仅筛选 <code>SEC_</code> 前缀。</li>
+<li>在 <code>run_compose_cmd</code> 注入密钥之前插入 <code>ensure_secrets_present(compose_files, &amp;sec_dict)</code> 即可。</li>
+</ul>
+<p><strong>验收</strong></p>
+<ul>
+<li>compose 引用 <code>${SEC_DB_PASSWORD}</code> 而 <code>sec_value.yml</code> 无该键：<code>start</code> 非 0，且未真正执行 <code>docker compose up</code>。</li>
+<li>补键后 <code>start</code> 正常；<code>diagnose</code> 全程掩码。</li>
+</ul>
+<p><strong>成本 / 风险</strong>：S。风险：与 ② 共用扫描器，需保证只读、零副作用。</p>
+<h3 id="④-gops-sys-diff客户值-vs-系统默认"><a class="header" href="#④-gops-sys-diff客户值-vs-系统默认">④ <code>gops sys diff</code>：客户值 vs 系统默认</a></h3>
+<p><strong>目标</strong>：直打“容易遗忘“——一眼看清“改了哪些、哪些还是默认“。</p>
+<p><strong>现状证据</strong></p>
+<ul>
+<li>已有值来源追踪：本地化写出 <code>_used.json</code>（<code>const_vars.rs::USED_JSON</code>）与可读版 <code>.used_value.yml</code>（<code>USED_READABLE_FILE</code>）；<code>src/project.rs::mix_used_value</code> 会把 used ⊕ mod ⊕ global 合并。</li>
+<li>但<strong>没有</strong>“客户值 vs 系统默认“的差异视图；操作员只能肉眼比对 <code>values/</code> 与 <code>sys/merged_vars.yml</code>。</li>
+</ul>
+<p><strong>期望行为</strong></p>
+<ul>
+<li><code>gops sys diff [--format table|yaml] [--only-changed]</code>：以 <code>sys/merged_vars.yml</code> 的 <code>system:</code> 段为基线，逐项对 <code>values/sys_value.yml</code> ⊕ <code>values/value.yml</code> ⊕ 实际 <code>.env</code> 做对比，标注：
+<ul>
+<li><code>=</code> 未改（取默认）、<code>!</code> 已覆盖、<code>+</code> 客户新增键、<code>-</code> 系统已删但客户仍写、<code>~</code> 类型/格式变化；</li>
+<li>每项附来源层（优先级 <code>value.yml</code> &gt; <code>sys_value.yml</code> &gt; <code>merged_vars</code>）。</li>
+</ul>
+</li>
+<li>可选 <code>--since &lt;git-ref&gt;</code>：展示相对某提交的值变化（借 git 历史）。</li>
+<li>纯读命令，不改任何文件。</li>
+</ul>
+<p><strong>代码落点</strong></p>
+<ul>
+<li>基线取 <code>merged_vars.yml</code> 的 <code>system:</code> 段 + 模块默认；覆盖层取 <code>values/</code>。</li>
+<li>若当前合并（<code>mix_used_value</code>）未保留“哪一层给的“信息，需要先让合并结果<strong>带上来源</strong>（不改变落盘格式）。</li>
+</ul>
+<p><strong>验收</strong></p>
+<ul>
+<li>默认值 + 一处覆盖：<code>diff</code> 仅把该一处标为 <code>!</code>，其余标 <code>=</code>。</li>
+<li>删除一个客户键：显示 <code>-</code>（已回落默认），而非静默。</li>
+</ul>
+<p><strong>成本 / 风险</strong>：M。风险：需要“默认层“与“覆盖层“同时可见，可能触及值的合并表示（但不动落盘格式）。</p>
+<h3 id="后续tier-2--3"><a class="header" href="#后续tier-2--3">后续（Tier 2 / 3）</a></h3>
+<p>⑤ 锁文件 / manifest、⑥ 轻量漂移报告、⑦ <code>values/</code> 提交检查、⑧ 多形态脚手架、⑨ 可选收敛，留待下一轮展开。其中 ⑧ 的一部分已兑现：<code>gops mod new</code> 现已为 <code>x86-ubt22-k8s</code> 生成 Helm chart 脚手架（见 <a href="operator/mod/README.html">模块维护器</a>）。</p>
+<h2 id="如果只做三件事"><a class="header" href="#如果只做三件事">如果只做三件事</a></h2>
+<ol>
+<li><strong><code>gops sys new --model</code></strong> —— 解锁 CI / 自动化，门槛最低。</li>
+<li><strong><code>gops sys check</code> 部署前校验</strong> —— 变量 + 密钥占位双校验，直打“后果严重“。</li>
+<li><strong><code>gops sys diff</code></strong> —— 直打“容易遗忘“，且能作为对外卖点。</li>
+</ol>
+<p>这三条合起来，正好把问题 1 的三个症状（<strong>时常修改 / 容易遗忘 / 后果严重</strong>）各自对应上一个可交付的功能，且都不动核心架构。</p>
+<h2 id="一个判断"><a class="header" href="#一个判断">一个判断</a></h2>
+<p>按定位页的逻辑，<strong>高价值 ≠ 覆盖更多</strong>。所以 ①–⑦ 排在前面，把“再多一种部署后端““再写一套模板“这类排在最后——后者只会扩大覆盖，不会降低遗忘与事故。</p>
+<blockquote>
+<p>说明：本文是改进建议，不是当前能力的描述；每条“现状“以现有代码为准，落地前需再次确认实现细节。</p>
+</blockquote>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="system-operator-指南"><a class="header" href="#system-operator-指南">System Operator 指南</a></h1>
 <h2 id="概述-2"><a class="header" href="#概述-2">概述</a></h2>
@@ -1122,13 +1686,13 @@ gops sys status [--mod &lt;module&gt;] [--env &lt;env&gt;]
 gops sys diagnose [--mod &lt;module&gt;] [--env &lt;env&gt;]
 </code></pre>
 <h2 id="部署类型kind"><a class="header" href="#部署类型kind">部署类型（kind）</a></h2>
-<p><code>sys/sys_model.yml</code> 的 <code>kind</code> 字段决定 <code>gops sys</code> 的行为：</p>
+<p><code>sys/sys_model.yml</code> 的 <code>kind</code> 字段决定 <code>gops sys</code> 的行为（<code>kind</code> 缺省时按 <code>gxl</code> 处理，兼容 1.2.0 及更早的系统）：</p>
 <ul>
 <li>
-<p><code>gxl</code>（默认，兼容旧系统）：部署命令委托外部 <code>gx</code> 执行，要求 <code>sys/workflows/operators.gxl</code> 与可用的 <code>gx</code>。</p>
+<p><code>gxl</code>：部署命令委托外部 <code>gx</code> 执行，要求 <code>sys/workflows/operators.gxl</code> 与可用的 <code>gx</code>。映射为 <code>gx run -e &lt;ENV&gt; -d &lt;N&gt; [--cmd-arg &lt;MOD&gt;] &lt;cmd&gt;</code>；<code>gx</code> 取自 <code>$HOME/bin/gx</code>，最低版本 <code>0.13.0</code>。</p>
 </li>
 <li>
-<p><code>docker-compose</code>：部署命令直接映射到 <code>docker compose</code>，<strong>无需 <code>gx</code></strong>：</p>
+<p><code>docker-compose</code>：部署命令直接映射到 <code>docker compose</code>，<strong>无需 <code>gx</code></strong>（<code>--mod</code> 参数会被忽略）：</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -1148,9 +1712,10 @@ gops sys diagnose [--mod &lt;module&gt;] [--env &lt;env&gt;]
 </li>
 </ul>
 <h2 id="创建系统"><a class="header" href="#创建系统">创建系统</a></h2>
-<pre><code class="language-bash">gops sys new --name web-stack                       # 默认 gxl（需要选择系统型号）
+<pre><code class="language-bash">gops sys new --name web-stack                       # 不指定 --kind：交互式选择部署类型，选 gxl 后再选择系统型号
 gops sys new --name gateway --kind docker-compose   # 纯 compose（无型号）
 </code></pre>
+<p><code>--kind</code> 缺省时会在终端交互式选择部署类型（<code>TEST_MODE</code> 下直接按 <code>gxl</code> 处理）；<code>gxl</code> 还需要再交互选择 <code>ModelSTD</code>。</p>
 <p>两种类型生成的结构不同，见 <a href="#system-目录结构">目录结构</a>。</p>
 <h2 id="关键文件"><a class="header" href="#关键文件">关键文件</a></h2>
 <ul>
@@ -1173,7 +1738,7 @@ gops sys localize -&gt; .env = merged_vars 默认值 ⊕ values/sys_value.yml �
 <p>两个值文件都是<strong>可选、可部分覆盖</strong>：只写需要修改的项，其余取系统默认值。保持注释模板原样时等价于空覆盖。</p>
 <p><code>sys localize</code> 在系统变量尚未解析（缺 <code>sys/merged_vars.yml</code>）时会自动先执行 <code>update</code>；<code>--only</code> 跳过这一步（此时若变量仍未解析会明确报错）。</p>
 <h2 id="密钥"><a class="header" href="#密钥">密钥</a></h2>
-<p>密钥<strong>不写入</strong> <code>.env</code>：在 <code>docker-compose.yml</code> 里用 <code>${SEC_xxx}</code> 占位，<code>gops sys start</code> 运行时从 <code>~/.galaxy/sec_value.yml</code> 读取并注入子进程环境（key 会归一化为大写并加 <code>SEC_</code> 前缀）。详见 <code>galaxy-ops</code> 仓库的 <code>src/system/README.md</code>。</p>
+<p>密钥<strong>不写入</strong> <code>.env</code>：在 <code>docker-compose.yml</code> 里用 <code>${SEC_xxx}</code> 占位，<code>gops sys start</code> 运行时从 <code>~/.galaxy/sec_value.yml</code>（或当前目录 <code>./.galaxy/sec_value.yml</code>）读取并注入子进程环境（key 会归一化为大写并加 <code>SEC_</code> 前缀）。<code>gops sys diagnose</code>（<code>docker compose config</code>）只读校验，注入的是掩码值 <code>********</code>。详见 <code>galaxy-ops</code> 仓库的 <code>src/system/README.md</code>。</p>
 <h2 id="常见流程"><a class="header" href="#常见流程">常见流程</a></h2>
 <h3 id="更新系统本地引用"><a class="header" href="#更新系统本地引用">更新系统本地引用</a></h3>
 <pre><code class="language-bash">gops sys update
@@ -1214,11 +1779,18 @@ gops prj update   -&gt; 同步项目本地引用
 <pre><code class="language-text">sys/sys_model.yml
 </code></pre>
 <h2 id="字段"><a class="header" href="#字段">字段</a></h2>
+<p>gxl 系统实际生成的内容（<code>kind</code> 为默认值 <code>gxl</code> 时会被省略，不写入文件）：</p>
 <pre><code class="language-yaml">name: web-stack          # 系统名（必填）
-kind: gxl                # 部署类型：gxl（默认）| docker-compose
 model: arm-mac14-host    # 目标型号（kind=gxl 必填；docker-compose 无型号）
 vender: ''               # 供应商标记（可选）
 </code></pre>
+<p>字段含义：</p>
+<ul>
+<li><code>name</code>：系统名（必填）</li>
+<li><code>kind</code>：部署类型：<code>gxl</code>（默认）| <code>docker-compose</code>；<code>gxl</code> 是默认值，序列化时省略</li>
+<li><code>model</code>：目标型号（<code>kind=gxl</code> 必填，写入文件；<code>docker-compose</code> 无型号，字段省略）</li>
+<li><code>vender</code>：供应商标记（可选）</li>
+</ul>
 <p>纯 docker-compose 系统的实际内容示例：</p>
 <pre><code class="language-yaml">name: gateway
 kind: docker-compose
@@ -1339,7 +1911,7 @@ vender: ''
   - name: REPLICAS
     value: 1
 </code></pre>
-<p>密钥不要写在这里：在 compose 里用 <code>${SEC_xxx}</code> 占位，运行时由 <code>gops sys start</code> 从 <code>~/.galaxy/sec_value.yml</code> 注入（不落盘）。</p>
+<p>密钥不要写在这里：在 compose 里用 <code>${SEC_xxx}</code> 占位，运行时由 <code>gops sys start</code> 从 <code>~/.galaxy/sec_value.yml</code>（或当前目录 <code>./.galaxy/sec_value.yml</code>）注入（不落盘）。</p>
 <pre><code class="language-yaml">services:
   db:
     environment:
@@ -1376,6 +1948,7 @@ gops sys status      # docker compose ps
 gops sys stop        # docker compose stop
 gops sys uninstall   # docker compose down
 </code></pre>
+<p><code>kind: docker-compose</code> 下 <code>--mod</code> 参数会被忽略（没有模块概念）；<code>--env</code> 仍可传入。</p>
 <h2 id="5-交付给客户运维项目"><a class="header" href="#5-交付给客户运维项目">5. 交付给客户（运维项目）</a></h2>
 <pre><code class="language-bash">gops sys package                          # 先 update 再打包 -&gt; ../gateway-&lt;version&gt;.tar.gz
 cd ..
@@ -1623,14 +2196,15 @@ gops sys start --mod &lt;module&gt;
 <li><code>kind: gxl</code>：最终依赖系统工作流和 <code>gx</code>
 <ul>
 <li>先确认 <code>sys/workflows/operators.gxl</code> 存在</li>
-<li>再确认 <code>gx</code> 可执行</li>
-<li>再检查 <code>--env</code> 与 <code>--mod</code> 传参是否正确</li>
+<li>再确认 <code>gx</code> 可执行：<code>gops</code> 使用 <code>$HOME/bin/gx</code>，且要求版本 &gt;= <code>0.13.0</code></li>
+<li>实际映射为 <code>gx run -e &lt;env&gt; -d &lt;debug&gt; [--cmd-arg &lt;mod&gt;] &lt;cmd&gt;</code>，检查 <code>--env</code> 与 <code>--mod</code> 传参</li>
 </ul>
 </li>
 <li><code>kind: docker-compose</code>：直接调用本机 <code>docker compose</code>
 <ul>
 <li>确认 <code>docker compose</code> 可用</li>
 <li>确认 <code>.env</code> 已生成（<code>gops sys localize</code>）</li>
+<li><code>--mod</code> 会被忽略（纯 compose 系统没有模块）</li>
 </ul>
 </li>
 </ul>
@@ -1682,15 +2256,22 @@ gops mod localize [--value &lt;file&gt; | --default]
 │   └── work.gxl
 └── mod/
     ├── arm-mac14-host/
-    │   └── vars.yml
-    └── x86-ubt22-k8s/
-        └── vars.yml
+    │   ├── vars.yml
+    │   ├── _gal/work.gxl
+    │   ├── spec/
+    │   │   ├── artifact.yml
+    │   │   └── depends.yml
+    │   └── workflows/
+    │       └── operators.gxl
+    ├── x86-ubt22-host/        # 结构同 arm-mac14-host
+    └── x86-ubt22-k8s/         # 结构同 arm-mac14-host
 </code></pre>
 <p>注意：</p>
 <ul>
 <li>当前骨架一定会生成 <code>mod-prj.yml</code></li>
-<li>当前骨架会按支持的 <code>ModelSTD</code> 生成 <code>mod/&lt;model&gt;/...</code></li>
-<li>初始模板比较轻，后续文件通常通过 update / localize / 手工补充逐步完善</li>
+<li>当前骨架会按支持的 <code>ModelSTD</code> 生成 <code>mod/&lt;model&gt;/...</code>；<code>gops mod new</code> 默认生成三个模型目录：<code>arm-mac14-host</code>、<code>x86-ubt22-host</code>、<code>x86-ubt22-k8s</code></li>
+<li>每个 <code>mod/&lt;model&gt;/</code> 下会直接生成 <code>vars.yml</code>、<code>spec/artifact.yml</code>、<code>spec/depends.yml</code>、<code>workflows/operators.gxl</code> 与 <code>_gal/work.gxl</code></li>
+<li><code>setting.yml</code> 不在 <code>gops mod new</code> 的初始骨架中（仅 <code>gops mod example</code> 会带）；初始模板比较轻，后续通过 update / localize / 手工补充逐步完善</li>
 </ul>
 <h3 id="2-更新模块本地引用"><a class="header" href="#2-更新模块本地引用">2. 更新模块本地引用</a></h3>
 <pre><code class="language-bash">gops mod update
@@ -1698,12 +2279,12 @@ gops mod update --force 2
 </code></pre>
 <p><code>update</code> 主要用于同步依赖、本地引用和相关生成内容。<code>--force</code> 支持不同强度的覆盖策略。</p>
 <h3 id="3-本地化模块"><a class="header" href="#3-本地化模块">3. 本地化模块</a></h3>
-<pre><code class="language-bash">gops mod localize --value values/dev.yml
+<pre><code class="language-bash">gops mod localize
 </code></pre>
-<p>或：</p>
-<pre><code class="language-bash">gops mod localize --default
-</code></pre>
-<p><code>localize</code> 会基于模块变量和值文件生成本地化结果，用于后续系统组合或实际交付。</p>
+<p><code>localize</code> 会读取模块根目录下 <code>values/&lt;model&gt;/</code> 里的值文件（<code>sys_value.yml</code>、<code>mod_value.yml</code>）生成本地化结果（<code>mod/&lt;model&gt;/local/</code>），用于后续系统组合或实际交付。</p>
+<blockquote>
+<p>说明：<code>gops mod localize</code> 虽然声明了 <code>--value</code> / <code>--default</code> 参数，但当前实现并未消费它们，实际值来自 <code>values/&lt;model&gt;/</code>。</p>
+</blockquote>
 <h2 id="模块在整体分层中的位置"><a class="header" href="#模块在整体分层中的位置">模块在整体分层中的位置</a></h2>
 <pre><code class="language-text">gops mod   -&gt; 定义和维护模块
 gops sys   -&gt; 组合模块形成系统
@@ -1730,19 +2311,21 @@ gops mod new --name postgresql
 cd postgresql
 </code></pre>
 <h3 id="2-补齐模块模型内容"><a class="header" href="#2-补齐模块模型内容">2. 补齐模块模型内容</a></h3>
-<p>先检查 <code>mod/</code> 下生成的模型目录，例如：</p>
+<p>先检查 <code>mod/</code> 下生成的模型目录（<code>gops mod new</code> 默认生成三个）：</p>
 <pre><code class="language-text">mod/
 ├── arm-mac14-host/
+├── x86-ubt22-host/
 └── x86-ubt22-k8s/
 </code></pre>
-<p>然后按模型补齐：</p>
+<p>每个模型目录已包含以下文件，按需修改即可：</p>
 <ul>
 <li><code>vars.yml</code></li>
 <li><code>spec/artifact.yml</code></li>
 <li><code>spec/depends.yml</code></li>
-<li><code>setting.yml</code></li>
-<li><code>workflows/</code></li>
+<li><code>workflows/operators.gxl</code></li>
+<li><code>_gal/work.gxl</code></li>
 </ul>
+<p><code>setting.yml</code> 不在 <code>gops mod new</code> 的初始骨架中，需要自定义本地化行为时再手工补充。</p>
 <h3 id="3-更新本地引用"><a class="header" href="#3-更新本地引用">3. 更新本地引用</a></h3>
 <pre><code class="language-bash">gops mod update
 </code></pre>
@@ -1750,12 +2333,19 @@ cd postgresql
 <pre><code class="language-bash">gops mod update --force 2
 </code></pre>
 <h3 id="4-本地化验证"><a class="header" href="#4-本地化验证">4. 本地化验证</a></h3>
-<p>使用默认值：</p>
-<pre><code class="language-bash">gops mod localize --default
+<p>先准备好值文件（<code>gops mod update</code> 会在模块根生成 <code>values/&lt;model&gt;/</code> 下的模板）：</p>
+<pre><code class="language-text">values/
+└── x86-ubt22-k8s/
+    ├── sys_value.yml
+    └── mod_value.yml
 </code></pre>
-<p>使用指定值文件：</p>
-<pre><code class="language-bash">gops mod localize --value ./mod/x86-ubt22-k8s/values/dev.yml
+<p>然后执行本地化：</p>
+<pre><code class="language-bash">gops mod localize
 </code></pre>
+<p>本地化会读取 <code>values/&lt;model&gt;/</code> 生成 <code>mod/&lt;model&gt;/local/</code>。</p>
+<blockquote>
+<p><code>--value</code> / <code>--default</code> 参数虽然可用，但当前 <code>gops mod localize</code> 实现并未消费它们；实际值始终来自 <code>values/&lt;model&gt;/</code>。</p>
+</blockquote>
 <h3 id="5-进入系统组合"><a class="header" href="#5-进入系统组合">5. 进入系统组合</a></h3>
 <p>模块完成后，通常不直接交付，而是继续：</p>
 <pre><code class="language-bash">gops sys new --name demo-system
@@ -1770,8 +2360,8 @@ gops mod localize --debug 3
 <h2 id="现实边界-1"><a class="header" href="#现实边界-1">现实边界</a></h2>
 <p>当前实现里，模块开发流程要注意几点：</p>
 <ul>
-<li><code>gops mod new</code> 只生成骨架，不会一次性补齐所有业务文件</li>
-<li><code>localize</code> 依赖值文件和变量定义，先补齐 <code>vars.yml</code> 再做本地化</li>
+<li><code>gops mod new</code> 生成的是模板骨架，业务文件仍需按需修改</li>
+<li><code>localize</code> 依赖 <code>values/&lt;model&gt;/</code> 下的值文件和 <code>vars.yml</code> 变量定义，先补齐 <code>vars.yml</code> 再做本地化</li>
 <li>模块是系统的输入，不是交付终点</li>
 <li>执行类工作流能力最终仍由 <code>galaxy-flow</code> / <code>gx</code> 承担</li>
 </ul>
@@ -1781,6 +2371,7 @@ gops mod localize --debug 3
 <h2 id="核心文件"><a class="header" href="#核心文件">核心文件</a></h2>
 <p>创建模块后，当前实现会生成这些关键文件：</p>
 <pre><code class="language-text">&lt;module-root&gt;/
+├── .gitignore
 ├── mod-prj.yml
 ├── version.txt
 ├── _gal/
@@ -1789,16 +2380,21 @@ gops mod localize --debug 3
 │   └── work.gxl
 └── mod/
     └── &lt;model&gt;/
-        └── vars.yml
+        ├── vars.yml
+        ├── _gal/work.gxl
+        ├── spec/
+        │   ├── artifact.yml
+        │   └── depends.yml
+        └── workflows/
+            └── operators.gxl
 </code></pre>
-<p>随着后续更新和本地化，模块目录通常还会出现这些约定目录或文件：</p>
+<p>运行 <code>gops mod update</code> / <code>gops mod localize</code> 后，模块目录还会出现这些约定目录或文件：</p>
 <ul>
-<li><code>mod/&lt;model&gt;/spec/artifact.yml</code></li>
-<li><code>mod/&lt;model&gt;/spec/depends.yml</code></li>
-<li><code>mod/&lt;model&gt;/setting.yml</code></li>
-<li><code>mod/&lt;model&gt;/values/</code></li>
-<li><code>mod/&lt;model&gt;/workflows/</code></li>
-<li><code>mod/&lt;model&gt;/local/</code></li>
+<li><code>mod/&lt;model&gt;/local/</code>：<code>gops mod localize</code> 生成的本地化输出</li>
+<li><code>mod/&lt;model&gt;/_used.json</code>：<code>gops mod localize</code> 生成的实际使用值</li>
+<li><code>values/&lt;model&gt;/sys_value.yml</code>、<code>values/&lt;model&gt;/mod_value.yml</code>：值文件（注意在模块根 <code>values/</code> 下，不在 <code>mod/&lt;model&gt;/</code> 里）</li>
+<li><code>values/&lt;model&gt;/.used_value.yml</code>：本地化时导出的可读值</li>
+<li><code>mod/&lt;model&gt;/setting.yml</code>：本地化行为设置（可选；<code>gops mod new</code> 不生成，<code>gops mod example</code> 或手工补充时才有）</li>
 </ul>
 <p>这些名字来自当前代码常量：</p>
 <ul>
@@ -1826,27 +2422,28 @@ gops mod localize --debug 3
 <h3 id="modmodelspecdependsyml"><a class="header" href="#modmodelspecdependsyml"><code>mod/&lt;model&gt;/spec/depends.yml</code></a></h3>
 <p>模块依赖定义，用于组织本地依赖、仓库依赖或附加资源。</p>
 <h3 id="modmodelsettingyml"><a class="header" href="#modmodelsettingyml"><code>mod/&lt;model&gt;/setting.yml</code></a></h3>
-<p>模块本地化行为相关设置。</p>
-<h3 id="modmodelvalues"><a class="header" href="#modmodelvalues"><code>mod/&lt;model&gt;/values/</code></a></h3>
-<p>模块值文件目录。<code>gops mod localize</code> 会围绕值文件执行本地化。</p>
+<p>模块本地化行为相关设置（可选，<code>gops mod new</code> 不生成）。</p>
+<h3 id="valuesmodel"><a class="header" href="#valuesmodel"><code>values/&lt;model&gt;/</code></a></h3>
+<p>模块值文件目录（位于模块根目录下，<strong>不是</strong> <code>mod/&lt;model&gt;/values/</code>）。<code>gops mod update</code> 会在此生成 <code>sys_value.yml</code> 与 <code>mod_value.yml</code>，<code>gops mod localize</code> 会读取它们执行本地化。</p>
 <h3 id="modmodelworkflows"><a class="header" href="#modmodelworkflows"><code>mod/&lt;model&gt;/workflows/</code></a></h3>
 <p>模块工作流目录，通常放模块级 <code>operators.gxl</code> 等流程文件。</p>
 <h3 id="modmodellocal"><a class="header" href="#modmodellocal"><code>mod/&lt;model&gt;/local/</code></a></h3>
 <p>模块本地化结果或局部输出目录。</p>
 <h2 id="modelstd-目录"><a class="header" href="#modelstd-目录">ModelSTD 目录</a></h2>
-<p>模块目录下按模型拆分，例如：</p>
+<p>模块目录下按模型拆分。<code>ModelSTD</code> 当前支持三种组合（<code>gops mod new</code> 会全部生成）：</p>
 <ul>
-<li><code>arm-mac14-host</code></li>
-<li><code>x86-ubt22-k8s</code></li>
+<li><code>arm-mac14-host</code>（<code>CpuArch::Arm</code> + <code>OsCPE::MAC14</code> + <code>RunSPC::Host</code>）</li>
+<li><code>x86-ubt22-host</code>（<code>CpuArch::X86</code> + <code>OsCPE::UBT22</code> + <code>RunSPC::Host</code>）</li>
+<li><code>x86-ubt22-k8s</code>（<code>CpuArch::X86</code> + <code>OsCPE::UBT22</code> + <code>RunSPC::K8S</code>）</li>
 </ul>
-<p>模型名由 <code>ModelSTD</code> 决定，表示 CPU / OS / 运行空间组合。</p>
+<p>模型名由 <code>ModelSTD</code> 决定，表示 CPU / OS / 运行空间组合（来自 <code>CpuArch</code> / <code>OsCPE</code> / <code>RunSPC</code> 三个枚举）。</p>
 <h2 id="当前配置边界"><a class="header" href="#当前配置边界">当前配置边界</a></h2>
 <p>当前代码里，模块配置的真实边界是：</p>
 <ul>
 <li>模块根配置：<code>mod-prj.yml</code></li>
-<li>模型级配置：<code>mod/&lt;model&gt;/...</code></li>
-<li>值文件和本地化输出：<code>values/</code> 与 <code>local/</code></li>
-<li>工作流入口：<code>_gal/*.gxl</code> 与 <code>workflows/</code></li>
+<li>模型级配置：<code>mod/&lt;model&gt;/...</code>（<code>vars.yml</code> / <code>spec/</code> / <code>workflows/</code> / <code>_gal/work.gxl</code>）</li>
+<li>值文件和本地化输出：模块根 <code>values/&lt;model&gt;/</code> 与模型内 <code>mod/&lt;model&gt;/local/</code></li>
+<li>工作流入口：<code>_gal/*.gxl</code> 与 <code>workflows/operators.gxl</code></li>
 </ul>
 <p>不要再按旧文档理解为独立 <code>gmod</code> 工具或多套历史模板系统。</p>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -1878,8 +2475,12 @@ gops mod localize --debug 3
 <h3 id="gops-mod-localize"><a class="header" href="#gops-mod-localize"><code>gops mod localize</code></a></h3>
 <pre><code class="language-bash">gops mod localize [--value &lt;file&gt;] [--default]
 </code></pre>
+<blockquote>
+<p>注意：<code>--value</code> / <code>--default</code> 参数已声明，但当前实现未消费；实际值来自模块根 <code>values/&lt;model&gt;/</code> 下的值文件。</p>
+</blockquote>
 <h2 id="目录参考"><a class="header" href="#目录参考">目录参考</a></h2>
 <h3 id="最小模块骨架"><a class="header" href="#最小模块骨架">最小模块骨架</a></h3>
+<p><code>gops mod new</code> 按支持的 <code>ModelSTD</code> 生成三个模型目录（<code>arm-mac14-host</code> / <code>x86-ubt22-host</code> / <code>x86-ubt22-k8s</code>），每个模型结构相同：</p>
 <pre><code class="language-text">&lt;module&gt;/
 ├── .gitignore
 ├── version.txt
@@ -1890,18 +2491,25 @@ gops mod localize --debug 3
 │   └── work.gxl
 └── mod/
     └── &lt;model&gt;/
-        └── vars.yml
+        ├── vars.yml
+        ├── _gal/work.gxl
+        ├── spec/
+        │   ├── artifact.yml
+        │   └── depends.yml
+        └── workflows/
+            └── operators.gxl
 </code></pre>
-<h3 id="常见扩展目录"><a class="header" href="#常见扩展目录">常见扩展目录</a></h3>
-<pre><code class="language-text">mod/&lt;model&gt;/
-├── spec/
-│   ├── artifact.yml
-│   └── depends.yml
+<h3 id="运行--本地化后新增"><a class="header" href="#运行--本地化后新增">运行 / 本地化后新增</a></h3>
+<pre><code class="language-text">&lt;module&gt;/
 ├── values/
-├── workflows/
-├── local/
-├── vars.yml
-└── setting.yml
+│   └── &lt;model&gt;/
+│       ├── sys_value.yml
+│       ├── mod_value.yml
+│       └── .used_value.yml
+└── mod/&lt;model&gt;/
+    ├── local/                 # gops mod localize 输出
+    ├── _used.json             # gops mod localize 生成
+    └── setting.yml            # 可选，非 gops mod new 生成
 </code></pre>
 <h2 id="代码参考"><a class="header" href="#代码参考">代码参考</a></h2>
 <p>当前模块相关实现主要在这些文件：</p>
@@ -1934,29 +2542,35 @@ gops mod localize --debug 3
 <h2 id="1-gops-mod-new-创建后文件很少"><a class="header" href="#1-gops-mod-new-创建后文件很少">1. <code>gops mod new</code> 创建后文件很少</a></h2>
 <p>现象：</p>
 <ul>
-<li>只看到 <code>mod-prj.yml</code></li>
-<li>只看到 <code>_gal/</code> 和少量 <code>vars.yml</code></li>
+<li>每个 <code>mod/&lt;model&gt;/</code> 下只有模板文件（<code>vars.yml</code> / <code>spec/</code> / <code>workflows/operators.gxl</code> / <code>_gal/work.gxl</code>）</li>
+<li>没有 <code>setting.yml</code>，也没有 <code>values/</code></li>
 </ul>
 <p>原因：</p>
 <ul>
-<li>当前 <code>mod new</code> 生成的是最小骨架，不是完整业务模板</li>
+<li>当前 <code>mod new</code> 生成的是模板骨架，不是完整业务模板</li>
+<li><code>setting.yml</code> 和 <code>values/</code> 不由 <code>mod new</code> 生成</li>
 </ul>
 <p>处理：</p>
 <ul>
-<li>继续补齐 <code>spec/</code>、<code>setting.yml</code>、<code>values/</code>、<code>workflows/</code></li>
-<li>之后执行 <code>gops mod update</code></li>
+<li>按需修改 <code>mod/&lt;model&gt;/</code> 下的模板文件</li>
+<li>执行 <code>gops mod update</code> 生成 <code>values/&lt;model&gt;/</code> 值文件模板</li>
+<li>需要自定义本地化行为时再手工补充 <code>setting.yml</code></li>
 </ul>
 <h2 id="2-gops-mod-localize-失败"><a class="header" href="#2-gops-mod-localize-失败">2. <code>gops mod localize</code> 失败</a></h2>
 <p>常见原因：</p>
 <ul>
 <li><code>vars.yml</code> 未定义完整</li>
-<li>指定的 <code>--value</code> 文件不存在</li>
-<li>值文件内容和变量结构不匹配</li>
+<li>模块根 <code>values/&lt;model&gt;/</code> 下的 <code>sys_value.yml</code> / <code>mod_value.yml</code> 缺失或结构不匹配</li>
+<li>尚未执行 <code>gops mod update</code>，导致值文件模板未生成</li>
 </ul>
 <p>建议：</p>
-<pre><code class="language-bash">gops mod localize --default --debug 2
+<pre><code class="language-bash">gops mod update
+gops mod localize --debug 2
 </code></pre>
-<p>先用默认值跑通，再切换到真实值文件。</p>
+<p>先生成 <code>values/&lt;model&gt;/</code> 值文件，再用 <code>--debug 2</code> 定位问题。</p>
+<blockquote>
+<p>注意：<code>gops mod localize</code> 声明的 <code>--value</code> / <code>--default</code> 目前未被实现消费，值始终来自 <code>values/&lt;model&gt;/</code>。</p>
+</blockquote>
 <h2 id="3-gops-mod-update-覆盖了本地内容"><a class="header" href="#3-gops-mod-update-覆盖了本地内容">3. <code>gops mod update</code> 覆盖了本地内容</a></h2>
 <p>原因：</p>
 <ul>

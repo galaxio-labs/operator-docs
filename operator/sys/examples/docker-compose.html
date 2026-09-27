@@ -45,10 +45,10 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-4a6734f9.js";
+            window.path_to_searchindex_js = "../../../searchindex-efd20e26.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../toc-8a341037.js"></script>
+        <script src="../../../toc-18d2ed36.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -218,7 +218,7 @@ vender: ''
   - name: REPLICAS
     value: 1
 </code></pre>
-<p>密钥不要写在这里：在 compose 里用 <code>${SEC_xxx}</code> 占位，运行时由 <code>gops sys start</code> 从 <code>~/.galaxy/sec_value.yml</code> 注入（不落盘）。</p>
+<p>密钥不要写在这里：在 compose 里用 <code>${SEC_xxx}</code> 占位，运行时由 <code>gops sys start</code> 从 <code>~/.galaxy/sec_value.yml</code>（或当前目录 <code>./.galaxy/sec_value.yml</code>）注入（不落盘）。</p>
 <pre><code class="language-yaml">services:
   db:
     environment:
@@ -255,6 +255,7 @@ gops sys status      # docker compose ps
 gops sys stop        # docker compose stop
 gops sys uninstall   # docker compose down
 </code></pre>
+<p><code>kind: docker-compose</code> 下 <code>--mod</code> 参数会被忽略（没有模块概念）；<code>--env</code> 仍可传入。</p>
 <h2 id="5-交付给客户运维项目"><a class="header" href="#5-交付给客户运维项目">5. 交付给客户（运维项目）</a></h2>
 <pre><code class="language-bash">gops sys package                          # 先 update 再打包 -&gt; ../gateway-&lt;version&gt;.tar.gz
 cd ..

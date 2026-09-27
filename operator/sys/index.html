@@ -45,10 +45,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-4a6734f9.js";
+            window.path_to_searchindex_js = "../../searchindex-efd20e26.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-8a341037.js"></script>
+        <script src="../../toc-18d2ed36.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -213,13 +213,13 @@ gops sys status [--mod &lt;module&gt;] [--env &lt;env&gt;]
 gops sys diagnose [--mod &lt;module&gt;] [--env &lt;env&gt;]
 </code></pre>
 <h2 id="部署类型kind"><a class="header" href="#部署类型kind">部署类型（kind）</a></h2>
-<p><code>sys/sys_model.yml</code> 的 <code>kind</code> 字段决定 <code>gops sys</code> 的行为：</p>
+<p><code>sys/sys_model.yml</code> 的 <code>kind</code> 字段决定 <code>gops sys</code> 的行为（<code>kind</code> 缺省时按 <code>gxl</code> 处理，兼容 1.2.0 及更早的系统）：</p>
 <ul>
 <li>
-<p><code>gxl</code>（默认，兼容旧系统）：部署命令委托外部 <code>gx</code> 执行，要求 <code>sys/workflows/operators.gxl</code> 与可用的 <code>gx</code>。</p>
+<p><code>gxl</code>：部署命令委托外部 <code>gx</code> 执行，要求 <code>sys/workflows/operators.gxl</code> 与可用的 <code>gx</code>。映射为 <code>gx run -e &lt;ENV&gt; -d &lt;N&gt; [--cmd-arg &lt;MOD&gt;] &lt;cmd&gt;</code>；<code>gx</code> 取自 <code>$HOME/bin/gx</code>，最低版本 <code>0.13.0</code>。</p>
 </li>
 <li>
-<p><code>docker-compose</code>：部署命令直接映射到 <code>docker compose</code>，<strong>无需 <code>gx</code></strong>：</p>
+<p><code>docker-compose</code>：部署命令直接映射到 <code>docker compose</code>，<strong>无需 <code>gx</code></strong>（<code>--mod</code> 参数会被忽略）：</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -239,9 +239,10 @@ gops sys diagnose [--mod &lt;module&gt;] [--env &lt;env&gt;]
 </li>
 </ul>
 <h2 id="创建系统"><a class="header" href="#创建系统">创建系统</a></h2>
-<pre><code class="language-bash">gops sys new --name web-stack                       # 默认 gxl（需要选择系统型号）
+<pre><code class="language-bash">gops sys new --name web-stack                       # 不指定 --kind：交互式选择部署类型，选 gxl 后再选择系统型号
 gops sys new --name gateway --kind docker-compose   # 纯 compose（无型号）
 </code></pre>
+<p><code>--kind</code> 缺省时会在终端交互式选择部署类型（<code>TEST_MODE</code> 下直接按 <code>gxl</code> 处理）；<code>gxl</code> 还需要再交互选择 <code>ModelSTD</code>。</p>
 <p>两种类型生成的结构不同，见 <a href="./structure/directory.html">目录结构</a>。</p>
 <h2 id="关键文件"><a class="header" href="#关键文件">关键文件</a></h2>
 <ul>
@@ -264,7 +265,7 @@ gops sys localize -&gt; .env = merged_vars 默认值 ⊕ values/sys_value.yml �
 <p>两个值文件都是<strong>可选、可部分覆盖</strong>：只写需要修改的项，其余取系统默认值。保持注释模板原样时等价于空覆盖。</p>
 <p><code>sys localize</code> 在系统变量尚未解析（缺 <code>sys/merged_vars.yml</code>）时会自动先执行 <code>update</code>；<code>--only</code> 跳过这一步（此时若变量仍未解析会明确报错）。</p>
 <h2 id="密钥"><a class="header" href="#密钥">密钥</a></h2>
-<p>密钥<strong>不写入</strong> <code>.env</code>：在 <code>docker-compose.yml</code> 里用 <code>${SEC_xxx}</code> 占位，<code>gops sys start</code> 运行时从 <code>~/.galaxy/sec_value.yml</code> 读取并注入子进程环境（key 会归一化为大写并加 <code>SEC_</code> 前缀）。详见 <code>galaxy-ops</code> 仓库的 <code>src/system/README.md</code>。</p>
+<p>密钥<strong>不写入</strong> <code>.env</code>：在 <code>docker-compose.yml</code> 里用 <code>${SEC_xxx}</code> 占位，<code>gops sys start</code> 运行时从 <code>~/.galaxy/sec_value.yml</code>（或当前目录 <code>./.galaxy/sec_value.yml</code>）读取并注入子进程环境（key 会归一化为大写并加 <code>SEC_</code> 前缀）。<code>gops sys diagnose</code>（<code>docker compose config</code>）只读校验，注入的是掩码值 <code>********</code>。详见 <code>galaxy-ops</code> 仓库的 <code>src/system/README.md</code>。</p>
 <h2 id="常见流程"><a class="header" href="#常见流程">常见流程</a></h2>
 <h3 id="更新系统本地引用"><a class="header" href="#更新系统本地引用">更新系统本地引用</a></h3>
 <pre><code class="language-bash">gops sys update
@@ -304,7 +305,7 @@ gops prj update   -&gt; 同步项目本地引用
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../operator/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../operator/roadmap.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
@@ -318,7 +319,7 @@ gops prj update   -&gt; 同步项目本地引用
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../operator/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../operator/roadmap.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 

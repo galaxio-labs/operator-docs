@@ -1,0 +1,617 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>定位与价值 - galaxio-labs operator ecosystem</title>
+
+
+        <!-- Custom HTML head -->
+        <script>
+        (() => {
+            try {
+                const savedWidth = localStorage.getItem('operator-docs-sidebar-width');
+                if (savedWidth && /^\d+px$/.test(savedWidth)) {
+                    document.documentElement.style.setProperty('--sidebar-target-width', savedWidth);
+                }
+            } catch (_) {}
+        })();
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-18c9c4e2.svg">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/site-b2c4fb56.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-efd20e26.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-18d2ed36.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">galaxio-labs operator ecosystem</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/galaxio-labs/operator-docs" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="gops-定位与价值"><a class="header" href="#gops-定位与价值">GOps 定位与价值</a></h1>
+<h2 id="一句话定位"><a class="header" href="#一句话定位">一句话定位</a></h2>
+<p><code>gops</code>（<code>galaxy-ops</code>）不是执行引擎，而是运维能力的<strong>资产化 + 组合 + 交付</strong>层：</p>
+<blockquote>
+<p>把“一套系统交付给 N 个客户“变成有对象模型、有版本、可审计的工程流程。
+执行本身仍然交给 <code>galaxy-flow</code>（<code>gx</code>）或本机 <code>docker compose</code>。</p>
+</blockquote>
+<h2 id="要解决的问题"><a class="header" href="#要解决的问题">要解决的问题</a></h2>
+<p>这一节回答“为什么会有 <code>gops</code>“。这些问题最终都指向同一个主题：<strong>交付中“该共享的“与“该隔离的“没有被分层表达</strong>——能力、值、流程应沉淀到共享层，客户差异与运行形态应隔离到独立层；一旦混在一起，变更就会逃出版本与责任的闭环。</p>
+<h3 id="1-客户环境的部署配置时常修改容易遗忘后果严重"><a class="header" href="#1-客户环境的部署配置时常修改容易遗忘后果严重">1. 客户环境的部署配置：时常修改、容易遗忘、后果严重</a></h3>
+<p><strong>客户环境下的部署配置，是运维交付长期的重灾区：</strong></p>
+<ul>
+<li><strong>时常修改</strong>：客户环境异构、需求会变（扩容、换证书、换域名、合规），配置天生是“活的“。</li>
+<li><strong>容易遗忘</strong>：修改发生在交付之后的现场，脱离产品版本库，没有“谁改了、改成了什么、相对默认差了多少“的记录。</li>
+<li><strong>后果严重</strong>：配置直接驱动运行时，一个错值就是生产事故，而且往往没有回滚点。</li>
+</ul>
+<h4 id="根因配置的三种脱节"><a class="header" href="#根因配置的三种脱节">根因：配置的三种“脱节“</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>脱节</th><th>含义</th></tr>
+</thead>
+<tbody>
+<tr><td>时间脱节</td><td>配置在“交付之后、运行之中“被改，脱离了产品构建时刻</td></tr>
+<tr><td>空间脱节</td><td>配置躺在客户环境中，脱离了产品的版本库</td></tr>
+<tr><td>责任脱节</td><td>产品 / 实施 / 客户运维都可能改，却没人完整拥有</td></tr>
+</tbody>
+</table>
+</div>
+<p>三种脱节合起来，就是“配置改动逃出了版本与责任闭环“。</p>
+<h4 id="gops-的应对"><a class="header" href="#gops-的应对">GOps 的应对</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>症状</th><th>脱节</th><th>GOps 机制</th></tr>
+</thead>
+<tbody>
+<tr><td>时常修改</td><td>时间</td><td>分层值文件（<code>merged_vars</code> 默认 ⊕ <code>sys_value.yml</code> ⊕ <code>value.yml</code>），高频改动被收敛进受控差异层</td></tr>
+<tr><td>容易遗忘</td><td>空间</td><td><code>sys_value.yml</code> 注释模板、<code>merged_vars.yml</code> 入库、<code>prj reimport</code> 保留 <code>values/</code></td></tr>
+<tr><td>后果严重</td><td>责任</td><td>配置与密钥分离（<code>${SEC_xxx}</code> 运行时注入）、<code>diagnose</code> 预校验 + 掩码、打包产物版本化可回滚</td></tr>
+</tbody>
+</table>
+</div>
+<p>一个关键设计：<code>values/sys_value.yml</code> 生成时为<strong>整份注释模板</strong>——“没写“等于“用系统默认值”。于是“复制了一份默认值却忘了改“这类经典事故从根上消失：要覆盖才写，且只写差异。</p>
+<h4 id="边界"><a class="header" href="#边界">边界</a></h4>
+<p>GOps 提供的是“让配置回到版本与责任闭环“的<strong>结构</strong>，但它不包办全部：</p>
+<ul>
+<li>它<strong>不强制</strong>你把 <code>values/</code> 提交进 git——这仍是纪律（好在该提交的东西被压缩到极小、极明确）；</li>
+<li>它<strong>不做漂移检测</strong>——有人绕过 <code>gops</code> 直接改现场文件，不会告警；</li>
+<li><strong>变更审计</strong>依赖 git 提供历史。</li>
+</ul>
+<p>换句话说，它把“需要人管的东西“从“整个客户环境“缩小到“几个值文件 + 一次 commit“。</p>
+<h3 id="2-模块被聚合进多个系统默认要能用集成要能改部署还要能再改"><a class="header" href="#2-模块被聚合进多个系统默认要能用集成要能改部署还要能再改">2. 模块被聚合进多个系统：默认要能用、集成要能改、部署还要能再改</a></h3>
+<p>一个模块（如 <code>postgresql</code>）会被多个系统复用，而它的运行配置需要同时满足三件事：</p>
+<ul>
+<li><strong>默认设定</strong>：模块自带一套能直接跑起来的默认值；</li>
+<li><strong>系统集成时可改写</strong>：被某个系统聚合时，集成者能按该系统需要改写；</li>
+<li><strong>部署时再次修改</strong>：到了客户现场，实施 / 客户还要能再改。</li>
+</ul>
+<p>难点在于：把定制写进模块就会<strong>污染共享资产</strong>（又回到“每系统一份“的老路）；而且三层改写必须有明确优先级，还要区分“哪些值允许被改、哪些不允许“。</p>
+<h4 id="根因共享与定制的冲突--覆盖层级"><a class="header" href="#根因共享与定制的冲突--覆盖层级">根因：共享与定制的冲突 + 覆盖层级</a></h4>
+<ul>
+<li>模块是<strong>共享资产</strong>，被 N 个系统复用；但配置需求是<strong>每个系统 / 每个客户各异</strong>的。</li>
+<li>改写点分布在三层，必须有单一、明确的优先级链。</li>
+<li>并非所有值都该被改：有些是身份 / 常量（如 <code>app_name</code>），必须锁死。</li>
+</ul>
+<h4 id="gops-的应对变量--可变性--分层覆盖点"><a class="header" href="#gops-的应对变量--可变性--分层覆盖点">GOps 的应对：变量 + 可变性 + 分层覆盖点</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>层级</th><th>拥有者</th><th>载体</th><th>作用</th></tr>
+</thead>
+<tbody>
+<tr><td>模块默认</td><td>模块定义者</td><td><code>mod/&lt;model&gt;/vars.yml</code></td><td>能直接运行的默认值</td></tr>
+<tr><td>系统集成覆盖</td><td>系统集成者</td><td><code>sys/setting/vars.yml</code> → merge → <code>sys/merged_vars.yml</code></td><td>按系统需要改写</td></tr>
+<tr><td>部署现场覆盖</td><td>实施 / 客户</td><td><code>values/sys_value.yml</code>、<code>values/value.yml</code></td><td>按客户环境再改</td></tr>
+</tbody>
+</table>
+</div>
+<ul>
+<li><strong>可变性（mutability）</strong>：每个变量声明自己允许在哪些层被改——<code>Immutable</code> / <code>System</code> / <code>Module</code>。定义者用它划定“允许被改写的边界“（例如 <code>app_name</code> 声明为不可变）。部署时的交互式设置只遍历可变项。</li>
+<li><strong>共享复用</strong>：模块以引用形式（<code>ModuleSpecRef</code>：名称 + 地址 + 模型 + 开关）被多个系统聚合，可改名、可选不同 <code>ModelSTD</code>，<strong>无需改动模块本体</strong>。</li>
+</ul>
+<p>这样，同一模块的默认值只写一次，各系统 / 各客户的改写分别落在各自的层上，互不污染。</p>
+<h4 id="边界-1"><a class="header" href="#边界-1">边界</a></h4>
+<ul>
+<li>覆盖优先级的细节由运行时（<code>orion-variate</code> 的变量合并）决定，以实际行为为准；</li>
+<li>“哪些项该在系统层改、哪些该留给客户层“仍需约定，工具不强制。</li>
+</ul>
+<h3 id="3-同一系统需要多种部署形态二进制--k8s--docker-compose"><a class="header" href="#3-同一系统需要多种部署形态二进制--k8s--docker-compose">3. 同一系统需要多种部署形态：二进制 / K8S / Docker Compose</a></h3>
+<p>同一套系统，可能既要在客户机上以<strong>二进制</strong>（裸机 / 进程）部署，又要上 <strong>Kubernetes</strong>，还要能跑 <strong>Docker Compose</strong>。</p>
+<p>难点：三种形态<strong>实现差异极大</strong>（进程 vs 编排 vs 容器），几乎无法复用同一份部署脚本；如果每种形态各自维护一套交付（值文件、操作命令、打包流程），就等于<strong>三份并行的运维体系</strong>——问题 1 的“时常修改、容易遗忘“会被放大三倍。而客户差异（域名、端口、规格）本应与形态无关。</p>
+<h4 id="根因形态差异外溢成了交付体系的分叉"><a class="header" href="#根因形态差异外溢成了交付体系的分叉">根因：形态差异外溢成了交付体系的分叉</a></h4>
+<ul>
+<li>形态的差异本是<strong>实现层</strong>的（怎么落地），却扩散到了<strong>交付层</strong>（值、命令、打包）。</li>
+<li>本应“一份值 + 一套命令“跨越三种形态，实际却变成三套。</li>
+</ul>
+<h4 id="gops-的应对分层表达形态"><a class="header" href="#gops-的应对分层表达形态">GOps 的应对：分层表达形态</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>部署形态</th><th>GOps 表达</th><th>执行者</th></tr>
+</thead>
+<tbody>
+<tr><td>二进制（Host）</td><td><code>kind: gxl</code> + <code>ModelSTD(RunSPC=Host)</code></td><td><code>gx</code> 执行模块的 host 工作流</td></tr>
+<tr><td>Kubernetes</td><td><code>kind: gxl</code> + <code>ModelSTD(RunSPC=K8S)</code></td><td><code>gx</code> 执行模块的 k8s 工作流</td></tr>
+<tr><td>Docker Compose</td><td><code>kind: docker-compose</code>（无 <code>ModelSTD</code>）</td><td>本机 <code>docker compose</code></td></tr>
+</tbody>
+</table>
+</div>
+<ul>
+<li><strong>模块层承载“同一能力的多种落地形式“</strong>：同一模块可同时拥有 Host 与 K8S 的 <code>mod/&lt;model&gt;/</code>（不同 <code>RunSPC</code>），各自的 <code>workflows/operators.gxl</code> 提供该形态的实现。</li>
+<li><strong>系统层选定形态</strong>：<code>ModelSTD</code>（Host / K8S）+ <code>kind</code>（gxl / compose）决定用哪种形态交付。</li>
+<li><strong>三形态共享交付面</strong>：同一套值模型、同一个命令面（<code>gops sys start/stop/status/diagnose</code>）、同一套打包 / 导入 / 保值流程。客户差异不随形态改变。</li>
+</ul>
+<h4 id="边界-2"><a class="header" href="#边界-2">边界</a></h4>
+<ul>
+<li>一个 <code>System</code> 绑定一个 <code>ModelSTD</code> + <code>kind</code>，<strong>没有“一份系统自动产出三种形态“</strong>；切换形态意味着另一个系统对象（但复用同一批模块与值定义）。</li>
+<li>GOps <strong>不做形态间的语义转换</strong>：不会把一份业务逻辑自动生成 host / k8s / compose 三份实现，各形态实现仍由模块作者分别编写；GOps 对齐的是<strong>对象、值、命令与交付流程</strong>，而非实现本身。</li>
+</ul>
+<h2 id="与开源机制的关系"><a class="header" href="#与开源机制的关系">与开源机制的关系</a></h2>
+<p>“已经有 Helm / Ansible 了，为什么还要 GOps？”——先说结论：</p>
+<blockquote>
+<p>开源机制解决的是“<strong>怎么覆盖</strong>“；GOps 想解决的是”<strong>谁来覆盖、覆盖了什么、以及别忘了</strong>“。前者是机制，后者是治理。</p>
+</blockquote>
+<p>问题 2 拆成 7 个要求：R1 默认、R2 集成覆盖、R3 部署覆盖、R4 复用不 fork、R5 优先级链、R6 可变性、R7 记录保值。对照开源机制：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>机制</th><th>复用 + 多层覆盖</th><th>优先级链</th><th>可变性声明</th><th>记录与保值</th><th>跨运行时</th></tr>
+</thead>
+<tbody>
+<tr><td>Helm</td><td>✅ chart 默认 + 覆盖 values</td><td>✅</td><td>❌</td><td>🟡 升级可留用户 values</td><td>❌ 绑 K8s</td></tr>
+<tr><td>Kustomize</td><td>✅ base + overlay</td><td>✅</td><td>❌</td><td>🟡 靠 git</td><td>❌ 绑 K8s</td></tr>
+<tr><td>Ansible</td><td>✅ role defaults + group/host vars</td><td>✅ 20+ 级</td><td>❌</td><td>❌</td><td>🟡 通用但与执行耦合</td></tr>
+<tr><td>Terraform</td><td>✅ module 变量 + tfvars</td><td>✅</td><td>❌</td><td>🟡 state 非交付值</td><td>❌ 面向基础设施</td></tr>
+<tr><td>Nix modules</td><td>✅ options + 覆盖</td><td>✅</td><td>✅ mkDefault/mkForce</td><td>🟡</td><td>❌ 整机配置范式</td></tr>
+<tr><td>CUE / Jsonnet</td><td>✅ 默认值 + 统一</td><td>✅</td><td>🟡 约束可禁覆盖</td><td>❌</td><td>❌ 是语言，不是交付系统</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>开源已解决得很好的</strong>：R1–R5（Helm 式分层 values、Ansible 式 role 复用）。GOps 的覆盖代数并不原创，本质与其同源。</p>
+<p><strong>开源至今的四个空白</strong>：</p>
+<ol>
+<li><strong>可变性 ≠ 所有权边界</strong>：开源工具把覆盖视为“谁在命令行传了什么“，没人把“产品 / 集成者 / 客户“表达成结构；Helm 里客户和集成者都只是传 <code>-f</code>，没有机制阻止客户覆盖集成者认为不可改的值。（只有 Nix 的 <code>mkDefault</code> / <code>mkForce</code> 把优先级做成了一等语义。）</li>
+<li><strong>交付对象模型</strong>：没有“系统 → N 个客户项目、各自维护客户值“的对象层。</li>
+<li><strong>记录与保值</strong>：没有工具原生提供“实际使用的值落盘入库 + 升级保护客户值“。</li>
+<li><strong>跨运行时统一</strong>：Helm / Kustomize 绑 K8s、Terraform 绑基础设施、Nix 绑整机，没有一套对象与覆盖链能在 host / k8s / docker compose 间共享。</li>
+</ol>
+<p><strong>GOps 的位置（诚实版）</strong>：</p>
+<ul>
+<li>覆盖代数<strong>不是原创</strong>——可视为 Helm 式分层值 + Ansible 式复用的运维交付改写；</li>
+<li>真正补的是空白 1–4：把覆盖嵌进 <code>Module → System → Ops Project</code> 对象模型、用 <code>Immutable</code> / <code>System</code> / <code>Module</code> 把可变性变成声明式所有权边界、用 <code>merged_vars.yml</code> + 来源追踪做记录、用 <code>kind</code> 跨运行时统一；</li>
+<li>但它的可变性粒度比 Nix 粗（Nix 可对每个赋值定优先级并合并，GOps 按变量作用域分级），且闭环仍依赖 <strong>git 纪律</strong>。</li>
+</ul>
+<h2 id="有没有满需求的开源方案"><a class="header" href="#有没有满需求的开源方案">有没有“满需求“的开源方案</a></h2>
+<p>把问题 1–3 合起来，“满需求“落在 6 个维度：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>维度</th><th>含义</th></tr>
+</thead>
+<tbody>
+<tr><td>D1 多层覆盖</td><td>默认 → 集成 → 部署三级覆盖 + 优先级链 + 复用不 fork</td></tr>
+<tr><td>D2 可变性 / 所有权</td><td>“某值不允许在某一层被改“作为声明</td></tr>
+<tr><td>D3 记录与保值</td><td>实际用了什么可复现；升级不覆盖客户值</td></tr>
+<tr><td>D4 密钥分离</td><td>密钥不落盘、运行时注入</td></tr>
+<tr><td>D5 多形态</td><td>同一能力支持二进制 / K8S / Compose</td></tr>
+<tr><td>D6 交付对象模型</td><td>产品 → 系统 → 客户项目，含打包 / 导入闭环</td></tr>
+</tbody>
+</table>
+</div>
+<p>主流方案对照：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>方案 / 组合</th><th>D1</th><th>D2</th><th>D3</th><th>D4</th><th>D5</th><th>D6</th></tr>
+</thead>
+<tbody>
+<tr><td>Helm + GitOps(Argo/Flux) + SOPS</td><td>✅</td><td>❌</td><td>🟡</td><td>✅</td><td>❌ 仅 K8s</td><td>🟡</td></tr>
+<tr><td>Ansible + Vault / AWX</td><td>🟡 过程式</td><td>❌</td><td>❌</td><td>✅</td><td>🟡</td><td>❌</td></tr>
+<tr><td>Terraform / Pulumi</td><td>🟡</td><td>❌</td><td>🟡 state</td><td>🟡</td><td>🟡 provider</td><td>❌</td></tr>
+<tr><td>Nix / Colmena</td><td>✅</td><td>✅ mkForce</td><td>🟡</td><td>🟡</td><td>🟡 host 强</td><td>❌</td></tr>
+<tr><td>Crossplane</td><td>🟡</td><td>❌</td><td>🟡</td><td>🟡</td><td>🟡 k8s 原生</td><td>❌</td></tr>
+<tr><td>Dagger</td><td>❌</td><td>❌</td><td>❌</td><td>🟡</td><td>🟡 runner</td><td>❌</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>结论</strong>：</p>
+<ol>
+<li><strong>单一开源项目：没有满需求的。</strong></li>
+<li><strong>K8s 单形态下最接近满需求的是 GitOps 栈</strong>（Git + Helm/Kustomize + SOPS/Sealed-Secrets + Argo CD/Flux）：D1/D3/D4 都做到，甚至靠 reconcile 有了漂移检测；但 <strong>D2 失守</strong>（无可变性声明）、<strong>D5 失守</strong>（只服务 K8s）。</li>
+<li><strong>能横跨三种形态的只有 Ansible / Terraform / Pulumi</strong>，但它们是过程式 / 状态式的，没有 D6 对象模型，D2/D3 基本空白，且配置与执行耦合。</li>
+<li><strong>跨形态没有开源方案同时满足</strong>：要么绑死 K8s，要么退化成过程式的 Ansible。</li>
+</ol>
+<p>GOps 自己也不是“满需求“：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>D1</th><th>D2</th><th>D3</th><th>D4</th><th>D5</th><th>D6</th></tr>
+</thead>
+<tbody>
+<tr><td>✅</td><td>✅（粒度粗）</td><td>🟡 靠 git 纪律</td><td>✅</td><td>🟡 需分别实现</td><td>✅</td></tr>
+</tbody>
+</table>
+</div>
+<p>它缺 GitOps 那种“强制以 Git 为真源 + 漂移检测 + 对账回滚“，也不做形态间自动转换。准确说法：<strong>开源里没有满需求，GOps 也没有；但它把“满需求“需要的维度装进了同一个对象模型，缺口集中在“强制入库 / 漂移检测 / 自动生成“。</strong></p>
+<h2 id="gops-与-gitops-的差距"><a class="header" href="#gops-与-gitops-的差距">GOps 与 GitOps 的差距</a></h2>
+<p>GOps 也依赖 Git，但 Git 在两边角色不同：</p>
+<ul>
+<li><strong>GitOps：Git 是控制回路的输入</strong>——被常驻控制器持续读取、对账、收敛。</li>
+<li><strong>GOps：Git 是版本化的载体</strong>——靠人 / CI 手动触发一次性动作。</li>
+</ul>
+<p>一句话：<strong>GitOps 的 Git 驱动一个 loop，GOps 的 Git 只是仓库。</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>维度</th><th>GitOps（Argo CD / Flux）</th><th>GOps</th></tr>
+</thead>
+<tbody>
+<tr><td>Git 角色</td><td>控制回路输入（活）</td><td>协作 / 版本载体（存）</td></tr>
+<tr><td>真源</td><td>Git 是唯一真源，现场必须服从</td><td>分层：默认来自系统产物，差异来自 <code>values/</code>，现场不强制收敛</td></tr>
+<tr><td>执行方式</td><td>常驻 controller 持续 reconcile</td><td>CLI 手动 / CI 一次性触发</td></tr>
+<tr><td>部署语义</td><td>声明式终态（幂等 converge）</td><td>可重复过程（gx workflow，未必终态）</td></tr>
+<tr><td>漂移检测</td><td>核心能力（OutOfSync → 自愈）</td><td>无</td></tr>
+<tr><td>回滚</td><td>revert commit → 自动回滚</td><td>重跑部署（人工）</td></tr>
+<tr><td>多形态</td><td>主流绑 K8s</td><td>二进制 / K8S / Compose（<code>kind</code>）</td></tr>
+<tr><td>密钥</td><td>加密后仍进 Git（SOPS / Sealed-Secrets）</td><td>不进 Git、不落盘，运行时注入</td></tr>
+<tr><td>对象粒度</td><td>manifest / release / overlay</td><td>Module / System / Ops Project</td></tr>
+</tbody>
+</table>
+</div>
+<p>三个本质差距：</p>
+<ol>
+<li><strong>有没有 reconcile loop</strong>：GitOps 有常驻控制器持续把现场拉回 Git；GOps 没有任何常驻组件，<code>gops sys start</code> 跑完即止，<strong>不知道现场是否偏离默认值</strong>。</li>
+<li><strong>部署能否归约为声明式终态</strong>：GitOps 成立的前提是“期望状态可完整描述 + 幂等收敛“，这成立在容器 / 基础设施领域；二进制部署与 GXL 工作流走的是“可重复过程“，不假装是终态。</li>
+<li><strong>真源的权威性</strong>：GitOps 里现场是从属的，手改会被当 drift 冲掉；GOps 反而承认现场是权威之一——<code>prj reimport</code> 就是“重建系统、保留 <code>values/</code>“。两者哲学相反。</li>
+</ol>
+<h3 id="为什么二进制--gxl-难以-gitops-化"><a class="header" href="#为什么二进制--gxl-难以-gitops-化">为什么二进制 / GXL 难以 GitOps 化</a></h3>
+<p>GitOps 需要四个前提同时成立，二进制 / host / GXL 恰好逐条违反：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>前提</th><th>含义</th><th>二进制 / Host / GXL</th></tr>
+</thead>
+<tbody>
+<tr><td>终态可完整描述</td><td>期望状态是一个 spec</td><td>❌ 安装 / 迁移是“过程 / 历史“（数据库迁移只能按序 apply）</td></tr>
+<tr><td>现实可观测</td><td>能读到实际状态并与期望 diff</td><td>❌ host 没有统一的“部署了什么“状态接口，系统异构</td></tr>
+<tr><td>操作幂等</td><td>可反复收敛而不产生副作用</td><td>❌ 启动 / 迁移 / 一次性初始化不幂等；GXL workflow 是“程序“</td></tr>
+<tr><td>资源可抛弃</td><td>收敛 = 杀掉重建</td><td>❌ 客户机器是有状态资产（数据 / license / 硬件），强收敛危险</td></tr>
+</tbody>
+</table>
+</div>
+<p>同样是部署，Docker Compose 可以而 host 不行：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>前提</th><th>Docker Compose</th><th>二进制 / Host</th></tr>
+</thead>
+<tbody>
+<tr><td>终态可完整描述</td><td>✅ <code>compose.yml</code></td><td>❌ 安装 / 迁移是过程</td></tr>
+<tr><td>可观测</td><td>✅ <code>docker compose ps</code></td><td>❌ 无统一状态接口</td></tr>
+<tr><td>幂等</td><td>✅ <code>up -d</code> 近似幂等</td><td>❌ 启动 / 迁移一次性</td></tr>
+<tr><td>可抛弃</td><td>✅ 容器可重建</td><td>❌ 有状态资产</td></tr>
+</tbody>
+</table>
+</div>
+<p>这也解释了为什么 GOps 的 <code>docker-compose</code> 形态最接近 GitOps——四个前提它占了三个半。</p>
+<p><strong>但并非“绝对不可能“</strong>：Puppet / Chef / Salt 证明了 host 收敛可行（装 agent + 状态模型 + 持续收敛），代价是 agent 重、OS 各异，且迁移 / 一次性步骤仍要退化成 <code>exec</code> / <code>unless</code> 这类逃逸阀。连 K8s 自己都得为非声明式步骤开逃逸阀（Helm hooks、Argo CD sync hooks、Job）——反过来说：凡是“过程“，GitOps 都得打补丁。</p>
+<p><strong>所以 GOps 的选择是取舍</strong>：既然四前提在二进制 / GXL 上凑不齐，就不去假装有终态收敛——部署 = 可重复的过程（GXL workflow），交给 <code>gx</code>；版本化的只是产物（tar.gz）+ 值（<code>values/</code>）；它<strong>不承诺收敛，只承诺可复现与可追溯</strong>。代价是失去漂移检测与自动回滚，换来的是形态自由。</p>
+<p><strong>互补关系</strong>更准确：GitOps 管“收敛“，GOps 管“组织与交付“；GitOps 在单形态里做到极致，GOps 用放弃收敛换来覆盖不可收敛的世界。</p>
+<h2 id="独特价值"><a class="header" href="#独特价值">独特价值</a></h2>
+<h3 id="1-三层对象模型复用与客户差异物理隔离"><a class="header" href="#1-三层对象模型复用与客户差异物理隔离">1. 三层对象模型：复用与客户差异物理隔离</a></h3>
+<p><code>Module → System → Ops Project</code> 三层各司其职：</p>
+<ul>
+<li><code>Module</code>：最小可复用运维单元（变量 / 依赖 / 构件 / 工作流）。</li>
+<li><code>System</code>：由模块组合出的交付单元。</li>
+<li><code>Ops Project</code>：面向具体客户环境的运维项目。</li>
+</ul>
+<p>同一个系统可以被多个客户项目导入，客户差异只落在 <code>&lt;project&gt;/values/&lt;system&gt;/</code>，不写死在系统定义里。</p>
+<pre class="mermaid">flowchart TD
+    M["Module 最小可复用单元"] --&gt; S["System 组合交付单元"]
+    S --&gt; P["Ops Project 客户现场"]
+    S --&gt;|gops sys package| PKG["交付包 tar.gz"]
+    PKG --&gt;|gops prj import| P
+    P --&gt;|gops prj reimport 保留 values| P
+</pre>
+
+<p>关键机制：在项目内的系统目录执行 <code>gops sys localize</code> / <code>sys update</code> 时，会依据上层 <code>ops-prj.yml</code> 反向解析出该项目为该系统维护的值目录，而不是使用系统自带的 <code>values/</code>。产品定义与客户现场在磁盘结构上天然分离。</p>
+<h3 id="2-执行中立同一命令面两种后端"><a class="header" href="#2-执行中立同一命令面两种后端">2. 执行中立：同一命令面，两种后端</a></h3>
+<p><code>sys/sys_model.yml</code> 的 <code>kind</code> 决定行为，但操作员的命令是同一套：</p>
+<pre class="mermaid">flowchart LR
+    CMD["gops sys start / stop / status / diagnose ..."] --&gt; K{"sys_model.yml kind"}
+    K --&gt;|gxl| GX["gx run -e ENV -d N cmd"]
+    K --&gt;|docker-compose| DC["docker compose ..."]
+    GX --&gt; WF["系统工作流 GXL"]
+    DC --&gt; LOCAL["本机 docker compose"]
+</pre>
+
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th><code>gops sys ...</code></th><th><code>gxl</code> 后端</th><th><code>docker-compose</code> 后端</th></tr>
+</thead>
+<tbody>
+<tr><td><code>download</code></td><td><code>gx run download</code></td><td><code>docker compose pull</code></td></tr>
+<tr><td><code>install</code></td><td><code>gx run install</code></td><td><code>docker compose create</code></td></tr>
+<tr><td><code>start</code></td><td><code>gx run start</code></td><td><code>docker compose up -d</code></td></tr>
+<tr><td><code>stop</code></td><td><code>gx run stop</code></td><td><code>docker compose stop</code></td></tr>
+<tr><td><code>uninstall</code></td><td><code>gx run uninstall</code></td><td><code>docker compose down</code></td></tr>
+<tr><td><code>status</code></td><td><code>gx run status</code></td><td><code>docker compose ps</code></td></tr>
+<tr><td><code>diagnose</code></td><td><code>gx run diagnose</code></td><td><code>docker compose config</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>价值点：<strong>纯声明式 compose 系统</strong>（完全不依赖 <code>gx</code>）与<strong>模块化 GXL 工作流系统</strong>共享同一套创建、变量、打包、本地化、交付流程。</p>
+<h3 id="3-多模型模块modelstd一个模块多目标平台"><a class="header" href="#3-多模型模块modelstd一个模块多目标平台">3. 多模型模块（ModelSTD）：一个模块，多目标平台</a></h3>
+<p><code>ModelSTD = CpuArch × OsCPE × RunSPC</code>，例如 <code>x86-ubt22-k8s</code>、<code>arm-mac14-host</code>、<code>x86-ubt22-host</code>。<code>gops mod new</code> 一次生成全部目标模型目录，每个模型有独立的 <code>vars.yml</code> / <code>spec/</code> / <code>workflows/</code>。</p>
+<p>即“一份模块定义，按 CPU / OS / 运行空间派生多套实现“，而不是为每个平台维护一个独立仓库。</p>
+<h3 id="4-值分层--只写差异--可审计"><a class="header" href="#4-值分层--只写差异--可审计">4. 值分层 + “只写差异” + 可审计</a></h3>
+<pre class="mermaid">flowchart TD
+    MV["sys/merged_vars.yml 系统默认值"] --&gt; ENV[".env"]
+    SV["values/sys_value.yml 注释模板"] --&gt; ENV
+    UV["values/value.yml 客户覆盖"] --&gt; ENV
+    ENV --&gt; DC["docker-compose.yml 消费"]
+    SEC["~/.galaxy/sec_value.yml 密钥"] --&gt;|运行时注入子进程环境| DC
+</pre>
+
+<ul>
+<li><code>.env = merged_vars 默认值 ⊕ values/sys_value.yml ⊕ values/value.yml</code></li>
+<li><code>sys update</code> 生成的 <code>values/sys_value.yml</code> 是<strong>整份注释模板</strong>：保持注释即“空覆盖“，取消注释才生效，默认值不会被钉死。</li>
+<li>优先级明确：<code>value.yml</code>（客户覆盖） &gt; <code>sys_value.yml</code>（系统值） &gt; <code>merged_vars</code>（默认）。</li>
+<li>来源可追踪：本地化会写出实际使用的值，能回答“这个最终值是谁给的“。</li>
+</ul>
+<h3 id="5-密钥作为一等公民不落盘运行时注入诊断掩码"><a class="header" href="#5-密钥作为一等公民不落盘运行时注入诊断掩码">5. 密钥作为一等公民：不落盘、运行时注入、诊断掩码</a></h3>
+<p>compose 里用 <code>${SEC_xxx}</code> 占位；<code>gops sys start</code> 运行时从 <code>~/.galaxy/sec_value.yml</code>（或 <code>./.galaxy/sec_value.yml</code>）读取，只注入 <strong>docker compose 子进程环境</strong>，不写 <code>.env</code>、不入库；<code>gops sys diagnose</code>（<code>docker compose config</code>）注入的是掩码值 <code>********</code>。</p>
+<p>配置与敏感值在生命周期上被彻底分开，而不是仅靠 <code>.gitignore</code> 约定。</p>
+<h3 id="6-交付闭环打包--导入--重导入保值"><a class="header" href="#6-交付闭环打包--导入--重导入保值">6. 交付闭环：打包 → 导入 → 重导入保值</a></h3>
+<pre><code class="language-text">gops sys package   -&gt; &lt;name&gt;-&lt;version&gt;.tar.gz（先 update 解析变量）
+gops prj import    -&gt; 导入客户项目
+gops prj reimport  -&gt; 按 ops-prj.yml 重建系统，保留 values/ 客户值
+</code></pre>
+<p><code>reimport</code> 体现了核心主张：<strong>系统目录可被删除重建，但客户值永不丢失</strong>。产品升级与客户现场数据成为两个独立生命周期。</p>
+<h3 id="7-单体-cli无历史包袱"><a class="header" href="#7-单体-cli无历史包袱">7. 单体 CLI，无历史包袱</a></h3>
+<p>一个 <code>gops</code> 二进制覆盖 <code>mod</code> / <code>sys</code> / <code>prj</code>，不存在 <code>gmod</code> / <code>gsys</code> 的历史分裂；文档以当前代码实现为唯一真源。</p>
+<h2 id="与常见工具的边界"><a class="header" href="#与常见工具的边界">与常见工具的边界</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>工具</th><th>主要职责</th><th>与 GOps 的差异</th></tr>
+</thead>
+<tbody>
+<tr><td>Ansible</td><td>过程式配置与编排执行</td><td>GOps 不执行；客户差异靠值文件而非 playbook 分支</td></tr>
+<tr><td>Helm</td><td>Kubernetes 包管理与模板</td><td>GOps 跨 CPU / OS / 运行时，且含“系统 → 客户项目“对象层</td></tr>
+<tr><td>Terraform</td><td>基础设施状态收敛</td><td>GOps 不做状态收敛，面向运维交付资产</td></tr>
+<tr><td>docker compose</td><td>单机声明式编排</td><td>GOps 在其上加对象模型、打包、客户值、密钥、多模型</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="是--不是"><a class="header" href="#是--不是">是 / 不是</a></h2>
+<p><strong>是</strong>：运维能力的组织、配置、组合、交付；跨平台模块与系统的资产化；客户差异的集中管理。</p>
+<p><strong>不是</strong>：工作流执行引擎；配置管理 / 状态收敛工具。<code>kind: gxl</code> 系统的能力上限取决于 <code>galaxy-flow</code> / <code>gx</code>；<code>kind: docker-compose</code> 路径则把门槛降到“只要一台装了 docker 的机器“。</p>
+<h2 id="相关文档"><a class="header" href="#相关文档">相关文档</a></h2>
+<ul>
+<li><a href="./README.html">维护器总览</a></li>
+<li><a href="./sys/README.html">系统维护器</a></li>
+<li><a href="./mod/README.html">模块维护器</a></li>
+<li><a href="../cmd/gops.html"><code>gops</code> 命令参考</a></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../operator/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../operator/roadmap.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../operator/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../operator/roadmap.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/site-7ad70ef6.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

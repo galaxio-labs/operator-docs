@@ -45,10 +45,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-4a6734f9.js";
+            window.path_to_searchindex_js = "../../searchindex-efd20e26.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-8a341037.js"></script>
+        <script src="../../toc-18d2ed36.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -192,6 +192,7 @@
 <h2 id="核心文件"><a class="header" href="#核心文件">核心文件</a></h2>
 <p>创建模块后，当前实现会生成这些关键文件：</p>
 <pre><code class="language-text">&lt;module-root&gt;/
+├── .gitignore
 ├── mod-prj.yml
 ├── version.txt
 ├── _gal/
@@ -200,16 +201,21 @@
 │   └── work.gxl
 └── mod/
     └── &lt;model&gt;/
-        └── vars.yml
+        ├── vars.yml
+        ├── _gal/work.gxl
+        ├── spec/
+        │   ├── artifact.yml
+        │   └── depends.yml
+        └── workflows/
+            └── operators.gxl
 </code></pre>
-<p>随着后续更新和本地化，模块目录通常还会出现这些约定目录或文件：</p>
+<p>运行 <code>gops mod update</code> / <code>gops mod localize</code> 后，模块目录还会出现这些约定目录或文件：</p>
 <ul>
-<li><code>mod/&lt;model&gt;/spec/artifact.yml</code></li>
-<li><code>mod/&lt;model&gt;/spec/depends.yml</code></li>
-<li><code>mod/&lt;model&gt;/setting.yml</code></li>
-<li><code>mod/&lt;model&gt;/values/</code></li>
-<li><code>mod/&lt;model&gt;/workflows/</code></li>
-<li><code>mod/&lt;model&gt;/local/</code></li>
+<li><code>mod/&lt;model&gt;/local/</code>：<code>gops mod localize</code> 生成的本地化输出</li>
+<li><code>mod/&lt;model&gt;/_used.json</code>：<code>gops mod localize</code> 生成的实际使用值</li>
+<li><code>values/&lt;model&gt;/sys_value.yml</code>、<code>values/&lt;model&gt;/mod_value.yml</code>：值文件（注意在模块根 <code>values/</code> 下，不在 <code>mod/&lt;model&gt;/</code> 里）</li>
+<li><code>values/&lt;model&gt;/.used_value.yml</code>：本地化时导出的可读值</li>
+<li><code>mod/&lt;model&gt;/setting.yml</code>：本地化行为设置（可选；<code>gops mod new</code> 不生成，<code>gops mod example</code> 或手工补充时才有）</li>
 </ul>
 <p>这些名字来自当前代码常量：</p>
 <ul>
@@ -237,27 +243,28 @@
 <h3 id="modmodelspecdependsyml"><a class="header" href="#modmodelspecdependsyml"><code>mod/&lt;model&gt;/spec/depends.yml</code></a></h3>
 <p>模块依赖定义，用于组织本地依赖、仓库依赖或附加资源。</p>
 <h3 id="modmodelsettingyml"><a class="header" href="#modmodelsettingyml"><code>mod/&lt;model&gt;/setting.yml</code></a></h3>
-<p>模块本地化行为相关设置。</p>
-<h3 id="modmodelvalues"><a class="header" href="#modmodelvalues"><code>mod/&lt;model&gt;/values/</code></a></h3>
-<p>模块值文件目录。<code>gops mod localize</code> 会围绕值文件执行本地化。</p>
+<p>模块本地化行为相关设置（可选，<code>gops mod new</code> 不生成）。</p>
+<h3 id="valuesmodel"><a class="header" href="#valuesmodel"><code>values/&lt;model&gt;/</code></a></h3>
+<p>模块值文件目录（位于模块根目录下，<strong>不是</strong> <code>mod/&lt;model&gt;/values/</code>）。<code>gops mod update</code> 会在此生成 <code>sys_value.yml</code> 与 <code>mod_value.yml</code>，<code>gops mod localize</code> 会读取它们执行本地化。</p>
 <h3 id="modmodelworkflows"><a class="header" href="#modmodelworkflows"><code>mod/&lt;model&gt;/workflows/</code></a></h3>
 <p>模块工作流目录，通常放模块级 <code>operators.gxl</code> 等流程文件。</p>
 <h3 id="modmodellocal"><a class="header" href="#modmodellocal"><code>mod/&lt;model&gt;/local/</code></a></h3>
 <p>模块本地化结果或局部输出目录。</p>
 <h2 id="modelstd-目录"><a class="header" href="#modelstd-目录">ModelSTD 目录</a></h2>
-<p>模块目录下按模型拆分，例如：</p>
+<p>模块目录下按模型拆分。<code>ModelSTD</code> 当前支持三种组合（<code>gops mod new</code> 会全部生成）：</p>
 <ul>
-<li><code>arm-mac14-host</code></li>
-<li><code>x86-ubt22-k8s</code></li>
+<li><code>arm-mac14-host</code>（<code>CpuArch::Arm</code> + <code>OsCPE::MAC14</code> + <code>RunSPC::Host</code>）</li>
+<li><code>x86-ubt22-host</code>（<code>CpuArch::X86</code> + <code>OsCPE::UBT22</code> + <code>RunSPC::Host</code>）</li>
+<li><code>x86-ubt22-k8s</code>（<code>CpuArch::X86</code> + <code>OsCPE::UBT22</code> + <code>RunSPC::K8S</code>）</li>
 </ul>
-<p>模型名由 <code>ModelSTD</code> 决定，表示 CPU / OS / 运行空间组合。</p>
+<p>模型名由 <code>ModelSTD</code> 决定，表示 CPU / OS / 运行空间组合（来自 <code>CpuArch</code> / <code>OsCPE</code> / <code>RunSPC</code> 三个枚举）。</p>
 <h2 id="当前配置边界"><a class="header" href="#当前配置边界">当前配置边界</a></h2>
 <p>当前代码里，模块配置的真实边界是：</p>
 <ul>
 <li>模块根配置：<code>mod-prj.yml</code></li>
-<li>模型级配置：<code>mod/&lt;model&gt;/...</code></li>
-<li>值文件和本地化输出：<code>values/</code> 与 <code>local/</code></li>
-<li>工作流入口：<code>_gal/*.gxl</code> 与 <code>workflows/</code></li>
+<li>模型级配置：<code>mod/&lt;model&gt;/...</code>（<code>vars.yml</code> / <code>spec/</code> / <code>workflows/</code> / <code>_gal/work.gxl</code>）</li>
+<li>值文件和本地化输出：模块根 <code>values/&lt;model&gt;/</code> 与模型内 <code>mod/&lt;model&gt;/local/</code></li>
+<li>工作流入口：<code>_gal/*.gxl</code> 与 <code>workflows/operators.gxl</code></li>
 </ul>
 <p>不要再按旧文档理解为独立 <code>gmod</code> 工具或多套历史模板系统。</p>
 

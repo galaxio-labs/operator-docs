@@ -45,10 +45,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-4a6734f9.js";
+            window.path_to_searchindex_js = "../../searchindex-efd20e26.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-8a341037.js"></script>
+        <script src="../../toc-18d2ed36.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -215,8 +215,12 @@
 <h3 id="gops-mod-localize"><a class="header" href="#gops-mod-localize"><code>gops mod localize</code></a></h3>
 <pre><code class="language-bash">gops mod localize [--value &lt;file&gt;] [--default]
 </code></pre>
+<blockquote>
+<p>注意：<code>--value</code> / <code>--default</code> 参数已声明，但当前实现未消费；实际值来自模块根 <code>values/&lt;model&gt;/</code> 下的值文件。</p>
+</blockquote>
 <h2 id="目录参考"><a class="header" href="#目录参考">目录参考</a></h2>
 <h3 id="最小模块骨架"><a class="header" href="#最小模块骨架">最小模块骨架</a></h3>
+<p><code>gops mod new</code> 按支持的 <code>ModelSTD</code> 生成三个模型目录（<code>arm-mac14-host</code> / <code>x86-ubt22-host</code> / <code>x86-ubt22-k8s</code>），每个模型结构相同：</p>
 <pre><code class="language-text">&lt;module&gt;/
 ├── .gitignore
 ├── version.txt
@@ -227,18 +231,25 @@
 │   └── work.gxl
 └── mod/
     └── &lt;model&gt;/
-        └── vars.yml
+        ├── vars.yml
+        ├── _gal/work.gxl
+        ├── spec/
+        │   ├── artifact.yml
+        │   └── depends.yml
+        └── workflows/
+            └── operators.gxl
 </code></pre>
-<h3 id="常见扩展目录"><a class="header" href="#常见扩展目录">常见扩展目录</a></h3>
-<pre><code class="language-text">mod/&lt;model&gt;/
-├── spec/
-│   ├── artifact.yml
-│   └── depends.yml
+<h3 id="运行--本地化后新增"><a class="header" href="#运行--本地化后新增">运行 / 本地化后新增</a></h3>
+<pre><code class="language-text">&lt;module&gt;/
 ├── values/
-├── workflows/
-├── local/
-├── vars.yml
-└── setting.yml
+│   └── &lt;model&gt;/
+│       ├── sys_value.yml
+│       ├── mod_value.yml
+│       └── .used_value.yml
+└── mod/&lt;model&gt;/
+    ├── local/                 # gops mod localize 输出
+    ├── _used.json             # gops mod localize 生成
+    └── setting.yml            # 可选，非 gops mod new 生成
 </code></pre>
 <h2 id="代码参考"><a class="header" href="#代码参考">代码参考</a></h2>
 <p>当前模块相关实现主要在这些文件：</p>

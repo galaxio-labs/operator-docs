@@ -45,10 +45,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-4a6734f9.js";
+            window.path_to_searchindex_js = "../../searchindex-efd20e26.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-8a341037.js"></script>
+        <script src="../../toc-18d2ed36.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -199,19 +199,21 @@ gops mod new --name postgresql
 cd postgresql
 </code></pre>
 <h3 id="2-补齐模块模型内容"><a class="header" href="#2-补齐模块模型内容">2. 补齐模块模型内容</a></h3>
-<p>先检查 <code>mod/</code> 下生成的模型目录，例如：</p>
+<p>先检查 <code>mod/</code> 下生成的模型目录（<code>gops mod new</code> 默认生成三个）：</p>
 <pre><code class="language-text">mod/
 ├── arm-mac14-host/
+├── x86-ubt22-host/
 └── x86-ubt22-k8s/
 </code></pre>
-<p>然后按模型补齐：</p>
+<p>每个模型目录已包含以下文件，按需修改即可：</p>
 <ul>
 <li><code>vars.yml</code></li>
 <li><code>spec/artifact.yml</code></li>
 <li><code>spec/depends.yml</code></li>
-<li><code>setting.yml</code></li>
-<li><code>workflows/</code></li>
+<li><code>workflows/operators.gxl</code></li>
+<li><code>_gal/work.gxl</code></li>
 </ul>
+<p><code>setting.yml</code> 不在 <code>gops mod new</code> 的初始骨架中，需要自定义本地化行为时再手工补充。</p>
 <h3 id="3-更新本地引用"><a class="header" href="#3-更新本地引用">3. 更新本地引用</a></h3>
 <pre><code class="language-bash">gops mod update
 </code></pre>
@@ -219,12 +221,19 @@ cd postgresql
 <pre><code class="language-bash">gops mod update --force 2
 </code></pre>
 <h3 id="4-本地化验证"><a class="header" href="#4-本地化验证">4. 本地化验证</a></h3>
-<p>使用默认值：</p>
-<pre><code class="language-bash">gops mod localize --default
+<p>先准备好值文件（<code>gops mod update</code> 会在模块根生成 <code>values/&lt;model&gt;/</code> 下的模板）：</p>
+<pre><code class="language-text">values/
+└── x86-ubt22-k8s/
+    ├── sys_value.yml
+    └── mod_value.yml
 </code></pre>
-<p>使用指定值文件：</p>
-<pre><code class="language-bash">gops mod localize --value ./mod/x86-ubt22-k8s/values/dev.yml
+<p>然后执行本地化：</p>
+<pre><code class="language-bash">gops mod localize
 </code></pre>
+<p>本地化会读取 <code>values/&lt;model&gt;/</code> 生成 <code>mod/&lt;model&gt;/local/</code>。</p>
+<blockquote>
+<p><code>--value</code> / <code>--default</code> 参数虽然可用，但当前 <code>gops mod localize</code> 实现并未消费它们；实际值始终来自 <code>values/&lt;model&gt;/</code>。</p>
+</blockquote>
 <h3 id="5-进入系统组合"><a class="header" href="#5-进入系统组合">5. 进入系统组合</a></h3>
 <p>模块完成后，通常不直接交付，而是继续：</p>
 <pre><code class="language-bash">gops sys new --name demo-system
@@ -239,8 +248,8 @@ gops mod localize --debug 3
 <h2 id="现实边界"><a class="header" href="#现实边界">现实边界</a></h2>
 <p>当前实现里，模块开发流程要注意几点：</p>
 <ul>
-<li><code>gops mod new</code> 只生成骨架，不会一次性补齐所有业务文件</li>
-<li><code>localize</code> 依赖值文件和变量定义，先补齐 <code>vars.yml</code> 再做本地化</li>
+<li><code>gops mod new</code> 生成的是模板骨架，业务文件仍需按需修改</li>
+<li><code>localize</code> 依赖 <code>values/&lt;model&gt;/</code> 下的值文件和 <code>vars.yml</code> 变量定义，先补齐 <code>vars.yml</code> 再做本地化</li>
 <li>模块是系统的输入，不是交付终点</li>
 <li>执行类工作流能力最终仍由 <code>galaxy-flow</code> / <code>gx</code> 承担</li>
 </ul>

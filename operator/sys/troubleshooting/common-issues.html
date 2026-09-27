@@ -45,10 +45,10 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-4a6734f9.js";
+            window.path_to_searchindex_js = "../../../searchindex-efd20e26.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../toc-8a341037.js"></script>
+        <script src="../../../toc-18d2ed36.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -239,14 +239,15 @@
 <li><code>kind: gxl</code>：最终依赖系统工作流和 <code>gx</code>
 <ul>
 <li>先确认 <code>sys/workflows/operators.gxl</code> 存在</li>
-<li>再确认 <code>gx</code> 可执行</li>
-<li>再检查 <code>--env</code> 与 <code>--mod</code> 传参是否正确</li>
+<li>再确认 <code>gx</code> 可执行：<code>gops</code> 使用 <code>$HOME/bin/gx</code>，且要求版本 &gt;= <code>0.13.0</code></li>
+<li>实际映射为 <code>gx run -e &lt;env&gt; -d &lt;debug&gt; [--cmd-arg &lt;mod&gt;] &lt;cmd&gt;</code>，检查 <code>--env</code> 与 <code>--mod</code> 传参</li>
 </ul>
 </li>
 <li><code>kind: docker-compose</code>：直接调用本机 <code>docker compose</code>
 <ul>
 <li>确认 <code>docker compose</code> 可用</li>
 <li>确认 <code>.env</code> 已生成（<code>gops sys localize</code>）</li>
+<li><code>--mod</code> 会被忽略（纯 compose 系统没有模块）</li>
 </ul>
 </li>
 </ul>
