@@ -1,5 +1,7 @@
 # Galaxy-Ops 文档
 
+> 想先了解 `gops` 的定位与独特价值，见 [定位与价值](./overview.md)。
+
 ```bash
 gops <COMMAND>
 ```
@@ -73,6 +75,8 @@ gops mod localize [--value <file> | --default]
 
 ## 文档索引
 
+- [overview.md](./overview.md)：`gops` 定位与独特价值（含对象模型 / 双后端分派图）
+- [roadmap.md](./roadmap.md)：按性价比排序的改进方向
 - [mod/README.md](./mod/README.md)：模块对象说明与 `gops mod` 使用方式
 - [mod/CONFIGURATION.md](./mod/CONFIGURATION.md)：模块配置与文件结构
 - [mod/DEVELOPMENT.md](./mod/DEVELOPMENT.md)：模块开发与本地调试流程

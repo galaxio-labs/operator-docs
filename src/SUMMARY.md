@@ -7,6 +7,8 @@
     * [gops](cmd/gops.md)
     * [内置命令](buildin.md)
 * [维护器](operator/README.md)
+    * [定位与价值](operator/overview.md)
+    * [改进方向](operator/roadmap.md)
     * [系统维护器](operator/sys/README.md)
         * [系统模型](operator/sys/configuration/sys-model.md)
         * [示例](operator/sys/examples/microservices.md)

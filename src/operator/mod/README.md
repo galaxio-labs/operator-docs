@@ -44,16 +44,23 @@ nginx/
 │   └── work.gxl
 └── mod/
     ├── arm-mac14-host/
-    │   └── vars.yml
-    └── x86-ubt22-k8s/
-        └── vars.yml
+    │   ├── vars.yml
+    │   ├── _gal/work.gxl
+    │   ├── spec/
+    │   │   ├── artifact.yml
+    │   │   └── depends.yml
+    │   └── workflows/
+    │       └── operators.gxl
+    ├── x86-ubt22-host/        # 结构同 arm-mac14-host
+    └── x86-ubt22-k8s/         # 结构同 arm-mac14-host
 ```
 
 注意：
 
 - 当前骨架一定会生成 `mod-prj.yml`
-- 当前骨架会按支持的 `ModelSTD` 生成 `mod/<model>/...`
-- 初始模板比较轻，后续文件通常通过 update / localize / 手工补充逐步完善
+- 当前骨架会按支持的 `ModelSTD` 生成 `mod/<model>/...`；`gops mod new` 默认生成三个模型目录：`arm-mac14-host`、`x86-ubt22-host`、`x86-ubt22-k8s`
+- 每个 `mod/<model>/` 下会直接生成 `vars.yml`、`spec/artifact.yml`、`spec/depends.yml`、`workflows/operators.gxl` 与 `_gal/work.gxl`
+- `setting.yml` 不在 `gops mod new` 的初始骨架中（仅 `gops mod example` 会带）；初始模板比较轻，后续通过 update / localize / 手工补充逐步完善
 
 ### 2. 更新模块本地引用
 
@@ -67,16 +74,12 @@ gops mod update --force 2
 ### 3. 本地化模块
 
 ```bash
-gops mod localize --value values/dev.yml
+gops mod localize
 ```
 
-或：
+`localize` 会读取模块根目录下 `values/<model>/` 里的值文件（`sys_value.yml`、`mod_value.yml`）生成本地化结果（`mod/<model>/local/`），用于后续系统组合或实际交付。
 
-```bash
-gops mod localize --default
-```
-
-`localize` 会基于模块变量和值文件生成本地化结果，用于后续系统组合或实际交付。
+> 说明：`gops mod localize` 虽然声明了 `--value` / `--default` 参数，但当前实现并未消费它们，实际值来自 `values/<model>/`。
 
 ## 模块在整体分层中的位置
 

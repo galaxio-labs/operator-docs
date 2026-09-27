@@ -8,12 +8,20 @@ sys/sys_model.yml
 
 ## 字段
 
+gxl 系统实际生成的内容（`kind` 为默认值 `gxl` 时会被省略，不写入文件）：
+
 ```yaml
 name: web-stack          # 系统名（必填）
-kind: gxl                # 部署类型：gxl（默认）| docker-compose
 model: arm-mac14-host    # 目标型号（kind=gxl 必填；docker-compose 无型号）
 vender: ''               # 供应商标记（可选）
 ```
+
+字段含义：
+
+- `name`：系统名（必填）
+- `kind`：部署类型：`gxl`（默认）| `docker-compose`；`gxl` 是默认值，序列化时省略
+- `model`：目标型号（`kind=gxl` 必填，写入文件；`docker-compose` 无型号，字段省略）
+- `vender`：供应商标记（可选）
 
 纯 docker-compose 系统的实际内容示例：
 

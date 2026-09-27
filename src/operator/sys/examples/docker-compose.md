@@ -45,7 +45,7 @@ system:
     value: 1
 ```
 
-密钥不要写在这里：在 compose 里用 `${SEC_xxx}` 占位，运行时由 `gops sys start` 从 `~/.galaxy/sec_value.yml` 注入（不落盘）。
+密钥不要写在这里：在 compose 里用 `${SEC_xxx}` 占位，运行时由 `gops sys start` 从 `~/.galaxy/sec_value.yml`（或当前目录 `./.galaxy/sec_value.yml`）注入（不落盘）。
 
 ```yaml
 services:
@@ -101,6 +101,8 @@ gops sys status      # docker compose ps
 gops sys stop        # docker compose stop
 gops sys uninstall   # docker compose down
 ```
+
+`kind: docker-compose` 下 `--mod` 参数会被忽略（没有模块概念）；`--env` 仍可传入。
 
 ## 5. 交付给客户（运维项目）
 

@@ -8,6 +8,7 @@
 
 ```text
 <module-root>/
+├── .gitignore
 ├── mod-prj.yml
 ├── version.txt
 ├── _gal/
@@ -16,17 +17,22 @@
 │   └── work.gxl
 └── mod/
     └── <model>/
-        └── vars.yml
+        ├── vars.yml
+        ├── _gal/work.gxl
+        ├── spec/
+        │   ├── artifact.yml
+        │   └── depends.yml
+        └── workflows/
+            └── operators.gxl
 ```
 
-随着后续更新和本地化，模块目录通常还会出现这些约定目录或文件：
+运行 `gops mod update` / `gops mod localize` 后，模块目录还会出现这些约定目录或文件：
 
-- `mod/<model>/spec/artifact.yml`
-- `mod/<model>/spec/depends.yml`
-- `mod/<model>/setting.yml`
-- `mod/<model>/values/`
-- `mod/<model>/workflows/`
-- `mod/<model>/local/`
+- `mod/<model>/local/`：`gops mod localize` 生成的本地化输出
+- `mod/<model>/_used.json`：`gops mod localize` 生成的实际使用值
+- `values/<model>/sys_value.yml`、`values/<model>/mod_value.yml`：值文件（注意在模块根 `values/` 下，不在 `mod/<model>/` 里）
+- `values/<model>/.used_value.yml`：本地化时导出的可读值
+- `mod/<model>/setting.yml`：本地化行为设置（可选；`gops mod new` 不生成，`gops mod example` 或手工补充时才有）
 
 这些名字来自当前代码常量：
 
@@ -70,11 +76,11 @@
 
 ### `mod/<model>/setting.yml`
 
-模块本地化行为相关设置。
+模块本地化行为相关设置（可选，`gops mod new` 不生成）。
 
-### `mod/<model>/values/`
+### `values/<model>/`
 
-模块值文件目录。`gops mod localize` 会围绕值文件执行本地化。
+模块值文件目录（位于模块根目录下，**不是** `mod/<model>/values/`）。`gops mod update` 会在此生成 `sys_value.yml` 与 `mod_value.yml`，`gops mod localize` 会读取它们执行本地化。
 
 ### `mod/<model>/workflows/`
 
@@ -86,20 +92,21 @@
 
 ## ModelSTD 目录
 
-模块目录下按模型拆分，例如：
+模块目录下按模型拆分。`ModelSTD` 当前支持三种组合（`gops mod new` 会全部生成）：
 
-- `arm-mac14-host`
-- `x86-ubt22-k8s`
+- `arm-mac14-host`（`CpuArch::Arm` + `OsCPE::MAC14` + `RunSPC::Host`）
+- `x86-ubt22-host`（`CpuArch::X86` + `OsCPE::UBT22` + `RunSPC::Host`）
+- `x86-ubt22-k8s`（`CpuArch::X86` + `OsCPE::UBT22` + `RunSPC::K8S`）
 
-模型名由 `ModelSTD` 决定，表示 CPU / OS / 运行空间组合。
+模型名由 `ModelSTD` 决定，表示 CPU / OS / 运行空间组合（来自 `CpuArch` / `OsCPE` / `RunSPC` 三个枚举）。
 
 ## 当前配置边界
 
 当前代码里，模块配置的真实边界是：
 
 - 模块根配置：`mod-prj.yml`
-- 模型级配置：`mod/<model>/...`
-- 值文件和本地化输出：`values/` 与 `local/`
-- 工作流入口：`_gal/*.gxl` 与 `workflows/`
+- 模型级配置：`mod/<model>/...`（`vars.yml` / `spec/` / `workflows/` / `_gal/work.gxl`）
+- 值文件和本地化输出：模块根 `values/<model>/` 与模型内 `mod/<model>/local/`
+- 工作流入口：`_gal/*.gxl` 与 `workflows/operators.gxl`
 
 不要再按旧文档理解为独立 `gmod` 工具或多套历史模板系统。

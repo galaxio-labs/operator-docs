@@ -40,9 +40,13 @@ gops mod update [--debug <0..3>] [--log <level>] [--force <0..3>]
 gops mod localize [--value <file>] [--default]
 ```
 
+> 注意：`--value` / `--default` 参数已声明，但当前实现未消费；实际值来自模块根 `values/<model>/` 下的值文件。
+
 ## 目录参考
 
 ### 最小模块骨架
+
+`gops mod new` 按支持的 `ModelSTD` 生成三个模型目录（`arm-mac14-host` / `x86-ubt22-host` / `x86-ubt22-k8s`），每个模型结构相同：
 
 ```text
 <module>/
@@ -55,21 +59,28 @@ gops mod localize [--value <file>] [--default]
 │   └── work.gxl
 └── mod/
     └── <model>/
-        └── vars.yml
+        ├── vars.yml
+        ├── _gal/work.gxl
+        ├── spec/
+        │   ├── artifact.yml
+        │   └── depends.yml
+        └── workflows/
+            └── operators.gxl
 ```
 
-### 常见扩展目录
+### 运行 / 本地化后新增
 
 ```text
-mod/<model>/
-├── spec/
-│   ├── artifact.yml
-│   └── depends.yml
+<module>/
 ├── values/
-├── workflows/
-├── local/
-├── vars.yml
-└── setting.yml
+│   └── <model>/
+│       ├── sys_value.yml
+│       ├── mod_value.yml
+│       └── .used_value.yml
+└── mod/<model>/
+    ├── local/                 # gops mod localize 输出
+    ├── _used.json             # gops mod localize 生成
+    └── setting.yml            # 可选，非 gops mod new 生成
 ```
 
 ## 代码参考

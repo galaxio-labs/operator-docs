@@ -31,10 +31,10 @@ gops sys diagnose [--mod <module>] [--env <env>]
 
 ## 部署类型（kind）
 
-`sys/sys_model.yml` 的 `kind` 字段决定 `gops sys` 的行为：
+`sys/sys_model.yml` 的 `kind` 字段决定 `gops sys` 的行为（`kind` 缺省时按 `gxl` 处理，兼容 1.2.0 及更早的系统）：
 
-- `gxl`（默认，兼容旧系统）：部署命令委托外部 `gx` 执行，要求 `sys/workflows/operators.gxl` 与可用的 `gx`。
-- `docker-compose`：部署命令直接映射到 `docker compose`，**无需 `gx`**：
+- `gxl`：部署命令委托外部 `gx` 执行，要求 `sys/workflows/operators.gxl` 与可用的 `gx`。映射为 `gx run -e <ENV> -d <N> [--cmd-arg <MOD>] <cmd>`；`gx` 取自 `$HOME/bin/gx`，最低版本 `0.13.0`。
+- `docker-compose`：部署命令直接映射到 `docker compose`，**无需 `gx`**（`--mod` 参数会被忽略）：
 
   | `gops sys ...` | `docker compose ...` |
   | --- | --- |
@@ -49,9 +49,11 @@ gops sys diagnose [--mod <module>] [--env <env>]
 ## 创建系统
 
 ```bash
-gops sys new --name web-stack                       # 默认 gxl（需要选择系统型号）
+gops sys new --name web-stack                       # 不指定 --kind：交互式选择部署类型，选 gxl 后再选择系统型号
 gops sys new --name gateway --kind docker-compose   # 纯 compose（无型号）
 ```
+
+`--kind` 缺省时会在终端交互式选择部署类型（`TEST_MODE` 下直接按 `gxl` 处理）；`gxl` 还需要再交互选择 `ModelSTD`。
 
 两种类型生成的结构不同，见 [目录结构](./structure/directory.md)。
 
@@ -82,7 +84,7 @@ gops sys localize -> .env = merged_vars 默认值 ⊕ values/sys_value.yml ⊕ v
 
 ## 密钥
 
-密钥**不写入** `.env`：在 `docker-compose.yml` 里用 `${SEC_xxx}` 占位，`gops sys start` 运行时从 `~/.galaxy/sec_value.yml` 读取并注入子进程环境（key 会归一化为大写并加 `SEC_` 前缀）。详见 `galaxy-ops` 仓库的 `src/system/README.md`。
+密钥**不写入** `.env`：在 `docker-compose.yml` 里用 `${SEC_xxx}` 占位，`gops sys start` 运行时从 `~/.galaxy/sec_value.yml`（或当前目录 `./.galaxy/sec_value.yml`）读取并注入子进程环境（key 会归一化为大写并加 `SEC_` 前缀）。`gops sys diagnose`（`docker compose config`）只读校验，注入的是掩码值 `********`。详见 `galaxy-ops` 仓库的 `src/system/README.md`。
 
 ## 常见流程
 

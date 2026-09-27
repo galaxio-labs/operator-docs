@@ -62,11 +62,12 @@ gops sys localize --debug 2
 
 - `kind: gxl`：最终依赖系统工作流和 `gx`
   - 先确认 `sys/workflows/operators.gxl` 存在
-  - 再确认 `gx` 可执行
-  - 再检查 `--env` 与 `--mod` 传参是否正确
+  - 再确认 `gx` 可执行：`gops` 使用 `$HOME/bin/gx`，且要求版本 >= `0.13.0`
+  - 实际映射为 `gx run -e <env> -d <debug> [--cmd-arg <mod>] <cmd>`，检查 `--env` 与 `--mod` 传参
 - `kind: docker-compose`：直接调用本机 `docker compose`
   - 确认 `docker compose` 可用
   - 确认 `.env` 已生成（`gops sys localize`）
+  - `--mod` 会被忽略（纯 compose 系统没有模块）
 
 ## 7. `docker compose` 报变量未定义
 

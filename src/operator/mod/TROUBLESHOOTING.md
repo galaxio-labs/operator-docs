@@ -4,33 +4,38 @@
 
 现象：
 
-- 只看到 `mod-prj.yml`
-- 只看到 `_gal/` 和少量 `vars.yml`
+- 每个 `mod/<model>/` 下只有模板文件（`vars.yml` / `spec/` / `workflows/operators.gxl` / `_gal/work.gxl`）
+- 没有 `setting.yml`，也没有 `values/`
 
 原因：
 
-- 当前 `mod new` 生成的是最小骨架，不是完整业务模板
+- 当前 `mod new` 生成的是模板骨架，不是完整业务模板
+- `setting.yml` 和 `values/` 不由 `mod new` 生成
 
 处理：
 
-- 继续补齐 `spec/`、`setting.yml`、`values/`、`workflows/`
-- 之后执行 `gops mod update`
+- 按需修改 `mod/<model>/` 下的模板文件
+- 执行 `gops mod update` 生成 `values/<model>/` 值文件模板
+- 需要自定义本地化行为时再手工补充 `setting.yml`
 
 ## 2. `gops mod localize` 失败
 
 常见原因：
 
 - `vars.yml` 未定义完整
-- 指定的 `--value` 文件不存在
-- 值文件内容和变量结构不匹配
+- 模块根 `values/<model>/` 下的 `sys_value.yml` / `mod_value.yml` 缺失或结构不匹配
+- 尚未执行 `gops mod update`，导致值文件模板未生成
 
 建议：
 
 ```bash
-gops mod localize --default --debug 2
+gops mod update
+gops mod localize --debug 2
 ```
 
-先用默认值跑通，再切换到真实值文件。
+先生成 `values/<model>/` 值文件，再用 `--debug 2` 定位问题。
+
+> 注意：`gops mod localize` 声明的 `--value` / `--default` 目前未被实现消费，值始终来自 `values/<model>/`。
 
 ## 3. `gops mod update` 覆盖了本地内容
 
