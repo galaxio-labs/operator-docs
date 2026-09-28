@@ -9,7 +9,7 @@
 | 改进点 | 对应问题 | 现状（代码证据） | 价值 |
 | --- | --- | --- | --- |
 | ① `gops sys new --model <modelsdt>`（非交互选型） | 采用前置 | `ia_model_std()` 只能交互；自动选型靠 `TEST_MODE=1` 这种 hack | 解锁 CI / 自动化，实现极小 |
-| ② `gops sys check` 部署前校验 | 问题 1（后果严重） | `sys localize` 只导出 `.env`（`export_env_file`），**不校验** `docker-compose.yml` 里的 `${VAR}` 是否都有定义 | 把"上线才炸"提前到"localize 前报错" |
+| ② `gops sys check` 部署前校验 | 问题 1（后果严重） | `sys localize` 只导出 `.env`（`export_env_file`），**不校验** `sys/docker-compose.yaml` 里的 `${VAR}` 是否都有定义 | 把"上线才炸"提前到"localize 前报错" |
 | ③ 密钥缺失 fail-fast | 问题 1（容易遗忘） | `run_compose_cmd` 无脑 `load_sec_dict()` 注入，不校验被引用的 `${SEC_x}` 是否存在 | 挡住"空密码静默上线" |
 | ④ `gops sys diff` | 问题 1（容易遗忘） | 有值来源追踪（`_used.json`），但没有"客户值 vs 系统默认"的差异视图 | 一眼看清"改了哪些、哪些还是默认" |
 
@@ -84,12 +84,12 @@
 
 **现状证据**
 
-- `src/system/operator.rs::SysOperator::localize` 只把合并后的值无条件写入 `<sys>/.env`（`project::export_env_file(options.evaled_value(), env_path)`），**不校验** `docker-compose.yml` 里引用的 `${VAR}` 是否都有定义。
+- `src/system/operator.rs::SysOperator::localize` 只把合并后的值无条件写入 `<sys>/.env`（`project::export_env_file(options.evaled_value(), env_path)`），**不校验** `sys/docker-compose.yaml` 里引用的 `${VAR}` 是否都有定义。
 - 缺失时 `docker compose` 仅打印 `The "X" variable is not set. Defaulting to a blank string.` 然后带空值继续——正是"后果严重"的典型现场。
 
 **期望行为**
 
-- 新增只读命令 `gops sys check`：扫描系统内 `docker-compose*.yml` 的插值占位
+- 新增只读命令 `gops sys check`：扫描系统内 compose 文件（`sys/docker-compose.{yaml,yml}` 等）的插值占位
   - 形态：`${VAR}`、`${VAR:-default}`、`${VAR-default}`、`$VAR`；带 `:-` / `-` 默认值的视为可选；
   - 其余必须在"合并值字典（∪ 生成的 `.env`）"中存在；
   - 输出缺失清单（`文件:行号  变量名`），有缺失即非 0 退出。

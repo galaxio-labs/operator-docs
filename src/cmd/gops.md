@@ -363,7 +363,7 @@ gops sys localize [OPTIONS]
 - 生成 `.env`：`sys/merged_vars.yml` 默认值 ⊕ `values/sys_value.yml` ⊕ `values/value.yml`
 - 两个值文件都是可选、可部分覆盖：只写需要修改的项，其余取系统默认值
 - 系统变量尚未解析（缺 `sys/merged_vars.yml`）时会自动先执行 `update`；`--only` 跳过该步骤
-- `kind: docker-compose` 时，`.env` 供同目录的 `docker-compose.yml` 消费
+- `kind: docker-compose` 时，`.env` 供 compose 消费（默认 compose 文件为 `sys/docker-compose.yaml`，`.env` 仍在系统根）
 
 **示例：**
 ```bash
@@ -424,12 +424,12 @@ my-module/
 ```
 my-system/
 ├── sys-prj.yml              # 系统根配置
-├── docker-compose.yml       # 系统级 compose 定义（${VAR} 占位）
 ├── version.txt
 ├── _gal/                    # GXL 工程文件（仅 kind: gxl）
 ├── values/                  # 值文件目录
 └── sys/
     ├── sys_model.yml        # name / model / kind / vender
+    ├── docker-compose.yaml  # 系统级 compose 定义（${VAR} 占位）
     ├── mod_list.yml         # 模块列表（GXL；可选）
     ├── merged_vars.yml      # 聚合变量（sys update 生成，需入库）
     ├── workflows/           # GXL 工作流（可选）
@@ -438,7 +438,7 @@ my-system/
         └── vars.yml         # 系统设置变量定义（源）
 ```
 
-纯 docker-compose 系统只保留 `sys_model.yml` 与 `setting/vars.yml`（详见 [System 目录结构](../operator/sys/structure/directory.md)）。
+纯 docker-compose 系统只保留 `sys_model.yml`、`docker-compose.yaml` 与 `setting/vars.yml`（详见 [System 目录结构](../operator/sys/structure/directory.md)）。
 
 ## 最佳实践
 

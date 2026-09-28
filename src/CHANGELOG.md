@@ -1,5 +1,10 @@
 # Changelog
 
+# 文档更新 2026-09-28 —— 对齐 galaxy-ops 1.3.3 的 docker-compose 文件位置
+
+- **System 文档**：`kind: docker-compose` 的 compose 文件默认从系统根移至 `sys/docker-compose.yaml`，并补充查找顺序、compose 项目目录锚定系统根、旧布局仍兼容的说明；同步 `operator/sys/structure/directory.md`、`file-organization.md`、`naming-conventions.md`、`operator/sys/README.md`、`operator/sys/examples/docker-compose.md`、`operator/sys/troubleshooting/common-issues.md`、`operator/overview.md`、`operator/roadmap.md`
+- **命令行工具**：`cmd/gops.md` 的系统目录结构与 `.env` 消费说明改为 `sys/docker-compose.yaml`
+
 # 工程 2026-09-18 —— 站点源移入 src/，避免 .git 被拷进产物
 
 - `book.toml` 的 `src` 由 `./` 改为 `src`，站点内容（`SUMMARY.md`、`README.md`、`CHANGELOG.md`、`cmd/`、`gxl/`、`operator/`、`config/`、`buildin.md`、`work.md`、`mermaid.min.js`、`favicon.svg`）平移至 `src/`

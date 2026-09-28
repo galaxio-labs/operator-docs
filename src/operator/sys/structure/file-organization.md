@@ -5,7 +5,6 @@
 ## 根目录文件
 
 - `sys-prj.yml`：系统根配置
-- `docker-compose.yml`：系统级 compose 定义（`sys new` 默认生成，用 `${VAR}` 占位）
 - `version.txt`：版本标记
 - `.gitignore`
 
@@ -18,6 +17,7 @@
 ## `sys/`
 
 - `sys_model.yml`：系统模型定义（`name` / `model` / `kind` / `vender`）
+- `docker-compose.yaml`：系统级 compose 定义（`sys new` 默认生成，用 `${VAR}` 占位；放在系统根（旧布局）仍受支持）
 - `mod_list.yml`：模块列表定义（GXL；可选）
 - `merged_vars.yml`：聚合变量（`sys update` 生成，需入库）
 - `setting/list.yml`：设置列表（可选）
@@ -32,7 +32,7 @@
 
 ## `.env`
 
-`gops sys localize` 生成的非密钥配置（`KEY=VALUE`），供 `docker compose` 消费。密钥不写入 `.env`。
+`gops sys localize` 生成的非密钥配置（`KEY=VALUE`），供 `docker compose` 消费。密钥不写入 `.env`。compose 项目目录锚定系统根，因此 `.env` 位于系统根（而非默认的 `sys/`）。
 
 ## 文件职责与本地化
 

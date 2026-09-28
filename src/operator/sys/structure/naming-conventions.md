@@ -25,7 +25,7 @@ gops sys new --name <name> [--kind gxl|docker-compose]
 当前实现里关键文件名是固定的：
 
 - `sys-prj.yml`
-- `docker-compose.yml`
+- `sys/docker-compose.yaml`
 - `sys_model.yml`
 - `mod_list.yml`
 - `merged_vars.yml`

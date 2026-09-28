@@ -74,7 +74,7 @@ gops sys localize --debug 2
 确认点：
 
 - 已执行 `gops sys localize` 生成 `.env`
-- `.env` 与 `docker-compose.yml` 位于同一目录
+- `.env` 位于系统根；compose 文件默认在 `sys/`（项目目录锚定系统根，`${VAR}` 由系统根的 `.env` 注入）
 - 密钥类变量用 `${SEC_xxx}` 占位，由 `gops sys start` 从 `~/.galaxy/sec_value.yml` 注入；直接用 `docker compose up` 不会自动注入密钥
 
 ## 8. 文档和目录树不一致

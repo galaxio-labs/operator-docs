@@ -11,7 +11,6 @@ gops sys new --name <name>
 ```text
 <system-root>/
 ├── .gitignore
-├── docker-compose.yml       # sys new 默认生成的 compose 定义（用 ${VAR} 占位）
 ├── sys-prj.yml              # 系统根配置
 ├── version.txt
 ├── _gal/                    # GXL 工程目录
@@ -22,6 +21,7 @@ gops sys new --name <name>
 └── sys/
     ├── .gitignore
     ├── sys_model.yml        # name / model / vender（kind 缺省 = gxl）
+    ├── docker-compose.yaml  # sys new 默认生成的 compose 定义（用 ${VAR} 占位）
     ├── mod_list.yml         # 模块列表
     ├── workflows/
     │   └── operators.gxl
@@ -39,16 +39,18 @@ gops sys new --name <name> --kind docker-compose
 ```text
 <system-root>/
 ├── .gitignore
-├── docker-compose.yml       # 系统级 compose 定义
 ├── sys-prj.yml
 ├── version.txt
 └── sys/
     ├── sys_model.yml        # name / kind: docker-compose / vender
+    ├── docker-compose.yaml  # 系统级 compose 定义
     └── setting/
         └── vars.yml
 ```
 
 compose 类型不生成 `_gal/`、`values/`、`mod_list.yml`、`workflows/`、`setting/list.yml`。
+
+compose 文件默认位于 `sys/`，`gops sys` 按 `sys/compose.{yaml,yml}` → `sys/docker-compose.{yaml,yml}` → 系统根同名文件的顺序查找。无论文件在哪，compose **项目目录都锚定系统根**（项目名 = 根目录名，相对挂载路径与 `.env` 均相对系统根）。把文件放在系统根（旧布局）仍受支持：此时 `gops` 不加 `-f`，交由 docker 自动发现（`docker-compose.override.yml` 自动合并、`COMPOSE_FILE` 环境变量继续生效）；`sys/` 布局下由 `gops` 显式合并 `<sys>/<stem>.override.{yaml,yml}`。
 
 ## 运行时生成的文件
 

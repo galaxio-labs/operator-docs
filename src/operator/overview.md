@@ -298,7 +298,7 @@ flowchart TD
     MV["sys/merged_vars.yml 系统默认值"] --> ENV[".env"]
     SV["values/sys_value.yml 注释模板"] --> ENV
     UV["values/value.yml 客户覆盖"] --> ENV
-    ENV --> DC["docker-compose.yml 消费"]
+    ENV --> DC["sys/docker-compose.yaml 消费"]
     SEC["~/.galaxy/sec_value.yml 密钥"] -->|运行时注入子进程环境| DC
 ```
 

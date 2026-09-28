@@ -21,7 +21,7 @@ vender: ''
 
 ## 2. 编写 compose 与变量定义
 
-`docker-compose.yml` 用 Docker Compose 原生 `${VAR}` 占位（`sys new` 会生成一份可修改的模板）：
+`sys/docker-compose.yaml` 用 Docker Compose 原生 `${VAR}` 占位（`sys new` 会生成一份可修改的模板）：
 
 ```yaml
 services:
@@ -32,6 +32,8 @@ services:
     deploy:
       replicas: ${REPLICAS}
 ```
+
+compose 文件默认位于 `sys/`，也兼容放在系统根（旧布局）。无论文件在哪，compose 项目目录都锚定系统根，`${VAR}` 由系统根的 `.env` 注入。
 
 非密钥变量在 `sys/setting/vars.yml` 的 `system:` 段声明（源定义，随系统版本化）：
 

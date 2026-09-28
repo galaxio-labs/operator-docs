@@ -68,7 +68,7 @@ gops sys new --name gateway --kind docker-compose   # 纯 compose（无型号）
 - `sys/workflows/operators.gxl`：系统级工作流（GXL）
 - `values/sys_value.yml`：值文件（`sys update` 生成**注释模板**，取消注释即覆盖）
 - `values/value.yml`：额外覆盖层（适合入库的客户覆盖）
-- `docker-compose.yml`：系统级 compose 定义（用 `${VAR}` 占位）
+- `sys/docker-compose.yaml`：系统级 compose 定义（用 `${VAR}` 占位；放在系统根（旧布局）仍受支持）
 - `.env`：`sys localize` 生成的非密钥配置（供 compose 消费）
 
 ## 值 / 本地化流程
@@ -84,7 +84,7 @@ gops sys localize -> .env = merged_vars 默认值 ⊕ values/sys_value.yml ⊕ v
 
 ## 密钥
 
-密钥**不写入** `.env`：在 `docker-compose.yml` 里用 `${SEC_xxx}` 占位，`gops sys start` 运行时从 `~/.galaxy/sec_value.yml`（或当前目录 `./.galaxy/sec_value.yml`）读取并注入子进程环境（key 会归一化为大写并加 `SEC_` 前缀）。`gops sys diagnose`（`docker compose config`）只读校验，注入的是掩码值 `********`。详见 `galaxy-ops` 仓库的 `src/system/README.md`。
+密钥**不写入** `.env`：在 `sys/docker-compose.yaml` 里用 `${SEC_xxx}` 占位，`gops sys start` 运行时从 `~/.galaxy/sec_value.yml`（或当前目录 `./.galaxy/sec_value.yml`）读取并注入子进程环境（key 会归一化为大写并加 `SEC_` 前缀）。`gops sys diagnose`（`docker compose config`）只读校验，注入的是掩码值 `********`。详见 `galaxy-ops` 仓库的 `src/system/README.md`。
 
 ## 常见流程
 
