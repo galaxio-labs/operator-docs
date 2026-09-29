@@ -257,7 +257,7 @@ gops mod localize [OPTIONS]
 - 基于环境特定值生成本地化配置文件
 - 适配不同部署环境的需求
 - 支持自定义值或默认值选择
-- 渲染 `spec/` → `local/` 后打印**文件变更表**（`FILE | STATE`，`created` / `replaced`）：用前后内容指纹（sha256）比对，先清空 `local/` 再重建不会误报未变文件，删除不报
+- 渲染 `spec/` → `local/` 后打印**文件变更表**（`FILE | STATE`，`created` / `replaced`）：用前后内容指纹（sha256）比对，先清空 `local/` 再重建不会误报未变文件，删除不报；标头为 `<输出目录> ← <源模板>`（如 `…/local ← sys/setting/warp-fusion`），区分来源
 
 **示例：**
 ```bash
