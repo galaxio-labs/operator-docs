@@ -51,7 +51,7 @@ gops sys new --name <name> [--kind gxl|docker-compose]
 
 ```bash
 gops sys localize --mod <module>
-gops sys start --mod <module>
+gops run start --mod <module>
 ```
 
 这里的 `<module>` 应与 `mod_list.yml` 中声明的模块名一致。

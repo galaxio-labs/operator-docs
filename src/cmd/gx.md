@@ -103,5 +103,5 @@ chmod +x gx
 
 ### 与 `gops` 的关系
 
-`kind: gxl` 的系统在 `gops sys start/stop/status/...` 时委托外部执行器执行系统的管理流程；
+`kind: gxl` 的系统在 `gops run start/stop/status/...` 时委托外部执行器执行系统的管理流程；
 `kind: docker-compose` 的系统不需要 `gx`，直接映射到本机 `docker compose`。

@@ -33,8 +33,9 @@ gops [全局选项] <主命令> [子命令选项] <子命令>
 
 1. **`gops prj`** - 部署管理命令
 2. **`gops mod`** - 模块管理命令
-3. **`gops sys`** - 系统管理命令
-4. **`gops self`** - 自升级命令
+3. **`gops sys`** - 系统管理命令（定义 / 交付 / 工件）
+4. **`gops run`** - 运行时运维命令（在环境里落地 / 运行）
+5. **`gops self`** - 自升级命令
 
 ## 全局选项
 
@@ -399,6 +400,31 @@ gops sys localize --mod gateway
 **值文件说明：** `values/sys_value.yml` 由 `sys update` 首次生成，整份是**注释模板**——取消注释需要覆盖的项即可；`values/value.yml` 优先级更高（覆盖层优先：`value.yml` > `sys_value.yml` > 变量定义），适合入库的客户覆盖。
 
 > 改了 `sys/setting/vars.yml` 而未重新 localize 时，`gops sys check` 会输出 `[WARN]` 提示（仅比对 `.env` 看不到这层陈旧）。
+
+## 运行时运维命令 (gops run)
+
+在目标系统上执行**标准运维动作**（算子流契约）。按 `sys/sys_model.yml` 的 `kind` 分派：`gxl` 系统委托 `gx run <cmd>`（需 `gx >= 0.13.0`）；`docker-compose` 系统映射到 `docker compose` 子命令（无需 gx）。
+
+```bash
+gops run download    # 下载制品        compose: pull
+gops run install     # 安装组件        compose: create
+gops run uninstall   # 卸载组件        compose: down
+gops run start       # 启动服务        compose: up -d
+gops run stop        # 停止服务        compose: stop
+gops run status      # 查询状态        compose: ps
+gops run diagnose    # 诊断问题        compose: config（密钥掩码注入）
+```
+
+**通用选项：** `--mod <MODULE>`、`-e, --env <ENV>`（默认 `default`）、`-d/--debug`、`--log`。
+
+> 与 `gops sys`（**定义/交付/工件**：`new`/`update`/`localize`/`package`/`setting`/`check`）区分：`gops run` 只管「在环境里落地/运行」。
+
+**示例：**
+```bash
+gops run start --env default
+gops run status --mod nginx
+gops run diagnose     # 校验并展示解析后的 compose（密钥以 ******** 掩码注入）
+```
 
 ## 自升级命令 (gops self)
 

@@ -104,7 +104,7 @@ GOps 提供的是"让配置回到版本与责任闭环"的**结构**，但它不
 
 - **模块层承载"同一能力的多种落地形式"**：同一模块可同时拥有 Host 与 K8S 的 `mod/<model>/`（不同 `RunSPC`），各自的 `workflows/operators.gxl` 提供该形态的实现。
 - **系统层选定形态**：`ModelSTD`（Host / K8S）+ `kind`（gxl / compose）决定用哪种形态交付。
-- **三形态共享交付面**：同一套值模型、同一个命令面（`gops sys start/stop/status/diagnose`）、同一套打包 / 导入 / 保值流程。客户差异不随形态改变。
+- **三形态共享交付面**：同一套值模型、同一个命令面（`gops run start/stop/status/diagnose`）、同一套打包 / 导入 / 保值流程。客户差异不随形态改变。
 
 #### 边界
 
@@ -205,7 +205,7 @@ GOps 也依赖 Git，但 Git 在两边角色不同：
 
 三个本质差距：
 
-1. **有没有 reconcile loop**：GitOps 有常驻控制器持续把现场拉回 Git；GOps 没有任何常驻组件，`gops sys start` 跑完即止，**不知道现场是否偏离默认值**。
+1. **有没有 reconcile loop**：GitOps 有常驻控制器持续把现场拉回 Git；GOps 没有任何常驻组件，`gops run start` 跑完即止，**不知道现场是否偏离默认值**。
 2. **部署能否归约为声明式终态**：GitOps 成立的前提是"期望状态可完整描述 + 幂等收敛"，这成立在容器 / 基础设施领域；二进制部署与 GXL 工作流走的是"可重复过程"，不假装是终态。
 3. **真源的权威性**：GitOps 里现场是从属的，手改会被当 drift 冲掉；GOps 反而承认现场是权威之一——`prj reimport` 就是"重建系统、保留 `values/`"。两者哲学相反。
 
@@ -266,7 +266,7 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    CMD["gops sys start / stop / status / diagnose ..."] --> K{"sys_model.yml kind"}
+    CMD["gops run start / stop / status / diagnose ..."] --> K{"sys_model.yml kind"}
     K -->|gxl| GX["gx run -e ENV -d N cmd"]
     K -->|docker-compose| DC["docker compose ..."]
     GX --> WF["系统工作流 GXL"]
@@ -309,7 +309,7 @@ flowchart TD
 
 ### 5. 密钥作为一等公民：不落盘、运行时注入、诊断掩码
 
-compose 里用 `${SEC_xxx}` 占位；`gops sys start` 运行时从 `~/.galaxy/sec_value.yml`（或 `./.galaxy/sec_value.yml`）读取，只注入 **docker compose 子进程环境**，不写 `.env`、不入库；`gops sys diagnose`（`docker compose config`）注入的是掩码值 `********`。
+compose 里用 `${SEC_xxx}` 占位；`gops run start` 运行时从 `~/.galaxy/sec_value.yml`（或 `./.galaxy/sec_value.yml`）读取，只注入 **docker compose 子进程环境**，不写 `.env`、不入库；`gops run diagnose`（`docker compose config`）注入的是掩码值 `********`。
 
 配置与敏感值在生命周期上被彻底分开，而不是仅靠 `.gitignore` 约定。
 

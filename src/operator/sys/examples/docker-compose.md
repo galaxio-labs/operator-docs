@@ -47,7 +47,7 @@ system:
     value: 1
 ```
 
-密钥不要写在这里：在 compose 里用 `${SEC_xxx}` 占位，运行时由 `gops sys start` 从 `~/.galaxy/sec_value.yml`（或当前目录 `./.galaxy/sec_value.yml`）注入（不落盘）。
+密钥不要写在这里：在 compose 里用 `${SEC_xxx}` 占位，运行时由 `gops run start` 从 `~/.galaxy/sec_value.yml`（或当前目录 `./.galaxy/sec_value.yml`）注入（不落盘）。
 
 ```yaml
 services:
@@ -95,13 +95,13 @@ REPLICAS: 3
 `kind: docker-compose` 下，部署命令映射到 `docker compose`：
 
 ```bash
-gops sys diagnose    # docker compose config（密钥以 ******** 掩码注入）
-gops sys download    # docker compose pull
-gops sys install     # docker compose create
-gops sys start       # docker compose up -d（密钥注入子进程环境）
-gops sys status      # docker compose ps
-gops sys stop        # docker compose stop
-gops sys uninstall   # docker compose down
+gops run diagnose    # docker compose config（密钥以 ******** 掩码注入）
+gops run download    # docker compose pull
+gops run install     # docker compose create
+gops run start       # docker compose up -d（密钥注入子进程环境）
+gops run status      # docker compose ps
+gops run stop        # docker compose stop
+gops run uninstall   # docker compose down
 ```
 
 `kind: docker-compose` 下 `--mod` 参数会被忽略（没有模块概念）；`--env` 仍可传入。
@@ -116,7 +116,7 @@ cd customer-a
 gops prj import --path ../gateway-0.1.0.tar.gz
 cd gateway
 gops sys localize                         # 使用 <project>/values/gateway/ 下的客户值
-gops sys start
+gops run start
 ```
 
 客户差异写在 `<project>/values/gateway/`（例如 `value.yml`）。在项目内的系统目录执行 `gops sys localize` / `sys update` 时，会依据上层 `ops-prj.yml` 直接使用该项目值目录。

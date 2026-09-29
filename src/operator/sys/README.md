@@ -15,23 +15,27 @@
 ## 当前命令
 
 ```bash
+# gops sys —— 定义 / 交付 / 工件
 gops sys new --name <name> [--kind gxl|docker-compose]
 gops sys update [--force]
 gops sys package [--force] [--output <path>] [--full]
 gops sys localize [--mod <module>] [--only]
 gops sys setting --init
-gops sys download [--mod <module>] [--env <env>]
-gops sys install [--mod <module>] [--env <env>]
-gops sys uninstall [--mod <module>] [--env <env>]
-gops sys start [--mod <module>] [--env <env>]
-gops sys stop [--mod <module>] [--env <env>]
-gops sys status [--mod <module>] [--env <env>]
-gops sys diagnose [--mod <module>] [--env <env>]
+gops sys check
+
+# gops run —— 运行时运维（在环境里落地/运行）
+gops run download [--mod <module>] [--env <env>]
+gops run install [--mod <module>] [--env <env>]
+gops run uninstall [--mod <module>] [--env <env>]
+gops run start [--mod <module>] [--env <env>]
+gops run stop [--mod <module>] [--env <env>]
+gops run status [--mod <module>] [--env <env>]
+gops run diagnose [--mod <module>] [--env <env>]
 ```
 
 ## 部署类型（kind）
 
-`sys/sys_model.yml` 的 `kind` 字段决定 `gops sys` 的行为（`kind` 缺省时按 `gxl` 处理，兼容 1.2.0 及更早的系统）：
+`sys/sys_model.yml` 的 `kind` 字段决定 `gops run` 的行为（`kind` 缺省时按 `gxl` 处理，兼容 1.2.0 及更早的系统）：
 
 - `gxl`：部署命令委托外部 `gx` 执行，要求 `sys/workflows/operators.gxl` 与可用的 `gx`。映射为 `gx run -e <ENV> -d <N> [--cmd-arg <MOD>] <cmd>`；`gx` 取自 `$HOME/bin/gx`，最低版本 `0.13.0`。
 - `docker-compose`：部署命令直接映射到 `docker compose`，**无需 `gx`**（`--mod` 参数会被忽略）：
@@ -84,7 +88,7 @@ gops sys localize -> .env = merged_vars 默认值 ⊕ values/sys_value.yml ⊕ v
 
 ## 密钥
 
-密钥**不写入** `.env`：在 `sys/docker-compose.yaml` 里用 `${SEC_xxx}` 占位，`gops sys start` 运行时从 `~/.galaxy/sec_value.yml`（或当前目录 `./.galaxy/sec_value.yml`）读取并注入子进程环境（key 会归一化为大写并加 `SEC_` 前缀）。`gops sys diagnose`（`docker compose config`）只读校验，注入的是掩码值 `********`。详见 `galaxy-ops` 仓库的 `src/system/README.md`。
+密钥**不写入** `.env`：在 `sys/docker-compose.yaml` 里用 `${SEC_xxx}` 占位，`gops run start` 运行时从 `~/.galaxy/sec_value.yml`（或当前目录 `./.galaxy/sec_value.yml`）读取并注入子进程环境（key 会归一化为大写并加 `SEC_` 前缀）。`gops run diagnose`（`docker compose config`）只读校验，注入的是掩码值 `********`。详见 `galaxy-ops` 仓库的 `src/system/README.md`。
 
 ## 常见流程
 
@@ -118,8 +122,8 @@ gops sys setting --init
 ### 执行系统操作
 
 ```bash
-gops sys start --env default
-gops sys status --env default
+gops run start --env default
+gops run status --env default
 ```
 
 ## 与模块和项目的关系

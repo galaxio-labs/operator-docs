@@ -115,7 +115,7 @@
 
 **现状证据**
 
-- `app/gops/commands/sys_cmd.rs::run_compose_cmd` 无脑 `orion_sec::load_sec_dict()` 后 `sec_env_pairs_for(cmd_name, &dict)` 全量注入子进程环境，**不检查** compose 文件里实际引用的 `${SEC_xxx}` 是否都在 `sec_dict` 中。
+- `app/gops/commands/run_cmd.rs::RunCommandHandler::run_compose_cmd` 无脑 `orion_sec::load_sec_dict()` 后 `sec_env_pairs_for(cmd_name, &dict)` 全量注入子进程环境，**不检查** compose 文件里实际引用的 `${SEC_xxx}` 是否都在 `sec_dict` 中。
 - `sec_env_pairs_for` 已知 `diagnose` 需要掩码（`SECRET_MASK`），说明"密钥注入"这一层已成型，只差一个"存在性"前置校验。
 
 **期望行为**

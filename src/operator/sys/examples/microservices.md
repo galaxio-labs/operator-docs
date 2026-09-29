@@ -69,10 +69,10 @@ gops sys localize    # 值取自 <project>/values/microservice-stack/
 ## 8. 执行系统操作
 
 ```bash
-gops sys download --env default
-gops sys install --env default
-gops sys start --env default
-gops sys status --env default
+gops run download --env default
+gops run install --env default
+gops run start --env default
+gops run status --env default
 ```
 
 ## 说明

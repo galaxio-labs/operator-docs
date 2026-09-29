@@ -47,18 +47,22 @@ gops prj reimport
 ### 系统命令
 
 ```bash
+# gops sys —— 定义 / 交付 / 工件
 gops sys new --name <name> [--kind gxl|docker-compose]
 gops sys update
-gops sys package
+gops sys package [--full]
 gops sys localize [--mod <module>] [--only]
 gops sys setting --init
-gops sys download [--mod <module>] [--env <env>]
-gops sys install [--mod <module>] [--env <env>]
-gops sys uninstall [--mod <module>] [--env <env>]
-gops sys start [--mod <module>] [--env <env>]
-gops sys stop [--mod <module>] [--env <env>]
-gops sys status [--mod <module>] [--env <env>]
-gops sys diagnose [--mod <module>] [--env <env>]
+gops sys check
+
+# gops run —— 运行时运维（在环境里落地/运行）
+gops run download [--mod <module>] [--env <env>]
+gops run install [--mod <module>] [--env <env>]
+gops run uninstall [--mod <module>] [--env <env>]
+gops run start [--mod <module>] [--env <env>]
+gops run stop [--mod <module>] [--env <env>]
+gops run status [--mod <module>] [--env <env>]
+gops run diagnose [--mod <module>] [--env <env>]
 ```
 
 `sys/sys_model.yml` 的 `kind` 决定部署行为：`gxl`（默认）委托 `gx` 执行；`docker-compose` 直接映射到本机 `docker compose`。

@@ -52,7 +52,7 @@ vender: ''
 ## 在流程中的作用
 
 - `gops sys new` 会初始化它；`--kind docker-compose` 会写入 `kind: docker-compose` 且不生成 GXL 骨架
-- `gops sys` 的部署命令按 `kind` 分派
+- `gops run` 的部署命令按 `kind` 分派
 - `gops prj import` / `prj reimport` 用它确定系统名与类型
 
 如果要核对字段细节，优先以当前仓库代码和 `gops sys new` 的生成结果为准，而不是旧版文档示例。
