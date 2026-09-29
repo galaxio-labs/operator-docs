@@ -31,7 +31,7 @@ gops sys setting --init
 
 ```bash
 gops sys update      # 解析变量 -> sys/merged_vars.yml，并生成 values/sys_value.yml（注释模板）
-gops sys localize    # 生成 .env（缺 merged_vars.yml 时会自动先 update）
+gops sys localize    # 生成 .env（默认先解析变量，等价于先 update）
 ```
 
 如果只想处理某个模块：

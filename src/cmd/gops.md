@@ -337,18 +337,32 @@ gops sys package [OPTIONS]
 **选项：**
 - `-f, --force <LEVEL>` - 强制更新级别
 - `--output <PATH>` - 输出路径（默认：父目录下 `<name>-<version>.tar.gz`）
-- `--no-git` - 不按 git 入库文件打包，而是打包当前目录全部（仅跳过 `.git/`）
+- `--full` - 打当前目录**全部**（含制品与本地化产物，用于隔离网络交付；默认只打 git 入库文件）。旧名 `--no-git` 仍可用（隐藏别名）
 
 **功能：**
 - 先执行一次 `update`（解析变量、生成 `sys/merged_vars.yml`），保证交付包可被 `gops prj import` 完整导入
-- 再打包为 `.tar.gz`：**默认只含 git 入库文件**（`git ls-files`，等价 `git archive` 的“只含入库文件”，需在 git 仓库内运行），自然排除被忽略的产物（`sys/*/mods/`、`**/local`、`.env` 等）；`deliver.lock` 作为交付清单始终随包分发
+- 再打包为 `.tar.gz`：**默认只含 git 入库文件**（`git ls-files`，等价 `git archive` 的“只含入库文件”，需在 git 仓库内运行），自然排除被 `.gitignore` 忽略的产物（`sys/*/mods/`、`**/local`、`.env` 等）；`--full` 则打当前目录全部（含制品/本地化产物）
+- 两种模式都会排除 `sys-prj.yml` 的 `ignore:` 节列出的路径；`deliver.lock` 作为交付清单始终随包分发（不受 `ignore` 影响）
+
+**`ignore` 节（`sys-prj.yml`）**：列出打包时排除的路径模式（glob，**相对系统根**），即使 `--full` 也排除。匹配文件自身**或**其任一祖先目录——目录级模式（如 `sys/*/mods`）会排除整棵子树。模式**锚定在根**：裸名 `mods` 只匹配根级 `mods`，任意层级请用 `**/mods`；`*` 不跨 `/`，跨级用 `**`；前导 `/` 或 `./` 会被归一化（等价于不带）。
+
+> 注意：模式过宽（如 `*`）会连 `sys/merged_vars.yml` 等一并排除；`deliver.lock` 不受影响（始终随包）。
+
+```yaml
+# sys-prj.yml
+ignore:
+  - artifacts
+  - sys/*/mods
+  - '**/cache'
+  - .env
+```
 
 **示例：**
 ```bash
-# 默认：只含入库文件
+# 默认：只含入库文件（不含制品）
 gops sys package
-# 整目录打包（含未入库 / 被忽略的内容）
-gops sys package --no-git
+# 整目录打包（含制品 / 被忽略的产物，用于隔离网络）
+gops sys package --full
 gops sys package --output /tmp/gateway-0.1.0.tar.gz
 ```
 
@@ -367,22 +381,24 @@ gops sys localize [OPTIONS]
 **功能：**
 - 生成 `.env`：`sys/merged_vars.yml` 默认值 ⊕ `values/sys_value.yml` ⊕ `values/value.yml`
 - 两个值文件都是可选、可部分覆盖：只写需要修改的项，其余取系统默认值
-- 系统变量尚未解析（缺 `sys/merged_vars.yml`）时会自动先执行 `update`；`--only` 跳过该步骤
+- **默认先解析变量**：`gops sys localize` 默认**无条件**先解析（等价于先跑一次 `gops sys update`，含解析/下载模块），因此改完 `sys/setting/vars.yml` 一条命令即生效；`--only` 跳过该步骤（用现有 `sys/merged_vars.yml`，**缺失时会明确报错**）。
 - `kind: docker-compose` 时，`.env` 供 compose 消费（默认 compose 文件为 `sys/docker-compose.yaml`，`.env` 仍在系统根）
 
 **示例：**
 ```bash
-# 生成本地化配置（必要时自动先 update）
+# 生成本地化配置（默认先解析变量，再写 .env）
 gops sys localize
 
-# 只 localize，不解析/下载（变量未解析时会明确报错）
+# 只 localize，不解析/下载（用现有 merged_vars.yml；缺失则报错）
 gops sys localize --only
 
 # 只处理某个模块
 gops sys localize --mod gateway
 ```
 
-**值文件说明：** `values/sys_value.yml` 由 `sys update` 首次生成，整份是**注释模板**——取消注释需要覆盖的项即可；`values/value.yml` 优先级更高，适合入库的客户覆盖。
+**值文件说明：** `values/sys_value.yml` 由 `sys update` 首次生成，整份是**注释模板**——取消注释需要覆盖的项即可；`values/value.yml` 优先级更高（覆盖层优先：`value.yml` > `sys_value.yml` > 变量定义），适合入库的客户覆盖。
+
+> 改了 `sys/setting/vars.yml` 而未重新 localize 时，`gops sys check` 会输出 `[WARN]` 提示（仅比对 `.env` 看不到这层陈旧）。
 
 ## 自升级命令 (gops self)
 

@@ -67,7 +67,7 @@ key 会归一化为大写并加 `SEC_` 前缀：`postgres_password` → `SEC_POS
 ## 3. 生成 `.env`
 
 ```bash
-gops sys localize        # 缺 merged_vars.yml 时会自动先 update
+gops sys localize        # 默认先解析变量（等价于先 update），再生成 .env
 cat .env
 ```
 

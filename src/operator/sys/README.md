@@ -17,7 +17,7 @@
 ```bash
 gops sys new --name <name> [--kind gxl|docker-compose]
 gops sys update [--force]
-gops sys package [--force] [--output <path>] [--no-git]
+gops sys package [--force] [--output <path>] [--full]
 gops sys localize [--mod <module>] [--only]
 gops sys setting --init
 gops sys download [--mod <module>] [--env <env>]
@@ -80,7 +80,7 @@ gops sys localize -> .env = merged_vars 默认值 ⊕ values/sys_value.yml ⊕ v
 
 两个值文件都是**可选、可部分覆盖**：只写需要修改的项，其余取系统默认值。保持注释模板原样时等价于空覆盖。
 
-`sys localize` 在系统变量尚未解析（缺 `sys/merged_vars.yml`）时会自动先执行 `update`；`--only` 跳过这一步（此时若变量仍未解析会明确报错）。
+`sys localize` 默认**总是先解析变量**（等价于先跑一次 `update`，含解析/下载模块），再生成 `.env`；`--only` 跳过解析（用现有 `sys/merged_vars.yml`，缺失则明确报错）。
 
 ## 密钥
 
@@ -98,8 +98,8 @@ gops sys update --force
 ### 本地化系统
 
 ```bash
-gops sys localize            # 缺 merged_vars.yml 时会自动先 update，再生成 .env
-gops sys localize --only     # 只 localize，不解析/下载模块
+gops sys localize            # 默认先解析变量（等价于先 update），再生成 .env
+gops sys localize --only     # 只 localize，不解析/下载模块（用现有 merged_vars.yml）
 gops sys localize --mod nginx
 ```
 
