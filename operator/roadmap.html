@@ -45,7 +45,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-cc2c0a22.js";
+            window.path_to_searchindex_js = "../searchindex-5803604b.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-18d2ed36.js"></script>
@@ -312,7 +312,7 @@
 <p><strong>目标</strong>：挡住“空密码静默上线“。</p>
 <p><strong>现状证据</strong></p>
 <ul>
-<li><code>app/gops/commands/sys_cmd.rs::run_compose_cmd</code> 无脑 <code>orion_sec::load_sec_dict()</code> 后 <code>sec_env_pairs_for(cmd_name, &amp;dict)</code> 全量注入子进程环境，<strong>不检查</strong> compose 文件里实际引用的 <code>${SEC_xxx}</code> 是否都在 <code>sec_dict</code> 中。</li>
+<li><code>app/gops/commands/run_cmd.rs::RunCommandHandler::run_compose_cmd</code> 无脑 <code>orion_sec::load_sec_dict()</code> 后 <code>sec_env_pairs_for(cmd_name, &amp;dict)</code> 全量注入子进程环境，<strong>不检查</strong> compose 文件里实际引用的 <code>${SEC_xxx}</code> 是否都在 <code>sec_dict</code> 中。</li>
 <li><code>sec_env_pairs_for</code> 已知 <code>diagnose</code> 需要掩码（<code>SECRET_MASK</code>），说明“密钥注入“这一层已成型，只差一个“存在性“前置校验。</li>
 </ul>
 <p><strong>期望行为</strong></p>

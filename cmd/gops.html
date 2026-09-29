@@ -45,7 +45,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-cc2c0a22.js";
+            window.path_to_searchindex_js = "../searchindex-5803604b.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-18d2ed36.js"></script>
@@ -208,7 +208,8 @@ gops &lt;command&gt; &lt;subcommand&gt; --help
 <ol>
 <li><strong><code>gops prj</code></strong> - 部署管理命令</li>
 <li><strong><code>gops mod</code></strong> - 模块管理命令</li>
-<li><strong><code>gops sys</code></strong> - 系统管理命令</li>
+<li><strong><code>gops sys</code></strong> - 系统管理命令（定义 / 交付 / 工件）</li>
+<li><strong><code>gops run</code></strong> - 运行时运维命令（在环境里落地 / 运行）</li>
 <li><strong><code>gops self</code></strong> - 自升级命令</li>
 </ol>
 <h2 id="全局选项"><a class="header" href="#全局选项">全局选项</a></h2>
@@ -550,6 +551,25 @@ gops sys localize --mod gateway
 <blockquote>
 <p>改了 <code>sys/setting/vars.yml</code> 而未重新 localize 时，<code>gops sys check</code> 会输出 <code>[WARN]</code> 提示（仅比对 <code>.env</code> 看不到这层陈旧）。</p>
 </blockquote>
+<h2 id="运行时运维命令-gops-run"><a class="header" href="#运行时运维命令-gops-run">运行时运维命令 (gops run)</a></h2>
+<p>在目标系统上执行<strong>标准运维动作</strong>（算子流契约）。按 <code>sys/sys_model.yml</code> 的 <code>kind</code> 分派：<code>gxl</code> 系统委托 <code>gx run &lt;cmd&gt;</code>（需 <code>gx &gt;= 0.13.0</code>）；<code>docker-compose</code> 系统映射到 <code>docker compose</code> 子命令（无需 gx）。</p>
+<pre><code class="language-bash">gops run download    # 下载制品        compose: pull
+gops run install     # 安装组件        compose: create
+gops run uninstall   # 卸载组件        compose: down
+gops run start       # 启动服务        compose: up -d
+gops run stop        # 停止服务        compose: stop
+gops run status      # 查询状态        compose: ps
+gops run diagnose    # 诊断问题        compose: config（密钥掩码注入）
+</code></pre>
+<p><strong>通用选项：</strong> <code>--mod &lt;MODULE&gt;</code>、<code>-e, --env &lt;ENV&gt;</code>（默认 <code>default</code>）、<code>-d/--debug</code>、<code>--log</code>。</p>
+<blockquote>
+<p>与 <code>gops sys</code>（<strong>定义/交付/工件</strong>：<code>new</code>/<code>update</code>/<code>localize</code>/<code>package</code>/<code>setting</code>/<code>check</code>）区分：<code>gops run</code> 只管「在环境里落地/运行」。</p>
+</blockquote>
+<p><strong>示例：</strong></p>
+<pre><code class="language-bash">gops run start --env default
+gops run status --mod nginx
+gops run diagnose     # 校验并展示解析后的 compose（密钥以 ******** 掩码注入）
+</code></pre>
 <h2 id="自升级命令-gops-self"><a class="header" href="#自升级命令-gops-self">自升级命令 (gops self)</a></h2>
 <p>与 <code>gx self</code> 对齐，用于检查与升级 <code>gops</code> 自身。</p>
 <h3 id="查看状态"><a class="header" href="#查看状态">查看状态</a></h3>

@@ -45,7 +45,7 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-cc2c0a22.js";
+            window.path_to_searchindex_js = "../../../searchindex-5803604b.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../toc-18d2ed36.js"></script>
@@ -219,7 +219,7 @@ vender: ''
   - name: REPLICAS
     value: 1
 </code></pre>
-<p>密钥不要写在这里：在 compose 里用 <code>${SEC_xxx}</code> 占位，运行时由 <code>gops sys start</code> 从 <code>~/.galaxy/sec_value.yml</code>（或当前目录 <code>./.galaxy/sec_value.yml</code>）注入（不落盘）。</p>
+<p>密钥不要写在这里：在 compose 里用 <code>${SEC_xxx}</code> 占位，运行时由 <code>gops run start</code> 从 <code>~/.galaxy/sec_value.yml</code>（或当前目录 <code>./.galaxy/sec_value.yml</code>）注入（不落盘）。</p>
 <pre><code class="language-yaml">services:
   db:
     environment:
@@ -248,13 +248,13 @@ REPLICAS: 3
 <p><code>.env</code> 只包含非密钥配置，随时可以用 <code>docker compose config</code> 校验。</p>
 <h2 id="4-部署"><a class="header" href="#4-部署">4. 部署</a></h2>
 <p><code>kind: docker-compose</code> 下，部署命令映射到 <code>docker compose</code>：</p>
-<pre><code class="language-bash">gops sys diagnose    # docker compose config（密钥以 ******** 掩码注入）
-gops sys download    # docker compose pull
-gops sys install     # docker compose create
-gops sys start       # docker compose up -d（密钥注入子进程环境）
-gops sys status      # docker compose ps
-gops sys stop        # docker compose stop
-gops sys uninstall   # docker compose down
+<pre><code class="language-bash">gops run diagnose    # docker compose config（密钥以 ******** 掩码注入）
+gops run download    # docker compose pull
+gops run install     # docker compose create
+gops run start       # docker compose up -d（密钥注入子进程环境）
+gops run status      # docker compose ps
+gops run stop        # docker compose stop
+gops run uninstall   # docker compose down
 </code></pre>
 <p><code>kind: docker-compose</code> 下 <code>--mod</code> 参数会被忽略（没有模块概念）；<code>--env</code> 仍可传入。</p>
 <h2 id="5-交付给客户运维项目"><a class="header" href="#5-交付给客户运维项目">5. 交付给客户（运维项目）</a></h2>
@@ -265,7 +265,7 @@ cd customer-a
 gops prj import --path ../gateway-0.1.0.tar.gz
 cd gateway
 gops sys localize                         # 使用 &lt;project&gt;/values/gateway/ 下的客户值
-gops sys start
+gops run start
 </code></pre>
 <p>客户差异写在 <code>&lt;project&gt;/values/gateway/</code>（例如 <code>value.yml</code>）。在项目内的系统目录执行 <code>gops sys localize</code> / <code>sys update</code> 时，会依据上层 <code>ops-prj.yml</code> 直接使用该项目值目录。</p>
 

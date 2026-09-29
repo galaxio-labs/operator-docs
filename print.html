@@ -46,7 +46,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-cc2c0a22.js";
+            window.path_to_searchindex_js = "searchindex-5803604b.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-18d2ed36.js"></script>
@@ -433,7 +433,7 @@ gx check
 <h3 id="模块加载失败"><a class="header" href="#模块加载失败">模块加载失败</a></h3>
 <p>检查网络连接与模块路径配置（<code>_gal</code> 中的 <code>extern mod</code>）。</p>
 <h3 id="与-gops-的关系"><a class="header" href="#与-gops-的关系">与 <code>gops</code> 的关系</a></h3>
-<p><code>kind: gxl</code> 的系统在 <code>gops sys start/stop/status/...</code> 时委托外部执行器执行系统的管理流程；
+<p><code>kind: gxl</code> 的系统在 <code>gops run start/stop/status/...</code> 时委托外部执行器执行系统的管理流程；
 <code>kind: docker-compose</code> 的系统不需要 <code>gx</code>，直接映射到本机 <code>docker compose</code>。</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="gops---galaxy-operations-system-系统操作管理工具"><a class="header" href="#gops---galaxy-operations-system-系统操作管理工具">gops - Galaxy Operations System 系统操作管理工具</a></h1>
@@ -457,7 +457,8 @@ gops &lt;command&gt; &lt;subcommand&gt; --help
 <ol>
 <li><strong><code>gops prj</code></strong> - 部署管理命令</li>
 <li><strong><code>gops mod</code></strong> - 模块管理命令</li>
-<li><strong><code>gops sys</code></strong> - 系统管理命令</li>
+<li><strong><code>gops sys</code></strong> - 系统管理命令（定义 / 交付 / 工件）</li>
+<li><strong><code>gops run</code></strong> - 运行时运维命令（在环境里落地 / 运行）</li>
 <li><strong><code>gops self</code></strong> - 自升级命令</li>
 </ol>
 <h2 id="全局选项"><a class="header" href="#全局选项">全局选项</a></h2>
@@ -799,6 +800,25 @@ gops sys localize --mod gateway
 <blockquote>
 <p>改了 <code>sys/setting/vars.yml</code> 而未重新 localize 时，<code>gops sys check</code> 会输出 <code>[WARN]</code> 提示（仅比对 <code>.env</code> 看不到这层陈旧）。</p>
 </blockquote>
+<h2 id="运行时运维命令-gops-run"><a class="header" href="#运行时运维命令-gops-run">运行时运维命令 (gops run)</a></h2>
+<p>在目标系统上执行<strong>标准运维动作</strong>（算子流契约）。按 <code>sys/sys_model.yml</code> 的 <code>kind</code> 分派：<code>gxl</code> 系统委托 <code>gx run &lt;cmd&gt;</code>（需 <code>gx &gt;= 0.13.0</code>）；<code>docker-compose</code> 系统映射到 <code>docker compose</code> 子命令（无需 gx）。</p>
+<pre><code class="language-bash">gops run download    # 下载制品        compose: pull
+gops run install     # 安装组件        compose: create
+gops run uninstall   # 卸载组件        compose: down
+gops run start       # 启动服务        compose: up -d
+gops run stop        # 停止服务        compose: stop
+gops run status      # 查询状态        compose: ps
+gops run diagnose    # 诊断问题        compose: config（密钥掩码注入）
+</code></pre>
+<p><strong>通用选项：</strong> <code>--mod &lt;MODULE&gt;</code>、<code>-e, --env &lt;ENV&gt;</code>（默认 <code>default</code>）、<code>-d/--debug</code>、<code>--log</code>。</p>
+<blockquote>
+<p>与 <code>gops sys</code>（<strong>定义/交付/工件</strong>：<code>new</code>/<code>update</code>/<code>localize</code>/<code>package</code>/<code>setting</code>/<code>check</code>）区分：<code>gops run</code> 只管「在环境里落地/运行」。</p>
+</blockquote>
+<p><strong>示例：</strong></p>
+<pre><code class="language-bash">gops run start --env default
+gops run status --mod nginx
+gops run diagnose     # 校验并展示解析后的 compose（密钥以 ******** 掩码注入）
+</code></pre>
 <h2 id="自升级命令-gops-self"><a class="header" href="#自升级命令-gops-self">自升级命令 (gops self)</a></h2>
 <p>与 <code>gx self</code> 对齐，用于检查与升级 <code>gops</code> 自身。</p>
 <h3 id="查看状态"><a class="header" href="#查看状态">查看状态</a></h3>
@@ -1126,18 +1146,22 @@ gops prj reimport
 </code></pre>
 <p><code>gops prj reimport</code> 按 <code>ops-prj.yml</code> 记录的 <code>sys_models</code> 重新导入系统，保留 <code>values/</code> 客户值。</p>
 <h3 id="系统命令"><a class="header" href="#系统命令">系统命令</a></h3>
-<pre><code class="language-bash">gops sys new --name &lt;name&gt; [--kind gxl|docker-compose]
+<pre><code class="language-bash"># gops sys —— 定义 / 交付 / 工件
+gops sys new --name &lt;name&gt; [--kind gxl|docker-compose]
 gops sys update
-gops sys package
+gops sys package [--full]
 gops sys localize [--mod &lt;module&gt;] [--only]
 gops sys setting --init
-gops sys download [--mod &lt;module&gt;] [--env &lt;env&gt;]
-gops sys install [--mod &lt;module&gt;] [--env &lt;env&gt;]
-gops sys uninstall [--mod &lt;module&gt;] [--env &lt;env&gt;]
-gops sys start [--mod &lt;module&gt;] [--env &lt;env&gt;]
-gops sys stop [--mod &lt;module&gt;] [--env &lt;env&gt;]
-gops sys status [--mod &lt;module&gt;] [--env &lt;env&gt;]
-gops sys diagnose [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops sys check
+
+# gops run —— 运行时运维（在环境里落地/运行）
+gops run download [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops run install [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops run uninstall [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops run start [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops run stop [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops run status [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops run diagnose [--mod &lt;module&gt;] [--env &lt;env&gt;]
 </code></pre>
 <p><code>sys/sys_model.yml</code> 的 <code>kind</code> 决定部署行为：<code>gxl</code>（默认）委托 <code>gx</code> 执行；<code>docker-compose</code> 直接映射到本机 <code>docker compose</code>。</p>
 <h3 id="模块命令"><a class="header" href="#模块命令">模块命令</a></h3>
@@ -1284,7 +1308,7 @@ gops mod localize [--value &lt;file&gt; | --default]
 <ul>
 <li><strong>模块层承载“同一能力的多种落地形式“</strong>：同一模块可同时拥有 Host 与 K8S 的 <code>mod/&lt;model&gt;/</code>（不同 <code>RunSPC</code>），各自的 <code>workflows/operators.gxl</code> 提供该形态的实现。</li>
 <li><strong>系统层选定形态</strong>：<code>ModelSTD</code>（Host / K8S）+ <code>kind</code>（gxl / compose）决定用哪种形态交付。</li>
-<li><strong>三形态共享交付面</strong>：同一套值模型、同一个命令面（<code>gops sys start/stop/status/diagnose</code>）、同一套打包 / 导入 / 保值流程。客户差异不随形态改变。</li>
+<li><strong>三形态共享交付面</strong>：同一套值模型、同一个命令面（<code>gops run start/stop/status/diagnose</code>）、同一套打包 / 导入 / 保值流程。客户差异不随形态改变。</li>
 </ul>
 <h4 id="边界-2"><a class="header" href="#边界-2">边界</a></h4>
 <ul>
@@ -1405,7 +1429,7 @@ gops mod localize [--value &lt;file&gt; | --default]
 </div>
 <p>三个本质差距：</p>
 <ol>
-<li><strong>有没有 reconcile loop</strong>：GitOps 有常驻控制器持续把现场拉回 Git；GOps 没有任何常驻组件，<code>gops sys start</code> 跑完即止，<strong>不知道现场是否偏离默认值</strong>。</li>
+<li><strong>有没有 reconcile loop</strong>：GitOps 有常驻控制器持续把现场拉回 Git；GOps 没有任何常驻组件，<code>gops run start</code> 跑完即止，<strong>不知道现场是否偏离默认值</strong>。</li>
 <li><strong>部署能否归约为声明式终态</strong>：GitOps 成立的前提是“期望状态可完整描述 + 幂等收敛“，这成立在容器 / 基础设施领域；二进制部署与 GXL 工作流走的是“可重复过程“，不假装是终态。</li>
 <li><strong>真源的权威性</strong>：GitOps 里现场是从属的，手改会被当 drift 冲掉；GOps 反而承认现场是权威之一——<code>prj reimport</code> 就是“重建系统、保留 <code>values/</code>“。两者哲学相反。</li>
 </ol>
@@ -1463,7 +1487,7 @@ gops mod localize [--value &lt;file&gt; | --default]
 <h3 id="2-执行中立同一命令面两种后端"><a class="header" href="#2-执行中立同一命令面两种后端">2. 执行中立：同一命令面，两种后端</a></h3>
 <p><code>sys/sys_model.yml</code> 的 <code>kind</code> 决定行为，但操作员的命令是同一套：</p>
 <pre class="mermaid">flowchart LR
-    CMD["gops sys start / stop / status / diagnose ..."] --&gt; K{"sys_model.yml kind"}
+    CMD["gops run start / stop / status / diagnose ..."] --&gt; K{"sys_model.yml kind"}
     K --&gt;|gxl| GX["gx run -e ENV -d N cmd"]
     K --&gt;|docker-compose| DC["docker compose ..."]
     GX --&gt; WF["系统工作流 GXL"]
@@ -1506,7 +1530,7 @@ gops mod localize [--value &lt;file&gt; | --default]
 <li>来源可追踪：本地化会写出实际使用的值，能回答“这个最终值是谁给的“。</li>
 </ul>
 <h3 id="5-密钥作为一等公民不落盘运行时注入诊断掩码"><a class="header" href="#5-密钥作为一等公民不落盘运行时注入诊断掩码">5. 密钥作为一等公民：不落盘、运行时注入、诊断掩码</a></h3>
-<p>compose 里用 <code>${SEC_xxx}</code> 占位；<code>gops sys start</code> 运行时从 <code>~/.galaxy/sec_value.yml</code>（或 <code>./.galaxy/sec_value.yml</code>）读取，只注入 <strong>docker compose 子进程环境</strong>，不写 <code>.env</code>、不入库；<code>gops sys diagnose</code>（<code>docker compose config</code>）注入的是掩码值 <code>********</code>。</p>
+<p>compose 里用 <code>${SEC_xxx}</code> 占位；<code>gops run start</code> 运行时从 <code>~/.galaxy/sec_value.yml</code>（或 <code>./.galaxy/sec_value.yml</code>）读取，只注入 <strong>docker compose 子进程环境</strong>，不写 <code>.env</code>、不入库；<code>gops run diagnose</code>（<code>docker compose config</code>）注入的是掩码值 <code>********</code>。</p>
 <p>配置与敏感值在生命周期上被彻底分开，而不是仅靠 <code>.gitignore</code> 约定。</p>
 <h3 id="6-交付闭环打包--导入--重导入保值"><a class="header" href="#6-交付闭环打包--导入--重导入保值">6. 交付闭环：打包 → 导入 → 重导入保值</a></h3>
 <pre><code class="language-text">gops sys package   -&gt; &lt;name&gt;-&lt;version&gt;.tar.gz（先 update 解析变量）
@@ -1666,7 +1690,7 @@ gops prj reimport  -&gt; 按 ops-prj.yml 重建系统，保留 values/ 客户值
 <p><strong>目标</strong>：挡住“空密码静默上线“。</p>
 <p><strong>现状证据</strong></p>
 <ul>
-<li><code>app/gops/commands/sys_cmd.rs::run_compose_cmd</code> 无脑 <code>orion_sec::load_sec_dict()</code> 后 <code>sec_env_pairs_for(cmd_name, &amp;dict)</code> 全量注入子进程环境，<strong>不检查</strong> compose 文件里实际引用的 <code>${SEC_xxx}</code> 是否都在 <code>sec_dict</code> 中。</li>
+<li><code>app/gops/commands/run_cmd.rs::RunCommandHandler::run_compose_cmd</code> 无脑 <code>orion_sec::load_sec_dict()</code> 后 <code>sec_env_pairs_for(cmd_name, &amp;dict)</code> 全量注入子进程环境，<strong>不检查</strong> compose 文件里实际引用的 <code>${SEC_xxx}</code> 是否都在 <code>sec_dict</code> 中。</li>
 <li><code>sec_env_pairs_for</code> 已知 <code>diagnose</code> 需要掩码（<code>SECRET_MASK</code>），说明“密钥注入“这一层已成型，只差一个“存在性“前置校验。</li>
 </ul>
 <p><strong>期望行为</strong></p>
@@ -1742,21 +1766,25 @@ gops prj reimport  -&gt; 按 ops-prj.yml 重建系统，保留 values/ 客户值
 <li>提供下载、安装、启动、停止、状态、诊断等系统操作入口</li>
 </ul>
 <h2 id="当前命令"><a class="header" href="#当前命令">当前命令</a></h2>
-<pre><code class="language-bash">gops sys new --name &lt;name&gt; [--kind gxl|docker-compose]
+<pre><code class="language-bash"># gops sys —— 定义 / 交付 / 工件
+gops sys new --name &lt;name&gt; [--kind gxl|docker-compose]
 gops sys update [--force]
 gops sys package [--force] [--output &lt;path&gt;] [--full]
 gops sys localize [--mod &lt;module&gt;] [--only]
 gops sys setting --init
-gops sys download [--mod &lt;module&gt;] [--env &lt;env&gt;]
-gops sys install [--mod &lt;module&gt;] [--env &lt;env&gt;]
-gops sys uninstall [--mod &lt;module&gt;] [--env &lt;env&gt;]
-gops sys start [--mod &lt;module&gt;] [--env &lt;env&gt;]
-gops sys stop [--mod &lt;module&gt;] [--env &lt;env&gt;]
-gops sys status [--mod &lt;module&gt;] [--env &lt;env&gt;]
-gops sys diagnose [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops sys check
+
+# gops run —— 运行时运维（在环境里落地/运行）
+gops run download [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops run install [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops run uninstall [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops run start [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops run stop [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops run status [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops run diagnose [--mod &lt;module&gt;] [--env &lt;env&gt;]
 </code></pre>
 <h2 id="部署类型kind"><a class="header" href="#部署类型kind">部署类型（kind）</a></h2>
-<p><code>sys/sys_model.yml</code> 的 <code>kind</code> 字段决定 <code>gops sys</code> 的行为（<code>kind</code> 缺省时按 <code>gxl</code> 处理，兼容 1.2.0 及更早的系统）：</p>
+<p><code>sys/sys_model.yml</code> 的 <code>kind</code> 字段决定 <code>gops run</code> 的行为（<code>kind</code> 缺省时按 <code>gxl</code> 处理，兼容 1.2.0 及更早的系统）：</p>
 <ul>
 <li>
 <p><code>gxl</code>：部署命令委托外部 <code>gx</code> 执行，要求 <code>sys/workflows/operators.gxl</code> 与可用的 <code>gx</code>。映射为 <code>gx run -e &lt;ENV&gt; -d &lt;N&gt; [--cmd-arg &lt;MOD&gt;] &lt;cmd&gt;</code>；<code>gx</code> 取自 <code>$HOME/bin/gx</code>，最低版本 <code>0.13.0</code>。</p>
@@ -1808,7 +1836,7 @@ gops sys localize -&gt; .env = merged_vars 默认值 ⊕ values/sys_value.yml �
 <p>两个值文件都是<strong>可选、可部分覆盖</strong>：只写需要修改的项，其余取系统默认值。保持注释模板原样时等价于空覆盖。</p>
 <p><code>sys localize</code> 默认<strong>总是先解析变量</strong>（等价于先跑一次 <code>update</code>，含解析/下载模块），再生成 <code>.env</code>；<code>--only</code> 跳过解析（用现有 <code>sys/merged_vars.yml</code>，缺失则明确报错）。</p>
 <h2 id="密钥"><a class="header" href="#密钥">密钥</a></h2>
-<p>密钥<strong>不写入</strong> <code>.env</code>：在 <code>sys/docker-compose.yaml</code> 里用 <code>${SEC_xxx}</code> 占位，<code>gops sys start</code> 运行时从 <code>~/.galaxy/sec_value.yml</code>（或当前目录 <code>./.galaxy/sec_value.yml</code>）读取并注入子进程环境（key 会归一化为大写并加 <code>SEC_</code> 前缀）。<code>gops sys diagnose</code>（<code>docker compose config</code>）只读校验，注入的是掩码值 <code>********</code>。详见 <code>galaxy-ops</code> 仓库的 <code>src/system/README.md</code>。</p>
+<p>密钥<strong>不写入</strong> <code>.env</code>：在 <code>sys/docker-compose.yaml</code> 里用 <code>${SEC_xxx}</code> 占位，<code>gops run start</code> 运行时从 <code>~/.galaxy/sec_value.yml</code>（或当前目录 <code>./.galaxy/sec_value.yml</code>）读取并注入子进程环境（key 会归一化为大写并加 <code>SEC_</code> 前缀）。<code>gops run diagnose</code>（<code>docker compose config</code>）只读校验，注入的是掩码值 <code>********</code>。详见 <code>galaxy-ops</code> 仓库的 <code>src/system/README.md</code>。</p>
 <h2 id="常见流程"><a class="header" href="#常见流程">常见流程</a></h2>
 <h3 id="更新系统本地引用"><a class="header" href="#更新系统本地引用">更新系统本地引用</a></h3>
 <pre><code class="language-bash">gops sys update
@@ -1826,8 +1854,8 @@ gops sys localize --mod nginx
 <pre><code class="language-bash">gops sys setting --init
 </code></pre>
 <h3 id="执行系统操作"><a class="header" href="#执行系统操作">执行系统操作</a></h3>
-<pre><code class="language-bash">gops sys start --env default
-gops sys status --env default
+<pre><code class="language-bash">gops run start --env default
+gops run status --env default
 </code></pre>
 <h2 id="与模块和项目的关系"><a class="header" href="#与模块和项目的关系">与模块和项目的关系</a></h2>
 <pre><code class="language-text">gops mod new      -&gt; 创建模块
@@ -1892,7 +1920,7 @@ vender: ''
 <h2 id="在流程中的作用"><a class="header" href="#在流程中的作用">在流程中的作用</a></h2>
 <ul>
 <li><code>gops sys new</code> 会初始化它；<code>--kind docker-compose</code> 会写入 <code>kind: docker-compose</code> 且不生成 GXL 骨架</li>
-<li><code>gops sys</code> 的部署命令按 <code>kind</code> 分派</li>
+<li><code>gops run</code> 的部署命令按 <code>kind</code> 分派</li>
 <li><code>gops prj import</code> / <code>prj reimport</code> 用它确定系统名与类型</li>
 </ul>
 <p>如果要核对字段细节，优先以当前仓库代码和 <code>gops sys new</code> 的生成结果为准，而不是旧版文档示例。</p>
@@ -1937,10 +1965,10 @@ cd microservice-stack
 gops sys localize    # 值取自 &lt;project&gt;/values/microservice-stack/
 </code></pre>
 <h2 id="8-执行系统操作"><a class="header" href="#8-执行系统操作">8. 执行系统操作</a></h2>
-<pre><code class="language-bash">gops sys download --env default
-gops sys install --env default
-gops sys start --env default
-gops sys status --env default
+<pre><code class="language-bash">gops run download --env default
+gops run install --env default
+gops run start --env default
+gops run status --env default
 </code></pre>
 <h2 id="说明-1"><a class="header" href="#说明-1">说明</a></h2>
 <p>这个示例强调的是当前实现中的责任边界：</p>
@@ -1982,7 +2010,7 @@ vender: ''
   - name: REPLICAS
     value: 1
 </code></pre>
-<p>密钥不要写在这里：在 compose 里用 <code>${SEC_xxx}</code> 占位，运行时由 <code>gops sys start</code> 从 <code>~/.galaxy/sec_value.yml</code>（或当前目录 <code>./.galaxy/sec_value.yml</code>）注入（不落盘）。</p>
+<p>密钥不要写在这里：在 compose 里用 <code>${SEC_xxx}</code> 占位，运行时由 <code>gops run start</code> 从 <code>~/.galaxy/sec_value.yml</code>（或当前目录 <code>./.galaxy/sec_value.yml</code>）注入（不落盘）。</p>
 <pre><code class="language-yaml">services:
   db:
     environment:
@@ -2011,13 +2039,13 @@ REPLICAS: 3
 <p><code>.env</code> 只包含非密钥配置，随时可以用 <code>docker compose config</code> 校验。</p>
 <h2 id="4-部署"><a class="header" href="#4-部署">4. 部署</a></h2>
 <p><code>kind: docker-compose</code> 下，部署命令映射到 <code>docker compose</code>：</p>
-<pre><code class="language-bash">gops sys diagnose    # docker compose config（密钥以 ******** 掩码注入）
-gops sys download    # docker compose pull
-gops sys install     # docker compose create
-gops sys start       # docker compose up -d（密钥注入子进程环境）
-gops sys status      # docker compose ps
-gops sys stop        # docker compose stop
-gops sys uninstall   # docker compose down
+<pre><code class="language-bash">gops run diagnose    # docker compose config（密钥以 ******** 掩码注入）
+gops run download    # docker compose pull
+gops run install     # docker compose create
+gops run start       # docker compose up -d（密钥注入子进程环境）
+gops run status      # docker compose ps
+gops run stop        # docker compose stop
+gops run uninstall   # docker compose down
 </code></pre>
 <p><code>kind: docker-compose</code> 下 <code>--mod</code> 参数会被忽略（没有模块概念）；<code>--env</code> 仍可传入。</p>
 <h2 id="5-交付给客户运维项目"><a class="header" href="#5-交付给客户运维项目">5. 交付给客户（运维项目）</a></h2>
@@ -2028,7 +2056,7 @@ cd customer-a
 gops prj import --path ../gateway-0.1.0.tar.gz
 cd gateway
 gops sys localize                         # 使用 &lt;project&gt;/values/gateway/ 下的客户值
-gops sys start
+gops run start
 </code></pre>
 <p>客户差异写在 <code>&lt;project&gt;/values/gateway/</code>（例如 <code>value.yml</code>）。在项目内的系统目录执行 <code>gops sys localize</code> / <code>sys update</code> 时，会依据上层 <code>ops-prj.yml</code> 直接使用该项目值目录。</p>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -2198,7 +2226,7 @@ gops sys start
 <h2 id="模块名"><a class="header" href="#模块名">模块名</a></h2>
 <p>系统命令里如果使用：</p>
 <pre><code class="language-bash">gops sys localize --mod &lt;module&gt;
-gops sys start --mod &lt;module&gt;
+gops run start --mod &lt;module&gt;
 </code></pre>
 <p>这里的 <code>&lt;module&gt;</code> 应与 <code>mod_list.yml</code> 中声明的模块名一致。</p>
 <h2 id="环境名"><a class="header" href="#环境名">环境名</a></h2>
@@ -2285,7 +2313,7 @@ gops sys start --mod &lt;module&gt;
 <ul>
 <li>已执行 <code>gops sys localize</code> 生成 <code>.env</code></li>
 <li><code>.env</code> 位于系统根；compose 文件默认在 <code>sys/</code>（项目目录锚定系统根，<code>${VAR}</code> 由系统根的 <code>.env</code> 注入）</li>
-<li>密钥类变量用 <code>${SEC_xxx}</code> 占位，由 <code>gops sys start</code> 从 <code>~/.galaxy/sec_value.yml</code> 注入；直接用 <code>docker compose up</code> 不会自动注入密钥</li>
+<li>密钥类变量用 <code>${SEC_xxx}</code> 占位，由 <code>gops run start</code> 从 <code>~/.galaxy/sec_value.yml</code> 注入；直接用 <code>docker compose up</code> 不会自动注入密钥</li>
 </ul>
 <h2 id="8-文档和目录树不一致"><a class="header" href="#8-文档和目录树不一致">8. 文档和目录树不一致</a></h2>
 <p>处理原则：</p>

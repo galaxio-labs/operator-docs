@@ -45,7 +45,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-cc2c0a22.js";
+            window.path_to_searchindex_js = "../searchindex-5803604b.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-18d2ed36.js"></script>
@@ -300,7 +300,7 @@
 <ul>
 <li><strong>模块层承载“同一能力的多种落地形式“</strong>：同一模块可同时拥有 Host 与 K8S 的 <code>mod/&lt;model&gt;/</code>（不同 <code>RunSPC</code>），各自的 <code>workflows/operators.gxl</code> 提供该形态的实现。</li>
 <li><strong>系统层选定形态</strong>：<code>ModelSTD</code>（Host / K8S）+ <code>kind</code>（gxl / compose）决定用哪种形态交付。</li>
-<li><strong>三形态共享交付面</strong>：同一套值模型、同一个命令面（<code>gops sys start/stop/status/diagnose</code>）、同一套打包 / 导入 / 保值流程。客户差异不随形态改变。</li>
+<li><strong>三形态共享交付面</strong>：同一套值模型、同一个命令面（<code>gops run start/stop/status/diagnose</code>）、同一套打包 / 导入 / 保值流程。客户差异不随形态改变。</li>
 </ul>
 <h4 id="边界-2"><a class="header" href="#边界-2">边界</a></h4>
 <ul>
@@ -421,7 +421,7 @@
 </div>
 <p>三个本质差距：</p>
 <ol>
-<li><strong>有没有 reconcile loop</strong>：GitOps 有常驻控制器持续把现场拉回 Git；GOps 没有任何常驻组件，<code>gops sys start</code> 跑完即止，<strong>不知道现场是否偏离默认值</strong>。</li>
+<li><strong>有没有 reconcile loop</strong>：GitOps 有常驻控制器持续把现场拉回 Git；GOps 没有任何常驻组件，<code>gops run start</code> 跑完即止，<strong>不知道现场是否偏离默认值</strong>。</li>
 <li><strong>部署能否归约为声明式终态</strong>：GitOps 成立的前提是“期望状态可完整描述 + 幂等收敛“，这成立在容器 / 基础设施领域；二进制部署与 GXL 工作流走的是“可重复过程“，不假装是终态。</li>
 <li><strong>真源的权威性</strong>：GitOps 里现场是从属的，手改会被当 drift 冲掉；GOps 反而承认现场是权威之一——<code>prj reimport</code> 就是“重建系统、保留 <code>values/</code>“。两者哲学相反。</li>
 </ol>
@@ -479,7 +479,7 @@
 <h3 id="2-执行中立同一命令面两种后端"><a class="header" href="#2-执行中立同一命令面两种后端">2. 执行中立：同一命令面，两种后端</a></h3>
 <p><code>sys/sys_model.yml</code> 的 <code>kind</code> 决定行为，但操作员的命令是同一套：</p>
 <pre class="mermaid">flowchart LR
-    CMD["gops sys start / stop / status / diagnose ..."] --&gt; K{"sys_model.yml kind"}
+    CMD["gops run start / stop / status / diagnose ..."] --&gt; K{"sys_model.yml kind"}
     K --&gt;|gxl| GX["gx run -e ENV -d N cmd"]
     K --&gt;|docker-compose| DC["docker compose ..."]
     GX --&gt; WF["系统工作流 GXL"]
@@ -522,7 +522,7 @@
 <li>来源可追踪：本地化会写出实际使用的值，能回答“这个最终值是谁给的“。</li>
 </ul>
 <h3 id="5-密钥作为一等公民不落盘运行时注入诊断掩码"><a class="header" href="#5-密钥作为一等公民不落盘运行时注入诊断掩码">5. 密钥作为一等公民：不落盘、运行时注入、诊断掩码</a></h3>
-<p>compose 里用 <code>${SEC_xxx}</code> 占位；<code>gops sys start</code> 运行时从 <code>~/.galaxy/sec_value.yml</code>（或 <code>./.galaxy/sec_value.yml</code>）读取，只注入 <strong>docker compose 子进程环境</strong>，不写 <code>.env</code>、不入库；<code>gops sys diagnose</code>（<code>docker compose config</code>）注入的是掩码值 <code>********</code>。</p>
+<p>compose 里用 <code>${SEC_xxx}</code> 占位；<code>gops run start</code> 运行时从 <code>~/.galaxy/sec_value.yml</code>（或 <code>./.galaxy/sec_value.yml</code>）读取，只注入 <strong>docker compose 子进程环境</strong>，不写 <code>.env</code>、不入库；<code>gops run diagnose</code>（<code>docker compose config</code>）注入的是掩码值 <code>********</code>。</p>
 <p>配置与敏感值在生命周期上被彻底分开，而不是仅靠 <code>.gitignore</code> 约定。</p>
 <h3 id="6-交付闭环打包--导入--重导入保值"><a class="header" href="#6-交付闭环打包--导入--重导入保值">6. 交付闭环：打包 → 导入 → 重导入保值</a></h3>
 <pre><code class="language-text">gops sys package   -&gt; &lt;name&gt;-&lt;version&gt;.tar.gz（先 update 解析变量）

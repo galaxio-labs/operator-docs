@@ -45,7 +45,7 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-cc2c0a22.js";
+            window.path_to_searchindex_js = "../../../searchindex-5803604b.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../toc-18d2ed36.js"></script>
@@ -227,10 +227,10 @@ cd microservice-stack
 gops sys localize    # 值取自 &lt;project&gt;/values/microservice-stack/
 </code></pre>
 <h2 id="8-执行系统操作"><a class="header" href="#8-执行系统操作">8. 执行系统操作</a></h2>
-<pre><code class="language-bash">gops sys download --env default
-gops sys install --env default
-gops sys start --env default
-gops sys status --env default
+<pre><code class="language-bash">gops run download --env default
+gops run install --env default
+gops run start --env default
+gops run status --env default
 </code></pre>
 <h2 id="说明"><a class="header" href="#说明">说明</a></h2>
 <p>这个示例强调的是当前实现中的责任边界：</p>

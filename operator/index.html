@@ -45,7 +45,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-cc2c0a22.js";
+            window.path_to_searchindex_js = "../searchindex-5803604b.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-18d2ed36.js"></script>
@@ -223,18 +223,22 @@ gops prj reimport
 </code></pre>
 <p><code>gops prj reimport</code> 按 <code>ops-prj.yml</code> 记录的 <code>sys_models</code> 重新导入系统，保留 <code>values/</code> 客户值。</p>
 <h3 id="系统命令"><a class="header" href="#系统命令">系统命令</a></h3>
-<pre><code class="language-bash">gops sys new --name &lt;name&gt; [--kind gxl|docker-compose]
+<pre><code class="language-bash"># gops sys —— 定义 / 交付 / 工件
+gops sys new --name &lt;name&gt; [--kind gxl|docker-compose]
 gops sys update
-gops sys package
+gops sys package [--full]
 gops sys localize [--mod &lt;module&gt;] [--only]
 gops sys setting --init
-gops sys download [--mod &lt;module&gt;] [--env &lt;env&gt;]
-gops sys install [--mod &lt;module&gt;] [--env &lt;env&gt;]
-gops sys uninstall [--mod &lt;module&gt;] [--env &lt;env&gt;]
-gops sys start [--mod &lt;module&gt;] [--env &lt;env&gt;]
-gops sys stop [--mod &lt;module&gt;] [--env &lt;env&gt;]
-gops sys status [--mod &lt;module&gt;] [--env &lt;env&gt;]
-gops sys diagnose [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops sys check
+
+# gops run —— 运行时运维（在环境里落地/运行）
+gops run download [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops run install [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops run uninstall [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops run start [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops run stop [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops run status [--mod &lt;module&gt;] [--env &lt;env&gt;]
+gops run diagnose [--mod &lt;module&gt;] [--env &lt;env&gt;]
 </code></pre>
 <p><code>sys/sys_model.yml</code> 的 <code>kind</code> 决定部署行为：<code>gxl</code>（默认）委托 <code>gx</code> 执行；<code>docker-compose</code> 直接映射到本机 <code>docker compose</code>。</p>
 <h3 id="模块命令"><a class="header" href="#模块命令">模块命令</a></h3>

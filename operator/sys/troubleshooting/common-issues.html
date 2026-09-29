@@ -45,7 +45,7 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-cc2c0a22.js";
+            window.path_to_searchindex_js = "../../../searchindex-5803604b.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../toc-18d2ed36.js"></script>
@@ -256,7 +256,7 @@
 <ul>
 <li>已执行 <code>gops sys localize</code> 生成 <code>.env</code></li>
 <li><code>.env</code> 位于系统根；compose 文件默认在 <code>sys/</code>（项目目录锚定系统根，<code>${VAR}</code> 由系统根的 <code>.env</code> 注入）</li>
-<li>密钥类变量用 <code>${SEC_xxx}</code> 占位，由 <code>gops sys start</code> 从 <code>~/.galaxy/sec_value.yml</code> 注入；直接用 <code>docker compose up</code> 不会自动注入密钥</li>
+<li>密钥类变量用 <code>${SEC_xxx}</code> 占位，由 <code>gops run start</code> 从 <code>~/.galaxy/sec_value.yml</code> 注入；直接用 <code>docker compose up</code> 不会自动注入密钥</li>
 </ul>
 <h2 id="8-文档和目录树不一致"><a class="header" href="#8-文档和目录树不一致">8. 文档和目录树不一致</a></h2>
 <p>处理原则：</p>
