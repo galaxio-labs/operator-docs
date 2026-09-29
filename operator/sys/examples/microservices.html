@@ -45,7 +45,7 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-7463006a.js";
+            window.path_to_searchindex_js = "../../../searchindex-cc2c0a22.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../toc-18d2ed36.js"></script>
@@ -205,7 +205,7 @@ cd microservice-stack
 </code></pre>
 <h2 id="5-解析变量并本地化"><a class="header" href="#5-解析变量并本地化">5. 解析变量并本地化</a></h2>
 <pre><code class="language-bash">gops sys update      # 解析变量 -&gt; sys/merged_vars.yml，并生成 values/sys_value.yml（注释模板）
-gops sys localize    # 生成 .env（缺 merged_vars.yml 时会自动先 update）
+gops sys localize    # 生成 .env（默认先解析变量，等价于先 update）
 </code></pre>
 <p>如果只想处理某个模块：</p>
 <pre><code class="language-bash">gops sys localize --mod gateway

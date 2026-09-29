@@ -45,7 +45,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-7463006a.js";
+            window.path_to_searchindex_js = "../../searchindex-cc2c0a22.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-18d2ed36.js"></script>
@@ -201,7 +201,7 @@
 <h2 id="当前命令"><a class="header" href="#当前命令">当前命令</a></h2>
 <pre><code class="language-bash">gops sys new --name &lt;name&gt; [--kind gxl|docker-compose]
 gops sys update [--force]
-gops sys package [--force] [--output &lt;path&gt;] [--no-git]
+gops sys package [--force] [--output &lt;path&gt;] [--full]
 gops sys localize [--mod &lt;module&gt;] [--only]
 gops sys setting --init
 gops sys download [--mod &lt;module&gt;] [--env &lt;env&gt;]
@@ -263,7 +263,7 @@ gops sys new --name gateway --kind docker-compose   # 纯 compose（无型号）
 gops sys localize -&gt; .env = merged_vars 默认值 ⊕ values/sys_value.yml ⊕ values/value.yml
 </code></pre>
 <p>两个值文件都是<strong>可选、可部分覆盖</strong>：只写需要修改的项，其余取系统默认值。保持注释模板原样时等价于空覆盖。</p>
-<p><code>sys localize</code> 在系统变量尚未解析（缺 <code>sys/merged_vars.yml</code>）时会自动先执行 <code>update</code>；<code>--only</code> 跳过这一步（此时若变量仍未解析会明确报错）。</p>
+<p><code>sys localize</code> 默认<strong>总是先解析变量</strong>（等价于先跑一次 <code>update</code>，含解析/下载模块），再生成 <code>.env</code>；<code>--only</code> 跳过解析（用现有 <code>sys/merged_vars.yml</code>，缺失则明确报错）。</p>
 <h2 id="密钥"><a class="header" href="#密钥">密钥</a></h2>
 <p>密钥<strong>不写入</strong> <code>.env</code>：在 <code>sys/docker-compose.yaml</code> 里用 <code>${SEC_xxx}</code> 占位，<code>gops sys start</code> 运行时从 <code>~/.galaxy/sec_value.yml</code>（或当前目录 <code>./.galaxy/sec_value.yml</code>）读取并注入子进程环境（key 会归一化为大写并加 <code>SEC_</code> 前缀）。<code>gops sys diagnose</code>（<code>docker compose config</code>）只读校验，注入的是掩码值 <code>********</code>。详见 <code>galaxy-ops</code> 仓库的 <code>src/system/README.md</code>。</p>
 <h2 id="常见流程"><a class="header" href="#常见流程">常见流程</a></h2>
@@ -272,8 +272,8 @@ gops sys localize -&gt; .env = merged_vars 默认值 ⊕ values/sys_value.yml �
 gops sys update --force
 </code></pre>
 <h3 id="本地化系统"><a class="header" href="#本地化系统">本地化系统</a></h3>
-<pre><code class="language-bash">gops sys localize            # 缺 merged_vars.yml 时会自动先 update，再生成 .env
-gops sys localize --only     # 只 localize，不解析/下载模块
+<pre><code class="language-bash">gops sys localize            # 默认先解析变量（等价于先 update），再生成 .env
+gops sys localize --only     # 只 localize，不解析/下载模块（用现有 merged_vars.yml）
 gops sys localize --mod nginx
 </code></pre>
 <h3 id="打包交付"><a class="header" href="#打包交付">打包交付</a></h3>

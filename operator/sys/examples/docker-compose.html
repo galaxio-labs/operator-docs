@@ -45,7 +45,7 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-7463006a.js";
+            window.path_to_searchindex_js = "../../../searchindex-cc2c0a22.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../toc-18d2ed36.js"></script>
@@ -230,7 +230,7 @@ vender: ''
 </code></pre>
 <p>key 会归一化为大写并加 <code>SEC_</code> 前缀：<code>postgres_password</code> → <code>SEC_POSTGRES_PASSWORD</code>。</p>
 <h2 id="3-生成-env"><a class="header" href="#3-生成-env">3. 生成 <code>.env</code></a></h2>
-<pre><code class="language-bash">gops sys localize        # 缺 merged_vars.yml 时会自动先 update
+<pre><code class="language-bash">gops sys localize        # 默认先解析变量（等价于先 update），再生成 .env
 cat .env
 </code></pre>
 <p>规则：</p>
