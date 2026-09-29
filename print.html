@@ -46,7 +46,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-5803604b.js";
+            window.path_to_searchindex_js = "searchindex-c8c1cd61.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-18d2ed36.js"></script>
@@ -222,6 +222,10 @@ scripts/sync-gxl-docs.sh check --dest &lt;operator-docs&gt;/src/gxl
 </blockquote>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="changelog"><a class="header" href="#changelog">Changelog</a></h1>
+<h1 id="文档更新-2026-09-30--值变更表gops-sys-diff--gops-mod-diff"><a class="header" href="#文档更新-2026-09-30--值变更表gops-sys-diff--gops-mod-diff">文档更新 2026-09-30 —— 值变更表（<code>gops sys diff</code> / <code>gops mod diff</code>）</a></h1>
+<ul>
+<li><strong>命令行工具</strong>：<code>cmd/gops.md</code> 新增「展示系统值变更」与「展示模块值变更」两节（列含义、未展开值比对、<code>--json</code>、<code>localize</code> 末尾附带变更表）；<code>gops prj diff</code> 标注暂不提供</li>
+</ul>
 <h1 id="文档更新-2026-09-28--对齐-galaxy-ops-133-的-docker-compose-文件位置"><a class="header" href="#文档更新-2026-09-28--对齐-galaxy-ops-133-的-docker-compose-文件位置">文档更新 2026-09-28 —— 对齐 galaxy-ops 1.3.3 的 docker-compose 文件位置</a></h1>
 <ul>
 <li><strong>System 文档</strong>：<code>kind: docker-compose</code> 的 compose 文件默认从系统根移至 <code>sys/docker-compose.yaml</code>，并补充查找顺序、compose 项目目录锚定系统根、旧布局仍兼容的说明；同步 <code>operator/sys/structure/directory.md</code>、<code>file-organization.md</code>、<code>naming-conventions.md</code>、<code>operator/sys/README.md</code>、<code>operator/sys/examples/docker-compose.md</code>、<code>operator/sys/troubleshooting/common-issues.md</code>、<code>operator/overview.md</code>、<code>operator/roadmap.md</code></li>
@@ -681,6 +685,14 @@ gops mod localize --value prod-values.yml
 # 使用自定义值文件并启用调试
 gops mod localize --value dev-values.yml --debug 2
 </code></pre>
+<h3 id="展示模块值变更"><a class="header" href="#展示模块值变更">展示模块值变更</a></h3>
+<pre><code class="language-bash">gops mod diff [--json]
+</code></pre>
+<p>只读比对「模块默认值」（<code>mod/&lt;model&gt;/vars.yml</code>，来源 <code>mod-default</code>）与生效值，<strong>按模型</strong>列出每个键的初始值 / 生效值 / 来源 / 可变性 / 变更状态。<code>gops mod localize</code> 结束时也会打印同一张表。</p>
+<p><strong>示例：</strong></p>
+<pre><code class="language-bash">gops mod diff
+gops mod diff --json
+</code></pre>
 <h2 id="系统管理命令-gops-sys"><a class="header" href="#系统管理命令-gops-sys">系统管理命令 (gops sys)</a></h2>
 <h3 id="创建新的系统操作符"><a class="header" href="#创建新的系统操作符">创建新的系统操作符</a></h3>
 <pre><code class="language-bash">gops sys new [OPTIONS]
@@ -800,6 +812,36 @@ gops sys localize --mod gateway
 <blockquote>
 <p>改了 <code>sys/setting/vars.yml</code> 而未重新 localize 时，<code>gops sys check</code> 会输出 <code>[WARN]</code> 提示（仅比对 <code>.env</code> 看不到这层陈旧）。</p>
 </blockquote>
+<h3 id="展示系统值变更"><a class="header" href="#展示系统值变更">展示系统值变更</a></h3>
+<pre><code class="language-bash">gops sys diff [--json]
+</code></pre>
+<p>只读比对「系统默认值」（<code>sys/merged_vars.yml</code> 的 <code>system:</code> 段，来源 <code>sys-defaults</code>）与生效值（⊕ <code>values/sys_value.yml</code>(<code>sys-setting</code>) ⊕ <code>values/value.yml</code>(<code>customer</code>)），只列出被覆盖的键：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>列</th><th>含义</th></tr>
+</thead>
+<tbody>
+<tr><td><code>KEY</code></td><td>变量名</td></tr>
+<tr><td><code>INITIAL</code></td><td>初始层取值（<code>-</code> 表示初始层无此键）</td></tr>
+<tr><td><code>EFFECTIVE</code></td><td>生效值</td></tr>
+<tr><td><code>ORIGIN</code></td><td>生效值来自哪一层</td></tr>
+<tr><td><code>MUTABILITY</code></td><td>生效值可变性（<code>merged_vars.yml</code> 不序列化可变性，故多为 <code>module</code>）</td></tr>
+<tr><td><code>STATE</code></td><td><code>same</code> / <code>changed</code> / <code>added</code> / <code>removed</code>（表格只列非 <code>same</code> 行）</td></tr>
+</tbody>
+</table>
+</div>
+<p>比对用<strong>未展开</strong>值（<code>${VAR}</code> 展开前），避免伪变更。<code>gops sys localize</code> 结束时也会打印同一张表（无覆盖时打 <code>[OK] 值无覆盖</code>）。</p>
+<p><strong>示例：</strong></p>
+<pre><code class="language-bash">gops sys diff
+# KEY         INITIAL      EFFECTIVE    ORIGIN    MUTABILITY  STATE
+# NGINX_TAG   1.25-alpine  1.27-alpine  customer  module      changed
+
+gops sys diff --json
+</code></pre>
+<blockquote>
+<p><code>gops prj diff</code> 暂不提供（prj 视角即逐系统的 <code>sys</code> 表）。</p>
+</blockquote>
 <h2 id="运行时运维命令-gops-run"><a class="header" href="#运行时运维命令-gops-run">运行时运维命令 (gops run)</a></h2>
 <p>在目标系统上执行<strong>标准运维动作</strong>（算子流契约）。按 <code>sys/sys_model.yml</code> 的 <code>kind</code> 分派：<code>gxl</code> 系统委托 <code>gx run &lt;cmd&gt;</code>（需 <code>gx &gt;= 0.13.0</code>）；<code>docker-compose</code> 系统映射到 <code>docker compose</code> 子命令（无需 gx）。</p>
 <pre><code class="language-bash">gops run download    # 下载制品        compose: pull
@@ -812,7 +854,7 @@ gops run diagnose    # 诊断问题        compose: config（密钥掩码注入�
 </code></pre>
 <p><strong>通用选项：</strong> <code>--mod &lt;MODULE&gt;</code>、<code>-e, --env &lt;ENV&gt;</code>（默认 <code>default</code>）、<code>-d/--debug</code>、<code>--log</code>。</p>
 <blockquote>
-<p>与 <code>gops sys</code>（<strong>定义/交付/工件</strong>：<code>new</code>/<code>update</code>/<code>localize</code>/<code>package</code>/<code>setting</code>/<code>check</code>）区分：<code>gops run</code> 只管「在环境里落地/运行」。</p>
+<p>与 <code>gops sys</code>（<strong>定义/交付/工件</strong>：<code>new</code>/<code>update</code>/<code>localize</code>/<code>package</code>/<code>setting</code>/<code>check</code>/<code>diff</code>）区分：<code>gops run</code> 只管「在环境里落地/运行」。</p>
 </blockquote>
 <p><strong>示例：</strong></p>
 <pre><code class="language-bash">gops run start --env default
