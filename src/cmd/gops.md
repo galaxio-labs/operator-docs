@@ -437,11 +437,19 @@ gops sys diff [--json]
 
 比对用**未展开**值（`${VAR}` 展开前），避免伪变更。`gops sys localize` 结束时也会打印同一张表（无覆盖时打 `[OK] 值无覆盖`）。
 
+对 **gxl 系统**（有 `sys/mod_list.yml`），`sys localize` 会逐模块消费 `values/<mod>/mod_value.yml`，故 `sys diff` / `localize` 还按模块分组呈现 `[mod: <name>]`（初始层 = `sys/<model>/mods/<mod>/vars.yml`；生效层 ⊕ `values/<mod>/value.yml` ⊕ `values/<mod>/mod_value.yml` ⊕ 系统层）。模块内容未下载时给 `[WARN]`（先 `gops sys update`）。
+
+值文件键**大小写不敏感**（加载时归一化为大写）。`--json` 为 `{ "system": [...], "modules": [{ "module": …, "changes": [...] }] }`（只含有变更的分组）。
+
 **示例：**
 ```bash
 gops sys diff
+# [sys] 值变更 (1 项):
 # KEY         INITIAL      EFFECTIVE    ORIGIN    MUTABILITY  STATE
 # NGINX_TAG   1.25-alpine  1.27-alpine  customer  module      changed
+# [mod: warp-parse] 值变更 (1 项):
+# KEY  INITIAL  EFFECTIVE  ORIGIN       MUTABILITY  STATE
+# CPU  1000     2000       mod-setting  module      changed
 
 gops sys diff --json
 ```

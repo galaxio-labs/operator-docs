@@ -2,7 +2,7 @@
 
 # 文档更新 2026-09-30 —— 值变更表（`gops sys diff` / `gops mod diff`）
 
-- **命令行工具**：`cmd/gops.md` 新增「展示系统值变更」与「展示模块值变更」两节（列含义、未展开值比对、`--json`、`localize` 末尾附带变更表）；`gops prj diff` 标注暂不提供；`mod localize` / `sys localize` 补**文件变更表**（`created`/`replaced`，前后内容指纹比对）
+- **命令行工具**：`cmd/gops.md` 新增「展示系统值变更」与「展示模块值变更」两节（列含义、未展开值比对、`--json`、`localize` 末尾附带变更表）；`gops prj diff` 标注暂不提供；`mod localize` / `sys localize` 补**文件变更表**（`created`/`replaced`，前后内容指纹比对）；`sys diff` 补 **gxl 系统的模块分组**（`[mod: <name>]`，`values/<mod>/mod_value.yml`）与 `--json` 新结构
 
 # 文档更新 2026-09-28 —— 对齐 galaxy-ops 1.3.3 的 docker-compose 文件位置
 
