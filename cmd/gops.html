@@ -45,7 +45,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-4437f2ff.js";
+            window.path_to_searchindex_js = "../searchindex-cfe6e6ea.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-18d2ed36.js"></script>
@@ -421,7 +421,7 @@ gops mod update --debug 3 --log mod=debug
 <li>基于环境特定值生成本地化配置文件</li>
 <li>适配不同部署环境的需求</li>
 <li>支持自定义值或默认值选择</li>
-<li>渲染 <code>spec/</code> → <code>local/</code> 后打印<strong>文件变更表</strong>（<code>FILE | STATE</code>，<code>created</code> / <code>replaced</code>）：用前后内容指纹（sha256）比对，先清空 <code>local/</code> 再重建不会误报未变文件，删除不报</li>
+<li>渲染 <code>spec/</code> → <code>local/</code> 后打印<strong>文件变更表</strong>（<code>FILE | STATE</code>，<code>created</code> / <code>replaced</code>）：用前后内容指纹（sha256）比对，先清空 <code>local/</code> 再重建不会误报未变文件，删除不报；标头为 <code>&lt;输出目录&gt; ← &lt;源模板&gt;</code>（如 <code>…/local ← sys/setting/warp-fusion</code>），区分来源</li>
 </ul>
 <p><strong>示例：</strong></p>
 <pre><code class="language-bash"># 使用默认值本地化
