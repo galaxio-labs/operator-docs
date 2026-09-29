@@ -439,7 +439,9 @@ gops sys diff [--json]
 
 对 **gxl 系统**（有 `sys/mod_list.yml`），`sys localize` 会逐模块消费 `values/<mod>/mod_value.yml`，故 `sys diff` / `localize` 还按模块分组呈现 `[mod: <name>]`（初始层 = `sys/<model>/mods/<mod>/vars.yml`；生效层 ⊕ `values/<mod>/value.yml` ⊕ `values/<mod>/mod_value.yml` ⊕ 系统层）。模块内容未下载时给 `[WARN]`（先 `gops sys update`）。
 
-值文件键**大小写不敏感**（加载时归一化为大写）。`--json` 为 `{ "system": [...], "modules": [{ "module": …, "changes": [...] }] }`（只含有变更的分组）。
+值文件键**大小写不敏感**（加载时归一化为大写）。`--json` 为 `{ "system": [...], "modules": [{ "module": …, "changes": [...] }], "files": [{ "target": …, "changes": [...] }] }`（只含有变更的分组）。
+
+**文件覆盖层：** 除值以外，`sys diff` 还会列出 `sys/setting/<mod>/**` 相对模块 `<mod>/spec/**` 的**新增 / 替换**（localize 把两者都渲染进 `local/`，即「setting 覆盖了模块默认的哪些文件」）；纯路径 + 内容比对，不需渲染，也不依赖上次 localize 的磁盘状态。
 
 **示例：**
 ```bash
