@@ -45,7 +45,7 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-efd20e26.js";
+            window.path_to_searchindex_js = "../../../searchindex-7463006a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../toc-18d2ed36.js"></script>
@@ -200,7 +200,7 @@ kind: docker-compose
 vender: ''
 </code></pre>
 <h2 id="2-编写-compose-与变量定义"><a class="header" href="#2-编写-compose-与变量定义">2. 编写 compose 与变量定义</a></h2>
-<p><code>docker-compose.yml</code> 用 Docker Compose 原生 <code>${VAR}</code> 占位（<code>sys new</code> 会生成一份可修改的模板）：</p>
+<p><code>sys/docker-compose.yaml</code> 用 Docker Compose 原生 <code>${VAR}</code> 占位（<code>sys new</code> 会生成一份可修改的模板）：</p>
 <pre><code class="language-yaml">services:
   app:
     image: ${SERVICE_IMAGE}
@@ -209,6 +209,7 @@ vender: ''
     deploy:
       replicas: ${REPLICAS}
 </code></pre>
+<p>compose 文件默认位于 <code>sys/</code>，也兼容放在系统根（旧布局）。无论文件在哪，compose 项目目录都锚定系统根，<code>${VAR}</code> 由系统根的 <code>.env</code> 注入。</p>
 <p>非密钥变量在 <code>sys/setting/vars.yml</code> 的 <code>system:</code> 段声明（源定义，随系统版本化）：</p>
 <pre><code class="language-yaml">system:
   - name: SERVICE_IMAGE

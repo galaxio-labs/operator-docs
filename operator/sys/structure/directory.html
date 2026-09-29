@@ -45,7 +45,7 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-efd20e26.js";
+            window.path_to_searchindex_js = "../../../searchindex-7463006a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../toc-18d2ed36.js"></script>
@@ -194,7 +194,6 @@
 </code></pre>
 <pre><code class="language-text">&lt;system-root&gt;/
 ├── .gitignore
-├── docker-compose.yml       # sys new 默认生成的 compose 定义（用 ${VAR} 占位）
 ├── sys-prj.yml              # 系统根配置
 ├── version.txt
 ├── _gal/                    # GXL 工程目录
@@ -205,6 +204,7 @@
 └── sys/
     ├── .gitignore
     ├── sys_model.yml        # name / model / vender（kind 缺省 = gxl）
+    ├── docker-compose.yaml  # sys new 默认生成的 compose 定义（用 ${VAR} 占位）
     ├── mod_list.yml         # 模块列表
     ├── workflows/
     │   └── operators.gxl
@@ -217,15 +217,16 @@
 </code></pre>
 <pre><code class="language-text">&lt;system-root&gt;/
 ├── .gitignore
-├── docker-compose.yml       # 系统级 compose 定义
 ├── sys-prj.yml
 ├── version.txt
 └── sys/
     ├── sys_model.yml        # name / kind: docker-compose / vender
+    ├── docker-compose.yaml  # 系统级 compose 定义
     └── setting/
         └── vars.yml
 </code></pre>
 <p>compose 类型不生成 <code>_gal/</code>、<code>values/</code>、<code>mod_list.yml</code>、<code>workflows/</code>、<code>setting/list.yml</code>。</p>
+<p>compose 文件默认位于 <code>sys/</code>，<code>gops sys</code> 按 <code>sys/compose.{yaml,yml}</code> → <code>sys/docker-compose.{yaml,yml}</code> → 系统根同名文件的顺序查找。无论文件在哪，compose <strong>项目目录都锚定系统根</strong>（项目名 = 根目录名，相对挂载路径与 <code>.env</code> 均相对系统根）。把文件放在系统根（旧布局）仍受支持：此时 <code>gops</code> 不加 <code>-f</code>，交由 docker 自动发现（<code>docker-compose.override.yml</code> 自动合并、<code>COMPOSE_FILE</code> 环境变量继续生效）；<code>sys/</code> 布局下由 <code>gops</code> 显式合并 <code>&lt;sys&gt;/&lt;stem&gt;.override.{yaml,yml}</code>。</p>
 <h2 id="运行时生成的文件"><a class="header" href="#运行时生成的文件">运行时生成的文件</a></h2>
 <p><code>gops sys update</code> / <code>gops sys localize</code> 会在需要时补齐：</p>
 <ul>
@@ -245,7 +246,7 @@
 <p>旧文档里常见的这些内容，不应再视为当前最小骨架的一部分：</p>
 <ul>
 <li><code>sys/vars.yml</code></li>
-<li><code>sys/mods/</code>（由本地化过程生成，不是初始结构）</li>
+<li><code>sys/&lt;model&gt;/mods/</code>（由 <code>gops sys update</code> 生成，不是初始结构）</li>
 <li><code>test_res/</code></li>
 <li>独立 <code>gsys</code> CLI 生成目录</li>
 </ul>

@@ -45,7 +45,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-efd20e26.js";
+            window.path_to_searchindex_js = "../searchindex-7463006a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-18d2ed36.js"></script>
@@ -209,6 +209,7 @@ gops &lt;command&gt; &lt;subcommand&gt; --help
 <li><strong><code>gops prj</code></strong> - 部署管理命令</li>
 <li><strong><code>gops mod</code></strong> - 模块管理命令</li>
 <li><strong><code>gops sys</code></strong> - 系统管理命令</li>
+<li><strong><code>gops self</code></strong> - 自升级命令</li>
 </ol>
 <h2 id="全局选项"><a class="header" href="#全局选项">全局选项</a></h2>
 <p>所有命令都支持以下全局选项：</p>
@@ -492,14 +493,18 @@ gops sys update --debug 3 --log sys=debug
 <ul>
 <li><code>-f, --force &lt;LEVEL&gt;</code> - 强制更新级别</li>
 <li><code>--output &lt;PATH&gt;</code> - 输出路径（默认：父目录下 <code>&lt;name&gt;-&lt;version&gt;.tar.gz</code>）</li>
+<li><code>--no-git</code> - 不按 git 入库文件打包，而是打包当前目录全部（仅跳过 <code>.git/</code>）</li>
 </ul>
 <p><strong>功能：</strong></p>
 <ul>
 <li>先执行一次 <code>update</code>（解析变量、生成 <code>sys/merged_vars.yml</code>），保证交付包可被 <code>gops prj import</code> 完整导入</li>
-<li>再把系统打包为 <code>.tar.gz</code></li>
+<li>再打包为 <code>.tar.gz</code>：<strong>默认只含 git 入库文件</strong>（<code>git ls-files</code>，等价 <code>git archive</code> 的“只含入库文件”，需在 git 仓库内运行），自然排除被忽略的产物（<code>sys/*/mods/</code>、<code>**/local</code>、<code>.env</code> 等）；<code>deliver.lock</code> 作为交付清单始终随包分发</li>
 </ul>
 <p><strong>示例：</strong></p>
-<pre><code class="language-bash">gops sys package
+<pre><code class="language-bash"># 默认：只含入库文件
+gops sys package
+# 整目录打包（含未入库 / 被忽略的内容）
+gops sys package --no-git
 gops sys package --output /tmp/gateway-0.1.0.tar.gz
 </code></pre>
 <h3 id="为环境本地化系统配置"><a class="header" href="#为环境本地化系统配置">为环境本地化系统配置</a></h3>
@@ -517,7 +522,7 @@ gops sys package --output /tmp/gateway-0.1.0.tar.gz
 <li>生成 <code>.env</code>：<code>sys/merged_vars.yml</code> 默认值 ⊕ <code>values/sys_value.yml</code> ⊕ <code>values/value.yml</code></li>
 <li>两个值文件都是可选、可部分覆盖：只写需要修改的项，其余取系统默认值</li>
 <li>系统变量尚未解析（缺 <code>sys/merged_vars.yml</code>）时会自动先执行 <code>update</code>；<code>--only</code> 跳过该步骤</li>
-<li><code>kind: docker-compose</code> 时，<code>.env</code> 供同目录的 <code>docker-compose.yml</code> 消费</li>
+<li><code>kind: docker-compose</code> 时，<code>.env</code> 供 compose 消费（默认 compose 文件为 <code>sys/docker-compose.yaml</code>，<code>.env</code> 仍在系统根）</li>
 </ul>
 <p><strong>示例：</strong></p>
 <pre><code class="language-bash"># 生成本地化配置（必要时自动先 update）
@@ -530,6 +535,51 @@ gops sys localize --only
 gops sys localize --mod gateway
 </code></pre>
 <p><strong>值文件说明：</strong> <code>values/sys_value.yml</code> 由 <code>sys update</code> 首次生成，整份是<strong>注释模板</strong>——取消注释需要覆盖的项即可；<code>values/value.yml</code> 优先级更高，适合入库的客户覆盖。</p>
+<h2 id="自升级命令-gops-self"><a class="header" href="#自升级命令-gops-self">自升级命令 (gops self)</a></h2>
+<p>与 <code>gx self</code> 对齐，用于检查与升级 <code>gops</code> 自身。</p>
+<h3 id="查看状态"><a class="header" href="#查看状态">查看状态</a></h3>
+<pre><code class="language-bash">gops self status
+</code></pre>
+<p>输出当前版本、安装目录与最近一次自升级结果（<code>state.last_remote_version</code> / <code>state.last_result</code> / <code>state.last_error</code>）。</p>
+<h3 id="检查更新"><a class="header" href="#检查更新">检查更新</a></h3>
+<pre><code class="language-bash"># 默认 stable 通道
+gops self check
+
+# 指定通道
+gops self check --channel alpha
+
+# 机器可读输出（stdout 仅 JSON，不含版本横幅）
+gops self check --channel alpha --json
+</code></pre>
+<h3 id="升级"><a class="header" href="#升级">升级</a></h3>
+<pre><code class="language-bash"># 升级到通道最新版
+gops self update --channel alpha
+
+# 跳过交互确认
+gops self update --channel alpha --yes
+
+# 只演练，不实际安装
+gops self update --channel alpha --dry-run
+
+# 指定目标版本（与清单不一致时报错）
+gops self update --channel alpha --to 2.1.0
+
+# 已是最新时强制重装
+gops self update --channel alpha --force
+</code></pre>
+<p>更新前会备份当前二进制；新版本 <code>--version</code> 健康检查失败会自动回滚。</p>
+<h3 id="回滚"><a class="header" href="#回滚">回滚</a></h3>
+<pre><code class="language-bash"># 回滚到最近一次备份
+gops self rollback
+
+# 指定备份 id（14 位时间戳）
+gops self rollback --id 20260321123456
+</code></pre>
+<h3 id="说明"><a class="header" href="#说明">说明</a></h3>
+<ul>
+<li>制品清单来自 <code>galaxio-labs/get</code> 的 <code>updates/gops</code> 通道，与 <code>inst-x.sh gops &lt;channel&gt;</code> 同一来源。</li>
+<li>状态、锁与备份存放于 <code>~/.galaxy/self_update/gops</code>（与 <code>gx</code> 的同名目录隔离）。</li>
+</ul>
 <h2 id="环境变量"><a class="header" href="#环境变量">环境变量</a></h2>
 <h3 id="调试环境变量"><a class="header" href="#调试环境变量">调试环境变量</a></h3>
 <ul>
@@ -577,12 +627,12 @@ gops sys localize --mod gateway
 <h3 id="系统目录结构"><a class="header" href="#系统目录结构">系统目录结构</a></h3>
 <pre><code>my-system/
 ├── sys-prj.yml              # 系统根配置
-├── docker-compose.yml       # 系统级 compose 定义（${VAR} 占位）
 ├── version.txt
 ├── _gal/                    # GXL 工程文件（仅 kind: gxl）
 ├── values/                  # 值文件目录
 └── sys/
     ├── sys_model.yml        # name / model / kind / vender
+    ├── docker-compose.yaml  # 系统级 compose 定义（${VAR} 占位）
     ├── mod_list.yml         # 模块列表（GXL；可选）
     ├── merged_vars.yml      # 聚合变量（sys update 生成，需入库）
     ├── workflows/           # GXL 工作流（可选）
@@ -590,7 +640,7 @@ gops sys localize --mod gateway
         ├── list.yml         # 可选
         └── vars.yml         # 系统设置变量定义（源）
 </code></pre>
-<p>纯 docker-compose 系统只保留 <code>sys_model.yml</code> 与 <code>setting/vars.yml</code>（详见 <a href="../operator/sys/structure/directory.html">System 目录结构</a>）。</p>
+<p>纯 docker-compose 系统只保留 <code>sys_model.yml</code>、<code>docker-compose.yaml</code> 与 <code>setting/vars.yml</code>（详见 <a href="../operator/sys/structure/directory.html">System 目录结构</a>）。</p>
 <h2 id="最佳实践"><a class="header" href="#最佳实践">最佳实践</a></h2>
 <h3 id="工程管理"><a class="header" href="#工程管理">工程管理</a></h3>
 <pre><code class="language-bash"># 1. 创建新工程

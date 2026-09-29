@@ -45,7 +45,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-efd20e26.js";
+            window.path_to_searchindex_js = "../searchindex-7463006a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-18d2ed36.js"></script>
@@ -511,7 +511,7 @@
     MV["sys/merged_vars.yml 系统默认值"] --&gt; ENV[".env"]
     SV["values/sys_value.yml 注释模板"] --&gt; ENV
     UV["values/value.yml 客户覆盖"] --&gt; ENV
-    ENV --&gt; DC["docker-compose.yml 消费"]
+    ENV --&gt; DC["sys/docker-compose.yaml 消费"]
     SEC["~/.galaxy/sec_value.yml 密钥"] --&gt;|运行时注入子进程环境| DC
 </pre>
 

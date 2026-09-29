@@ -45,7 +45,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-efd20e26.js";
+            window.path_to_searchindex_js = "../../searchindex-7463006a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-18d2ed36.js"></script>
@@ -201,7 +201,7 @@
 <h2 id="当前命令"><a class="header" href="#当前命令">当前命令</a></h2>
 <pre><code class="language-bash">gops sys new --name &lt;name&gt; [--kind gxl|docker-compose]
 gops sys update [--force]
-gops sys package [--force] [--output &lt;path&gt;]
+gops sys package [--force] [--output &lt;path&gt;] [--no-git]
 gops sys localize [--mod &lt;module&gt;] [--only]
 gops sys setting --init
 gops sys download [--mod &lt;module&gt;] [--env &lt;env&gt;]
@@ -255,7 +255,7 @@ gops sys new --name gateway --kind docker-compose   # 纯 compose（无型号）
 <li><code>sys/workflows/operators.gxl</code>：系统级工作流（GXL）</li>
 <li><code>values/sys_value.yml</code>：值文件（<code>sys update</code> 生成<strong>注释模板</strong>，取消注释即覆盖）</li>
 <li><code>values/value.yml</code>：额外覆盖层（适合入库的客户覆盖）</li>
-<li><code>docker-compose.yml</code>：系统级 compose 定义（用 <code>${VAR}</code> 占位）</li>
+<li><code>sys/docker-compose.yaml</code>：系统级 compose 定义（用 <code>${VAR}</code> 占位；放在系统根（旧布局）仍受支持）</li>
 <li><code>.env</code>：<code>sys localize</code> 生成的非密钥配置（供 compose 消费）</li>
 </ul>
 <h2 id="值--本地化流程"><a class="header" href="#值--本地化流程">值 / 本地化流程</a></h2>
@@ -265,7 +265,7 @@ gops sys localize -&gt; .env = merged_vars 默认值 ⊕ values/sys_value.yml �
 <p>两个值文件都是<strong>可选、可部分覆盖</strong>：只写需要修改的项，其余取系统默认值。保持注释模板原样时等价于空覆盖。</p>
 <p><code>sys localize</code> 在系统变量尚未解析（缺 <code>sys/merged_vars.yml</code>）时会自动先执行 <code>update</code>；<code>--only</code> 跳过这一步（此时若变量仍未解析会明确报错）。</p>
 <h2 id="密钥"><a class="header" href="#密钥">密钥</a></h2>
-<p>密钥<strong>不写入</strong> <code>.env</code>：在 <code>docker-compose.yml</code> 里用 <code>${SEC_xxx}</code> 占位，<code>gops sys start</code> 运行时从 <code>~/.galaxy/sec_value.yml</code>（或当前目录 <code>./.galaxy/sec_value.yml</code>）读取并注入子进程环境（key 会归一化为大写并加 <code>SEC_</code> 前缀）。<code>gops sys diagnose</code>（<code>docker compose config</code>）只读校验，注入的是掩码值 <code>********</code>。详见 <code>galaxy-ops</code> 仓库的 <code>src/system/README.md</code>。</p>
+<p>密钥<strong>不写入</strong> <code>.env</code>：在 <code>sys/docker-compose.yaml</code> 里用 <code>${SEC_xxx}</code> 占位，<code>gops sys start</code> 运行时从 <code>~/.galaxy/sec_value.yml</code>（或当前目录 <code>./.galaxy/sec_value.yml</code>）读取并注入子进程环境（key 会归一化为大写并加 <code>SEC_</code> 前缀）。<code>gops sys diagnose</code>（<code>docker compose config</code>）只读校验，注入的是掩码值 <code>********</code>。详见 <code>galaxy-ops</code> 仓库的 <code>src/system/README.md</code>。</p>
 <h2 id="常见流程"><a class="header" href="#常见流程">常见流程</a></h2>
 <h3 id="更新系统本地引用"><a class="header" href="#更新系统本地引用">更新系统本地引用</a></h3>
 <pre><code class="language-bash">gops sys update

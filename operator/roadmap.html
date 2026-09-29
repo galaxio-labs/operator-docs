@@ -45,7 +45,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-efd20e26.js";
+            window.path_to_searchindex_js = "../searchindex-7463006a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-18d2ed36.js"></script>
@@ -198,7 +198,7 @@
 </thead>
 <tbody>
 <tr><td>① <code>gops sys new --model &lt;modelsdt&gt;</code>（非交互选型）</td><td>采用前置</td><td><code>ia_model_std()</code> 只能交互；自动选型靠 <code>TEST_MODE=1</code> 这种 hack</td><td>解锁 CI / 自动化，实现极小</td></tr>
-<tr><td>② <code>gops sys check</code> 部署前校验</td><td>问题 1（后果严重）</td><td><code>sys localize</code> 只导出 <code>.env</code>（<code>export_env_file</code>），<strong>不校验</strong> <code>docker-compose.yml</code> 里的 <code>${VAR}</code> 是否都有定义</td><td>把“上线才炸“提前到“localize 前报错“</td></tr>
+<tr><td>② <code>gops sys check</code> 部署前校验</td><td>问题 1（后果严重）</td><td><code>sys localize</code> 只导出 <code>.env</code>（<code>export_env_file</code>），<strong>不校验</strong> <code>sys/docker-compose.yaml</code> 里的 <code>${VAR}</code> 是否都有定义</td><td>把“上线才炸“提前到“localize 前报错“</td></tr>
 <tr><td>③ 密钥缺失 fail-fast</td><td>问题 1（容易遗忘）</td><td><code>run_compose_cmd</code> 无脑 <code>load_sec_dict()</code> 注入，不校验被引用的 <code>${SEC_x}</code> 是否存在</td><td>挡住“空密码静默上线“</td></tr>
 <tr><td>④ <code>gops sys diff</code></td><td>问题 1（容易遗忘）</td><td>有值来源追踪（<code>_used.json</code>），但没有“客户值 vs 系统默认“的差异视图</td><td>一眼看清“改了哪些、哪些还是默认“</td></tr>
 </tbody>
@@ -281,12 +281,12 @@
 <p><strong>目标</strong>：在 <code>localize</code> 之后、<code>start</code> 之前，把“上线才炸“的未定义变量提前成一条明确报错。</p>
 <p><strong>现状证据</strong></p>
 <ul>
-<li><code>src/system/operator.rs::SysOperator::localize</code> 只把合并后的值无条件写入 <code>&lt;sys&gt;/.env</code>（<code>project::export_env_file(options.evaled_value(), env_path)</code>），<strong>不校验</strong> <code>docker-compose.yml</code> 里引用的 <code>${VAR}</code> 是否都有定义。</li>
+<li><code>src/system/operator.rs::SysOperator::localize</code> 只把合并后的值无条件写入 <code>&lt;sys&gt;/.env</code>（<code>project::export_env_file(options.evaled_value(), env_path)</code>），<strong>不校验</strong> <code>sys/docker-compose.yaml</code> 里引用的 <code>${VAR}</code> 是否都有定义。</li>
 <li>缺失时 <code>docker compose</code> 仅打印 <code>The "X" variable is not set. Defaulting to a blank string.</code> 然后带空值继续——正是“后果严重“的典型现场。</li>
 </ul>
 <p><strong>期望行为</strong></p>
 <ul>
-<li>新增只读命令 <code>gops sys check</code>：扫描系统内 <code>docker-compose*.yml</code> 的插值占位
+<li>新增只读命令 <code>gops sys check</code>：扫描系统内 compose 文件（<code>sys/docker-compose.{yaml,yml}</code> 等）的插值占位
 <ul>
 <li>形态：<code>${VAR}</code>、<code>${VAR:-default}</code>、<code>${VAR-default}</code>、<code>$VAR</code>；带 <code>:-</code> / <code>-</code> 默认值的视为可选；</li>
 <li>其余必须在“合并值字典（∪ 生成的 <code>.env</code>）“中存在；</li>

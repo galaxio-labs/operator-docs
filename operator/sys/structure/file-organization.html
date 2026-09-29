@@ -45,7 +45,7 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-efd20e26.js";
+            window.path_to_searchindex_js = "../../../searchindex-7463006a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../toc-18d2ed36.js"></script>
@@ -192,7 +192,6 @@
 <h2 id="根目录文件"><a class="header" href="#根目录文件">根目录文件</a></h2>
 <ul>
 <li><code>sys-prj.yml</code>：系统根配置</li>
-<li><code>docker-compose.yml</code>：系统级 compose 定义（<code>sys new</code> 默认生成，用 <code>${VAR}</code> 占位）</li>
 <li><code>version.txt</code>：版本标记</li>
 <li><code>.gitignore</code></li>
 </ul>
@@ -205,6 +204,7 @@
 <h2 id="sys"><a class="header" href="#sys"><code>sys/</code></a></h2>
 <ul>
 <li><code>sys_model.yml</code>：系统模型定义（<code>name</code> / <code>model</code> / <code>kind</code> / <code>vender</code>）</li>
+<li><code>docker-compose.yaml</code>：系统级 compose 定义（<code>sys new</code> 默认生成，用 <code>${VAR}</code> 占位；放在系统根（旧布局）仍受支持）</li>
 <li><code>mod_list.yml</code>：模块列表定义（GXL；可选）</li>
 <li><code>merged_vars.yml</code>：聚合变量（<code>sys update</code> 生成，需入库）</li>
 <li><code>setting/list.yml</code>：设置列表（可选）</li>
@@ -218,7 +218,7 @@
 <li><code>setting/mod_value.yml</code>、<code>&lt;mod&gt;/mod_value.yml</code>：本地化辅助值文件。</li>
 </ul>
 <h2 id="env"><a class="header" href="#env"><code>.env</code></a></h2>
-<p><code>gops sys localize</code> 生成的非密钥配置（<code>KEY=VALUE</code>），供 <code>docker compose</code> 消费。密钥不写入 <code>.env</code>。</p>
+<p><code>gops sys localize</code> 生成的非密钥配置（<code>KEY=VALUE</code>），供 <code>docker compose</code> 消费。密钥不写入 <code>.env</code>。compose 项目目录锚定系统根，因此 <code>.env</code> 位于系统根（而非默认的 <code>sys/</code>）。</p>
 <h2 id="文件职责与本地化"><a class="header" href="#文件职责与本地化">文件职责与本地化</a></h2>
 <pre><code class="language-text">.env = sys/merged_vars.yml 默认值 ⊕ values/sys_value.yml ⊕ values/value.yml
 </code></pre>
@@ -242,7 +242,7 @@
 <ul>
 <li><code>SYS_BIN = "gsys"</code> / <code>MOD_BIN = "gmod"</code>（GXL 模板中已改为 <code>"gops sys"</code> / <code>"gops mod"</code>）</li>
 <li>“系统级 vars.yml 必然位于 sys/ 根目录”</li>
-<li>“sys/mods/ 是固定初始结构”</li>
+<li>“sys/mods/ 是固定初始结构”（模块现在按目标模型分组到 <code>sys/&lt;model&gt;/mods/&lt;mod&gt;/</code>，由 <code>gops sys update</code> 生成）</li>
 <li>“系统变量文件叫 <code>sys/sys_vars.yml</code>”（已重命名为 <code>merged_vars.yml</code>，旧名仅作读取兼容）</li>
 </ul>
 
