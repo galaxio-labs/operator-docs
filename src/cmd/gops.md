@@ -257,6 +257,7 @@ gops mod localize [OPTIONS]
 - 基于环境特定值生成本地化配置文件
 - 适配不同部署环境的需求
 - 支持自定义值或默认值选择
+- 渲染 `spec/` → `local/` 后打印**文件变更表**（`FILE | STATE`，`created` / `replaced`）：用前后内容指纹（sha256）比对，先清空 `local/` 再重建不会误报未变文件，删除不报
 
 **示例：**
 ```bash
@@ -412,6 +413,8 @@ gops sys localize --mod gateway
 ```
 
 **值文件说明：** `values/sys_value.yml` 由 `sys update` 首次生成，整份是**注释模板**——取消注释需要覆盖的项即可；`values/value.yml` 优先级更高（覆盖层优先：`value.yml` > `sys_value.yml` > 变量定义），适合入库的客户覆盖。
+
+`localize` 渲染 sys setting 模板（`src` → `dst`）后，会打印**文件变更表**（`FILE | STATE`，`created` / `replaced`），用前后内容指纹（sha256）比对：清空输出树再重建不会把内容未变的文件误报为变更，删除不报。
 
 > 改了 `sys/setting/vars.yml` 而未重新 localize 时，`gops sys check` 会输出 `[WARN]` 提示（仅比对 `.env` 看不到这层陈旧）。
 
