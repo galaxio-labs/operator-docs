@@ -46,7 +46,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-c8c1cd61.js";
+            window.path_to_searchindex_js = "searchindex-d7fc209e.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-18d2ed36.js"></script>
@@ -224,7 +224,7 @@ scripts/sync-gxl-docs.sh check --dest &lt;operator-docs&gt;/src/gxl
 <h1 id="changelog"><a class="header" href="#changelog">Changelog</a></h1>
 <h1 id="文档更新-2026-09-30--值变更表gops-sys-diff--gops-mod-diff"><a class="header" href="#文档更新-2026-09-30--值变更表gops-sys-diff--gops-mod-diff">文档更新 2026-09-30 —— 值变更表（<code>gops sys diff</code> / <code>gops mod diff</code>）</a></h1>
 <ul>
-<li><strong>命令行工具</strong>：<code>cmd/gops.md</code> 新增「展示系统值变更」与「展示模块值变更」两节（列含义、未展开值比对、<code>--json</code>、<code>localize</code> 末尾附带变更表）；<code>gops prj diff</code> 标注暂不提供</li>
+<li><strong>命令行工具</strong>：<code>cmd/gops.md</code> 新增「展示系统值变更」与「展示模块值变更」两节（列含义、未展开值比对、<code>--json</code>、<code>localize</code> 末尾附带变更表）；<code>gops prj diff</code> 标注暂不提供；<code>mod localize</code> / <code>sys localize</code> 补<strong>文件变更表</strong>（<code>created</code>/<code>replaced</code>，前后内容指纹比对）</li>
 </ul>
 <h1 id="文档更新-2026-09-28--对齐-galaxy-ops-133-的-docker-compose-文件位置"><a class="header" href="#文档更新-2026-09-28--对齐-galaxy-ops-133-的-docker-compose-文件位置">文档更新 2026-09-28 —— 对齐 galaxy-ops 1.3.3 的 docker-compose 文件位置</a></h1>
 <ul>
@@ -674,6 +674,7 @@ gops mod update --debug 3 --log mod=debug
 <li>基于环境特定值生成本地化配置文件</li>
 <li>适配不同部署环境的需求</li>
 <li>支持自定义值或默认值选择</li>
+<li>渲染 <code>spec/</code> → <code>local/</code> 后打印<strong>文件变更表</strong>（<code>FILE | STATE</code>，<code>created</code> / <code>replaced</code>）：用前后内容指纹（sha256）比对，先清空 <code>local/</code> 再重建不会误报未变文件，删除不报</li>
 </ul>
 <p><strong>示例：</strong></p>
 <pre><code class="language-bash"># 使用默认值本地化
@@ -809,6 +810,7 @@ gops sys localize --only
 gops sys localize --mod gateway
 </code></pre>
 <p><strong>值文件说明：</strong> <code>values/sys_value.yml</code> 由 <code>sys update</code> 首次生成，整份是<strong>注释模板</strong>——取消注释需要覆盖的项即可；<code>values/value.yml</code> 优先级更高（覆盖层优先：<code>value.yml</code> &gt; <code>sys_value.yml</code> &gt; 变量定义），适合入库的客户覆盖。</p>
+<p><code>localize</code> 渲染 sys setting 模板（<code>src</code> → <code>dst</code>）后，会打印<strong>文件变更表</strong>（<code>FILE | STATE</code>，<code>created</code> / <code>replaced</code>），用前后内容指纹（sha256）比对：清空输出树再重建不会把内容未变的文件误报为变更，删除不报。</p>
 <blockquote>
 <p>改了 <code>sys/setting/vars.yml</code> 而未重新 localize 时，<code>gops sys check</code> 会输出 <code>[WARN]</code> 提示（仅比对 <code>.env</code> 看不到这层陈旧）。</p>
 </blockquote>
