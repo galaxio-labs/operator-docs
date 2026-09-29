@@ -34,6 +34,7 @@ gops [全局选项] <主命令> [子命令选项] <子命令>
 1. **`gops prj`** - 部署管理命令
 2. **`gops mod`** - 模块管理命令
 3. **`gops sys`** - 系统管理命令
+4. **`gops self`** - 自升级命令
 
 ## 全局选项
 
@@ -336,14 +337,18 @@ gops sys package [OPTIONS]
 **选项：**
 - `-f, --force <LEVEL>` - 强制更新级别
 - `--output <PATH>` - 输出路径（默认：父目录下 `<name>-<version>.tar.gz`）
+- `--no-git` - 不按 git 入库文件打包，而是打包当前目录全部（仅跳过 `.git/`）
 
 **功能：**
 - 先执行一次 `update`（解析变量、生成 `sys/merged_vars.yml`），保证交付包可被 `gops prj import` 完整导入
-- 再把系统打包为 `.tar.gz`
+- 再打包为 `.tar.gz`：**默认只含 git 入库文件**（`git ls-files`，等价 `git archive` 的“只含入库文件”，需在 git 仓库内运行），自然排除被忽略的产物（`sys/*/mods/`、`**/local`、`.env` 等）；`deliver.lock` 作为交付清单始终随包分发
 
 **示例：**
 ```bash
+# 默认：只含入库文件
 gops sys package
+# 整目录打包（含未入库 / 被忽略的内容）
+gops sys package --no-git
 gops sys package --output /tmp/gateway-0.1.0.tar.gz
 ```
 
@@ -378,6 +383,67 @@ gops sys localize --mod gateway
 ```
 
 **值文件说明：** `values/sys_value.yml` 由 `sys update` 首次生成，整份是**注释模板**——取消注释需要覆盖的项即可；`values/value.yml` 优先级更高，适合入库的客户覆盖。
+
+## 自升级命令 (gops self)
+
+与 `gx self` 对齐，用于检查与升级 `gops` 自身。
+
+### 查看状态
+
+```bash
+gops self status
+```
+
+输出当前版本、安装目录与最近一次自升级结果（`state.last_remote_version` / `state.last_result` / `state.last_error`）。
+
+### 检查更新
+
+```bash
+# 默认 stable 通道
+gops self check
+
+# 指定通道
+gops self check --channel alpha
+
+# 机器可读输出（stdout 仅 JSON，不含版本横幅）
+gops self check --channel alpha --json
+```
+
+### 升级
+
+```bash
+# 升级到通道最新版
+gops self update --channel alpha
+
+# 跳过交互确认
+gops self update --channel alpha --yes
+
+# 只演练，不实际安装
+gops self update --channel alpha --dry-run
+
+# 指定目标版本（与清单不一致时报错）
+gops self update --channel alpha --to 2.1.0
+
+# 已是最新时强制重装
+gops self update --channel alpha --force
+```
+
+更新前会备份当前二进制；新版本 `--version` 健康检查失败会自动回滚。
+
+### 回滚
+
+```bash
+# 回滚到最近一次备份
+gops self rollback
+
+# 指定备份 id（14 位时间戳）
+gops self rollback --id 20260321123456
+```
+
+### 说明
+
+- 制品清单来自 `galaxio-labs/get` 的 `updates/gops` 通道，与 `inst-x.sh gops <channel>` 同一来源。
+- 状态、锁与备份存放于 `~/.galaxy/self_update/gops`（与 `gx` 的同名目录隔离）。
 
 ## 环境变量
 

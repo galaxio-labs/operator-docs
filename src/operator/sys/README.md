@@ -17,7 +17,7 @@
 ```bash
 gops sys new --name <name> [--kind gxl|docker-compose]
 gops sys update [--force]
-gops sys package [--force] [--output <path>]
+gops sys package [--force] [--output <path>] [--no-git]
 gops sys localize [--mod <module>] [--only]
 gops sys setting --init
 gops sys download [--mod <module>] [--env <env>]

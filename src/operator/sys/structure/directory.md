@@ -74,6 +74,6 @@ compose 文件默认位于 `sys/`，`gops sys` 按 `sys/compose.{yaml,yml}` → 
 旧文档里常见的这些内容，不应再视为当前最小骨架的一部分：
 
 - `sys/vars.yml`
-- `sys/mods/`（由本地化过程生成，不是初始结构）
+- `sys/<model>/mods/`（由 `gops sys update` 生成，不是初始结构）
 - `test_res/`
 - 独立 `gsys` CLI 生成目录
