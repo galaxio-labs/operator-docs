@@ -270,6 +270,20 @@ gops mod localize --value prod-values.yml
 gops mod localize --value dev-values.yml --debug 2
 ```
 
+### 展示模块值变更
+
+```bash
+gops mod diff [--json]
+```
+
+只读比对「模块默认值」（`mod/<model>/vars.yml`，来源 `mod-default`）与生效值，**按模型**列出每个键的初始值 / 生效值 / 来源 / 可变性 / 变更状态。`gops mod localize` 结束时也会打印同一张表。
+
+**示例：**
+```bash
+gops mod diff
+gops mod diff --json
+```
+
 ## 系统管理命令 (gops sys)
 
 ### 创建新的系统操作符
@@ -401,6 +415,36 @@ gops sys localize --mod gateway
 
 > 改了 `sys/setting/vars.yml` 而未重新 localize 时，`gops sys check` 会输出 `[WARN]` 提示（仅比对 `.env` 看不到这层陈旧）。
 
+### 展示系统值变更
+
+```bash
+gops sys diff [--json]
+```
+
+只读比对「系统默认值」（`sys/merged_vars.yml` 的 `system:` 段，来源 `sys-defaults`）与生效值（⊕ `values/sys_value.yml`(`sys-setting`) ⊕ `values/value.yml`(`customer`)），只列出被覆盖的键：
+
+| 列 | 含义 |
+|---|---|
+| `KEY` | 变量名 |
+| `INITIAL` | 初始层取值（`-` 表示初始层无此键） |
+| `EFFECTIVE` | 生效值 |
+| `ORIGIN` | 生效值来自哪一层 |
+| `MUTABILITY` | 生效值可变性（`merged_vars.yml` 不序列化可变性，故多为 `module`） |
+| `STATE` | `same` / `changed` / `added` / `removed`（表格只列非 `same` 行） |
+
+比对用**未展开**值（`${VAR}` 展开前），避免伪变更。`gops sys localize` 结束时也会打印同一张表（无覆盖时打 `[OK] 值无覆盖`）。
+
+**示例：**
+```bash
+gops sys diff
+# KEY         INITIAL      EFFECTIVE    ORIGIN    MUTABILITY  STATE
+# NGINX_TAG   1.25-alpine  1.27-alpine  customer  module      changed
+
+gops sys diff --json
+```
+
+> `gops prj diff` 暂不提供（prj 视角即逐系统的 `sys` 表）。
+
 ## 运行时运维命令 (gops run)
 
 在目标系统上执行**标准运维动作**（算子流契约）。按 `sys/sys_model.yml` 的 `kind` 分派：`gxl` 系统委托 `gx run <cmd>`（需 `gx >= 0.13.0`）；`docker-compose` 系统映射到 `docker compose` 子命令（无需 gx）。
@@ -417,7 +461,7 @@ gops run diagnose    # 诊断问题        compose: config（密钥掩码注入�
 
 **通用选项：** `--mod <MODULE>`、`-e, --env <ENV>`（默认 `default`）、`-d/--debug`、`--log`。
 
-> 与 `gops sys`（**定义/交付/工件**：`new`/`update`/`localize`/`package`/`setting`/`check`）区分：`gops run` 只管「在环境里落地/运行」。
+> 与 `gops sys`（**定义/交付/工件**：`new`/`update`/`localize`/`package`/`setting`/`check`/`diff`）区分：`gops run` 只管「在环境里落地/运行」。
 
 **示例：**
 ```bash

@@ -1,5 +1,9 @@
 # Changelog
 
+# 文档更新 2026-09-30 —— 值变更表（`gops sys diff` / `gops mod diff`）
+
+- **命令行工具**：`cmd/gops.md` 新增「展示系统值变更」与「展示模块值变更」两节（列含义、未展开值比对、`--json`、`localize` 末尾附带变更表）；`gops prj diff` 标注暂不提供
+
 # 文档更新 2026-09-28 —— 对齐 galaxy-ops 1.3.3 的 docker-compose 文件位置
 
 - **System 文档**：`kind: docker-compose` 的 compose 文件默认从系统根移至 `sys/docker-compose.yaml`，并补充查找顺序、compose 项目目录锚定系统根、旧布局仍兼容的说明；同步 `operator/sys/structure/directory.md`、`file-organization.md`、`naming-conventions.md`、`operator/sys/README.md`、`operator/sys/examples/docker-compose.md`、`operator/sys/troubleshooting/common-issues.md`、`operator/overview.md`、`operator/roadmap.md`
