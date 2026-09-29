@@ -46,7 +46,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-cfe6e6ea.js";
+            window.path_to_searchindex_js = "searchindex-0ed4a64d.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-18d2ed36.js"></script>
@@ -835,7 +835,8 @@ gops sys localize --mod gateway
 </div>
 <p>比对用<strong>未展开</strong>值（<code>${VAR}</code> 展开前），避免伪变更。<code>gops sys localize</code> 结束时也会打印同一张表（无覆盖时打 <code>[OK] 值无覆盖</code>）。</p>
 <p>对 <strong>gxl 系统</strong>（有 <code>sys/mod_list.yml</code>），<code>sys localize</code> 会逐模块消费 <code>values/&lt;mod&gt;/mod_value.yml</code>，故 <code>sys diff</code> / <code>localize</code> 还按模块分组呈现 <code>[mod: &lt;name&gt;]</code>（初始层 = <code>sys/&lt;model&gt;/mods/&lt;mod&gt;/vars.yml</code>；生效层 ⊕ <code>values/&lt;mod&gt;/value.yml</code> ⊕ <code>values/&lt;mod&gt;/mod_value.yml</code> ⊕ 系统层）。模块内容未下载时给 <code>[WARN]</code>（先 <code>gops sys update</code>）。</p>
-<p>值文件键<strong>大小写不敏感</strong>（加载时归一化为大写）。<code>--json</code> 为 <code>{ "system": [...], "modules": [{ "module": …, "changes": [...] }] }</code>（只含有变更的分组）。</p>
+<p>值文件键<strong>大小写不敏感</strong>（加载时归一化为大写）。<code>--json</code> 为 <code>{ "system": [...], "modules": [{ "module": …, "changes": [...] }], "files": [{ "target": …, "changes": [...] }] }</code>（只含有变更的分组）。</p>
+<p><strong>文件覆盖层：</strong> 除值以外，<code>sys diff</code> 还会列出 <code>sys/setting/&lt;mod&gt;/**</code> 相对模块 <code>&lt;mod&gt;/spec/**</code> 的<strong>新增 / 替换</strong>（localize 把两者都渲染进 <code>local/</code>，即「setting 覆盖了模块默认的哪些文件」）；纯路径 + 内容比对，不需渲染，也不依赖上次 localize 的磁盘状态。</p>
 <p><strong>示例：</strong></p>
 <pre><code class="language-bash">gops sys diff
 # [sys] 值变更 (1 项):
