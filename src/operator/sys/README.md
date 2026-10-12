@@ -133,8 +133,7 @@ gops mod new      -> 创建模块
 gops sys new      -> 组合模块形成系统
 gops prj new      -> 创建运维项目
 gops prj import   -> 把系统导入项目
-gops prj reimport -> 按 ops-prj.yml 重新导入（保留 values/）
-gops prj update   -> 同步项目本地引用
+gops prj sync     -> 同步 / 补齐系统（旧名 update）
 ```
 
 导入到运维项目后，项目值放在 `<project>/values/<system>/`。在项目内的系统目录执行 `gops sys localize` / `gops sys update` 时，会依据上层 `ops-prj.yml` 直接使用该项目值目录，不依赖 `<sys>/values` 符号链接是否完整。

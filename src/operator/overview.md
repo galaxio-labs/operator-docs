@@ -313,15 +313,15 @@ compose 里用 `${SEC_xxx}` 占位；`gops run start` 运行时从 `~/.galaxy/se
 
 配置与敏感值在生命周期上被彻底分开，而不是仅靠 `.gitignore` 约定。
 
-### 6. 交付闭环：打包 → 导入 → 重导入保值
+### 6. 交付闭环：打包 → 导入 → 同步保值
 
 ```text
 gops sys package   -> <name>-<version>.tar.gz（先 update 解析变量）
 gops prj import    -> 导入客户项目
-gops prj reimport  -> 按 ops-prj.yml 重建系统，保留 values/ 客户值
+gops prj sync      -> 同步 / 补齐系统（包内内容非破坏覆盖，缺失系统按包导入）
 ```
 
-`reimport` 体现了核心主张：**系统目录可被删除重建，但客户值永不丢失**。产品升级与客户现场数据成为两个独立生命周期。
+`prj sync` 体现了核心主张：**系统目录可被删除重建，但客户值 / 现场态（`protect`）永不丢失**。产品升级与客户现场数据成为两个独立生命周期。
 
 ### 7. 单体 CLI，无历史包袱
 

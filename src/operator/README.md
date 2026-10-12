@@ -37,11 +37,11 @@ Module -> System -> Project
 ```bash
 gops prj new --name <name>
 gops prj import --path <system-path>
-gops prj update
-gops prj reimport
+gops prj sync            # 同步 / 补齐系统（旧名 update）
+gops prj backup          # 存一份现场态
 ```
 
-`gops prj reimport` 按 `ops-prj.yml` 记录的 `sys_models` 重新导入系统，保留 `values/` 客户值。
+`gops prj sync` 按 `ops-prj.yml` 记录的系统做**非破坏同步**：包内内容覆盖、`protect` 不碰、目录缺失就按包导入（补齐被删的系统）。`gops prj backup` / `restore` 与 `contract export` / `import` 管理现场态。
 
 
 ### 系统命令
