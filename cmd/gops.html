@@ -45,7 +45,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-0ed4a64d.js";
+            window.path_to_searchindex_js = "../searchindex-ec8dea9d.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-18d2ed36.js"></script>
@@ -193,7 +193,7 @@
 <h2 id="基本用法"><a class="header" href="#基本用法">基本用法</a></h2>
 <h3 id="显示版本信息"><a class="header" href="#显示版本信息">显示版本信息</a></h3>
 <pre><code class="language-bash">gops
-# 输出示例：gops: 1.3.0
+# 输出示例：gops: 2.3.1
 </code></pre>
 <h3 id="显示帮助信息"><a class="header" href="#显示帮助信息">显示帮助信息</a></h3>
 <pre><code class="language-bash">gops --help
@@ -246,6 +246,25 @@ gops &lt;command&gt; &lt;subcommand&gt; --help
 </li>
 </ul>
 <h2 id="部署工程管理命令-gops-prj"><a class="header" href="#部署工程管理命令-gops-prj">部署工程管理命令 (gops prj)</a></h2>
+<p><code>gops prj</code> 管理<strong>运维工程</strong>（<code>ops-prj.yml</code>）：把打包好的系统导入进来、长期保持同步，并管理系统的<strong>现场态</strong>（系统目录里<strong>不属于交付包</strong>、且必须跨升级存活的文件）。</p>
+<p>现场态声明写在系统侧 <code>sys-prj.yml</code>，<strong>五个声明互相独立、各由各自的命令消费，彼此之间没有任何派生 / 覆盖 / 交叠逻辑</strong>：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>声明（<code>sys-prj.yml</code>）</th><th>只服务</th><th>作用</th></tr>
+</thead>
+<tbody>
+<tr><td><code>pkg_include:</code></td><td><code>gops sys package</code></td><td>基准集之外额外纳入交付包的路径（默认模式补未被 git 跟踪的生成物）；<code>pkg_exclude</code> 优先</td></tr>
+<tr><td><code>pkg_exclude:</code></td><td><code>gops sys package</code></td><td>打包排除的路径（旧名 <code>ignore</code>；默认与 <code>--full</code> 都生效）</td></tr>
+<tr><td><code>protect:</code></td><td><code>prj sync</code> / <code>sys update</code> / <code>prj upgrade</code></td><td>升级 / 重建不覆盖、也不删（旧名 <code>preserve</code>）</td></tr>
+<tr><td><code>backup:</code></td><td><code>prj backup</code> / <code>prj restore</code></td><td>备份选取的现场态（扁平列表；只表达“丢失的代价”，<strong>不触发任何删除</strong>）</td></tr>
+<tr><td><code>contract:</code></td><td><code>prj contract export</code> / <code>import</code></td><td>对外契约（不可重建的<strong>公开</strong>现场事实：对外域名 / 端点 / 公开证书）</td></tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<p><code>contract</code> 与 <code>protect</code> / <code>backup</code> / 打包<strong>互不影响</strong> —— 契约内容只走 <code>prj contract export</code> / <code>import</code> 独立归档；<code>protect</code> / <code>backup</code> / 打包各自只按自己那一节声明行事。</p>
+</blockquote>
 <h3 id="创建维护工程"><a class="header" href="#创建维护工程">创建维护工程</a></h3>
 <pre><code class="language-bash">gops prj new [OPTIONS]
 </code></pre>
@@ -280,9 +299,9 @@ gops prj new --name my-project --debug 2
 </ul>
 <p><strong>功能：</strong></p>
 <ul>
-<li>从指定路径导入系统配置</li>
-<li>将系统集成到当前工程</li>
-<li>自动处理系统依赖关系</li>
+<li>从指定路径导入系统配置（<code>--path</code> 必须是<strong>打包产物</strong>：本地 <code>.tar.gz</code>、<code>.git</code>/<code>git@</code> 仓库地址，或 http(s) 的 <code>.tar.gz</code> / <code>.git</code> 地址；<strong>不接受裸目录</strong>）</li>
+<li>将系统集成到当前工程（归档根须含 <code>sys/</code> 目录）</li>
+<li>客户值目录 <code>&lt;sys&gt;/values</code> 建为指向 <code>&lt;project&gt;/values/&lt;sys_name&gt;</code> 的符号链接</li>
 </ul>
 <p><strong>示例：</strong></p>
 <pre><code class="language-bash"># 从指定路径导入系统
@@ -291,8 +310,8 @@ gops prj import --path /path/to/system
 # 详细调试导入过程
 gops prj import --path /path/to/system --debug 3
 </code></pre>
-<h3 id="更新工程"><a class="header" href="#更新工程">更新工程</a></h3>
-<pre><code class="language-bash">gops prj update [OPTIONS]
+<h3 id="同步--补齐工程系统-prj-sync"><a class="header" href="#同步--补齐工程系统-prj-sync">同步 / 补齐工程系统 (prj sync)</a></h3>
+<pre><code class="language-bash">gops prj sync [OPTIONS]      # 旧名 update 仍可用（隐藏别名）
 </code></pre>
 <p><strong>选项：</strong></p>
 <ul>
@@ -302,36 +321,107 @@ gops prj import --path /path/to/system --debug 3
 </ul>
 <p><strong>功能：</strong></p>
 <ul>
-<li>更新工程中的系统引用</li>
-<li>更新模块依赖关系</li>
-<li>下载远程资源</li>
+<li>按 <code>ops-prj.yml</code> 记录的系统逐个同步：
+<ul>
+<li>目录<strong>缺失</strong> → 按包<strong>导入</strong>（补齐被删的系统，不再是静默跳过）</li>
+<li>目录<strong>已在</strong> → 把<strong>包内内容</strong>非破坏覆盖到各自 <code>addr</code> 指向的版本（<code>protect</code> 声明的路径不碰，<strong>不删</strong>任何东西）</li>
+</ul>
+</li>
+<li>刷新项目 <code>work_envs</code>，回写 <code>ops-prj.yml</code></li>
+<li><strong>不是事务</strong>：无备份 / 无健康检查 / 无回滚；也不同步运行时（不拉镜像、不切换、不探活）。要做一次可回滚的发布升级请用 <code>gops prj upgrade</code></li>
 </ul>
 <p><strong>示例：</strong></p>
-<pre><code class="language-bash"># 正常更新工程
-gops prj update
+<pre><code class="language-bash"># 同步 + 补齐缺失系统
+gops prj sync
 
-# 强制更新（覆盖文件）
-gops prj update --force 2
+# 强制覆盖
+gops prj sync --force 2
 
-# 详细调试更新过程
-gops prj update --debug 3 --log update=debug
+# 详细调试
+gops prj sync --debug 3 --log update=debug
 </code></pre>
-<h3 id="重新导入系统"><a class="header" href="#重新导入系统">重新导入系统</a></h3>
-<pre><code class="language-bash">gops prj reimport [OPTIONS]
+<h3 id="备份现场态-prj-backup"><a class="header" href="#备份现场态-prj-backup">备份现场态 (prj backup)</a></h3>
+<pre><code class="language-bash">gops prj backup [OPTIONS]
 </code></pre>
 <p><strong>选项：</strong></p>
 <ul>
 <li><code>-d, --debug &lt;LEVEL&gt;</code> - 调试级别</li>
 <li><code>--log &lt;LOG&gt;</code> - 日志配置</li>
-<li><code>-f, --force &lt;LEVEL&gt;</code> - 强制更新级别</li>
 </ul>
 <p><strong>功能：</strong></p>
 <ul>
-<li>按 <code>ops-prj.yml</code> 记录的 <code>sys_models</code> 重新导入系统</li>
-<li>保留 <code>values/</code> 客户值（适用于“删除了已导入系统目录、但保留了 values/ + ops-prj.yml”的场景）</li>
+<li>按系统侧 <code>sys-prj.yml: backup</code> 与项目侧 <code>ops-prj.yml: backup</code> 的声明，收集现场态到<strong>一个归档</strong>（含清单 + sha256）</li>
+<li>保留最近 <code>keep</code> 份；含私钥 / 凭据的条目会被<strong>点名</strong>，请离机保管</li>
+<li><strong>不含</strong> <code>contract:</code> 契约内容（契约另走 <code>prj contract export</code>）</li>
+</ul>
+<h3 id="还原现场态-prj-restore"><a class="header" href="#还原现场态-prj-restore">还原现场态 (prj restore)</a></h3>
+<pre><code class="language-bash">gops prj restore &lt;ARCHIVE&gt; [OPTIONS]
+</code></pre>
+<p><strong>选项：</strong></p>
+<ul>
+<li><code>&lt;ARCHIVE&gt;</code> - 备份归档（<code>.tar.gz</code>）路径</li>
+<li><code>--list</code> - 只列出归档内容，不落地</li>
+<li><code>--dry-run</code> - 预演：解包校验但不改动现场</li>
+</ul>
+<p><strong>功能：</strong></p>
+<ul>
+<li>把备份归档合并回现场（先解到临时目录再覆盖；目录没了就按归档重建这部分）</li>
+<li>只放回<strong>备份里有的</strong>内容（= 各系统 <code>sys-prj.yml: backup</code> 声明命中的路径）；交付包内容与 <code>contract:</code> 契约内容都不在其中</li>
 </ul>
 <p><strong>示例：</strong></p>
-<pre><code class="language-bash">gops prj reimport
+<pre><code class="language-bash">gops prj restore --list ./backup/site-20261012-120000.tar.gz
+gops prj restore --dry-run ./backup/site-20261012-120000.tar.gz
+gops prj restore ./backup/site-20261012-120000.tar.gz
+</code></pre>
+<h3 id="对外契约-prj-contract"><a class="header" href="#对外契约-prj-contract">对外契约 (prj contract)</a></h3>
+<pre><code class="language-bash">gops prj contract export
+gops prj contract import &lt;ARCHIVE&gt;
+</code></pre>
+<p><strong>功能：</strong></p>
+<ul>
+<li><code>export</code> - 把本部署的对外契约（<code>sys-prj.yml: contract</code> 列出的文件 / 目录）打成归档，文件名带日期时间（如 <code>&lt;系统&gt;-contract-YYYYMMDD-HHMMSS.tar.gz</code>），用于交付 / 迁移 / 存档</li>
+<li><code>import</code> - 从归档把契约灌回本部署（写进 <code>contract:</code> 列出的文件），<strong>幂等</strong>（同一归档重复导入结果不变）</li>
+</ul>
+<p>归档的<strong>落点 / 份数</strong>由项目侧 <code>ops-prj.yml: contract</code>（<code>target</code> / <code>keep</code>）决定。</p>
+<h3 id="升级发布态-prj-upgrade"><a class="header" href="#升级发布态-prj-upgrade">升级发布态 (prj upgrade)</a></h3>
+<pre><code class="language-bash">gops prj upgrade [NAME] --to &lt;VERSION|URL|PATH&gt; --on-failure &lt;rollback-all|halt&gt; [OPTIONS]
+</code></pre>
+<p><strong>选项：</strong></p>
+<ul>
+<li><code>[NAME]</code> - 只升级该系统（缺省 = <code>ops-prj.yml</code> 里已导入的全部系统）</li>
+<li><code>--to</code> - 目标版本（按 ref 的 <code>addr</code> 模板 <code>{version}</code> 解析）或完整地址（URL / 本机路径）</li>
+<li><code>--on-failure</code> - 失败处置：<code>rollback-all</code>（整工程回滚）/ <code>halt</code>（停在那里不回滚）。现阶段<strong>必填</strong></li>
+<li><code>--dry-run</code> - 只出计划，不动现场</li>
+<li><code>--health-cmd</code> - 栈外健康检查命令（给 <code>sh -c</code>）；给了才做回滚判定</li>
+<li><code>--health-timeout</code> - 健康检查超时（秒）</li>
+<li><code>--json</code> - 机读结果（单行 JSON，给编排器判成败）</li>
+<li><code>-f, --force &lt;LEVEL&gt;</code> / <code>-d, --debug &lt;LEVEL&gt;</code> / <code>--log &lt;LOG&gt;</code></li>
+</ul>
+<p><strong>功能：</strong></p>
+<ul>
+<li>对已导入的系统做一次<strong>带事务边界</strong>的发布升级：diagnose → backup → apply（覆盖包内内容）→ regenerate（<code>sys update</code> + <code>localize</code>）→ pull → up → health</li>
+<li>失败按 <code>--on-failure</code> 处置</li>
+<li>第 1 版只支持 <code>kind: docker-compose</code> 的系统</li>
+</ul>
+<h3 id="诊断工程现场态-prj-diagnose"><a class="header" href="#诊断工程现场态-prj-diagnose">诊断工程现场态 (prj diagnose)</a></h3>
+<pre><code class="language-bash">gops prj diagnose [OPTIONS]      # 旧名 doctor 仍可用（隐藏别名）
+</code></pre>
+<p><strong>选项：</strong></p>
+<ul>
+<li><code>-d, --debug &lt;LEVEL&gt;</code> - 调试级别</li>
+<li><code>--log &lt;LOG&gt;</code> - 日志配置</li>
+<li><code>--strict</code> - 将警告视为错误（用于 CI 卡口）</li>
+</ul>
+<p><strong>功能：</strong></p>
+<ul>
+<li>只读检查：客户值 <code>values/</code> 是否被版本控制纳管（存在、每系统有值目录、未被 <code>.gitignore</code>、无未提交改动）</li>
+<li><code>ops-prj.yml</code> 的 <code>sys_models</code> 是否重名</li>
+<li><code>sys-prj.yml</code> 的 <code>contract:</code> 是否齐备（声明了但路径不在场）</li>
+<li><strong>只做各声明自身的检查，不做跨声明推理</strong></li>
+</ul>
+<p><strong>示例：</strong></p>
+<pre><code class="language-bash">gops prj diagnose
+gops prj diagnose --strict
 </code></pre>
 <h2 id="模块管理命令-gops-mod"><a class="header" href="#模块管理命令-gops-mod">模块管理命令 (gops mod)</a></h2>
 <h3 id="创建示例模块结构"><a class="header" href="#创建示例模块结构">创建示例模块结构</a></h3>
@@ -509,18 +599,21 @@ gops sys update --debug 3 --log sys=debug
 <ul>
 <li>先执行一次 <code>update</code>（解析变量、生成 <code>sys/merged_vars.yml</code>），保证交付包可被 <code>gops prj import</code> 完整导入</li>
 <li>再打包为 <code>.tar.gz</code>：<strong>默认只含 git 入库文件</strong>（<code>git ls-files</code>，等价 <code>git archive</code> 的“只含入库文件”，需在 git 仓库内运行），自然排除被 <code>.gitignore</code> 忽略的产物（<code>sys/*/mods/</code>、<code>**/local</code>、<code>.env</code> 等）；<code>--full</code> 则打当前目录全部（含制品/本地化产物）</li>
-<li>两种模式都会排除 <code>sys-prj.yml</code> 的 <code>ignore:</code> 节列出的路径；<code>deliver.lock</code> 作为交付清单始终随包分发（不受 <code>ignore</code> 影响）</li>
+<li>两种模式都会排除 <code>sys-prj.yml</code> 的 <code>pkg_exclude:</code> 节列出的路径；<code>pkg_include:</code> 则在基准集之外<strong>额外纳入</strong>命中它的路径（用于让<strong>未被 git 跟踪</strong>的生成物随包走，默认模式，可覆盖 <code>.gitignore</code>）；<code>deliver.lock</code> 作为交付清单始终随包分发（不受影响）</li>
 </ul>
-<p><strong><code>ignore</code> 节（<code>sys-prj.yml</code>）</strong>：列出打包时排除的路径模式（glob，<strong>相对系统根</strong>），即使 <code>--full</code> 也排除。匹配文件自身<strong>或</strong>其任一祖先目录——目录级模式（如 <code>sys/*/mods</code>）会排除整棵子树。模式<strong>锚定在根</strong>：裸名 <code>mods</code> 只匹配根级 <code>mods</code>，任意层级请用 <code>**/mods</code>；<code>*</code> 不跨 <code>/</code>，跨级用 <code>**</code>；前导 <code>/</code> 或 <code>./</code> 会被归一化（等价于不带）。</p>
+<p><strong><code>pkg_exclude</code> 节（<code>sys-prj.yml</code>，旧名 <code>ignore</code>）</strong>：列出打包时排除的路径模式（glob，<strong>相对系统根</strong>），即使 <code>--full</code> 也排除。匹配文件自身<strong>或</strong>其任一祖先目录——目录级模式（如 <code>sys/*/mods</code>）会排除整棵子树。模式<strong>锚定在根</strong>：裸名 <code>mods</code> 只匹配根级 <code>mods</code>，任意层级请用 <code>**/mods</code>；<code>*</code> 不跨 <code>/</code>，跨级用 <code>**</code>；前导 <code>/</code> 或 <code>./</code> 会被归一化（等价于不带）。</p>
+<p><strong><code>pkg_include</code> 节（<code>sys-prj.yml</code>）</strong>：在默认（git 入库文件）或 <code>--full</code>（整目录）的<strong>基准集之外</strong>额外把命中它的路径纳入交付包 —— 用于让<strong>未被 git 跟踪</strong>的生成物 / 制品随包走。<code>pkg_exclude</code>（排除）<strong>优先于</strong> <code>pkg_include</code>（相交时以排除为准）。</p>
 <blockquote>
-<p>注意：模式过宽（如 <code>*</code>）会连 <code>sys/merged_vars.yml</code> 等一并排除；<code>deliver.lock</code> 不受影响（始终随包）。</p>
+<p>注意：<code>pkg_exclude</code> 模式过宽（如 <code>*</code>）会连 <code>sys/merged_vars.yml</code> 等一并排除；<code>deliver.lock</code> 不受影响（始终随包）。</p>
 </blockquote>
 <pre><code class="language-yaml"># sys-prj.yml
-ignore:
+pkg_exclude:
   - artifacts
   - sys/*/mods
   - '**/cache'
   - .env
+# pkg_include:
+#   - artifacts/app.bin
 </code></pre>
 <p><strong>示例：</strong></p>
 <pre><code class="language-bash"># 默认：只含入库文件（不含制品）
@@ -684,7 +777,7 @@ gops self rollback --id 20260321123456
 <h2 id="配置文件结构"><a class="header" href="#配置文件结构">配置文件结构</a></h2>
 <h3 id="工程目录结构"><a class="header" href="#工程目录结构">工程目录结构</a></h3>
 <pre><code>my-project/
-├── ops-prj.yml              # 工程 manifest：name + work_envs + sys_models
+├── ops-prj.yml              # 工程 manifest：name + work_envs + sys_models + backup/contract 归档设定
 ├── version.txt
 ├── _gal/                    # GXL 工程文件
 ├── values/                  # 客户值目录
@@ -692,7 +785,7 @@ gops self rollback --id 20260321123456
 │       ├── sys_value.yml    # 值文件（只写需要覆盖的项）
 │       └── value.yml        # 额外覆盖层（可选）
 └── {system-name}/           # 已导入的系统目录
-    └── values -&gt; ../values/{system-name}   # 符号链接（prj import/reimport 建立）
+    └── values -&gt; ../values/{system-name}   # 符号链接（prj import / prj sync 建立）
 </code></pre>
 <blockquote>
 <p>历史：原 <code>ops-systems.yml</code> 已合并进 <code>ops-prj.yml</code>；加载时会兼容合并旧文件，保存后写入单文件。</p>
@@ -708,7 +801,7 @@ gops self rollback --id 20260321123456
 </code></pre>
 <h3 id="系统目录结构"><a class="header" href="#系统目录结构">系统目录结构</a></h3>
 <pre><code>my-system/
-├── sys-prj.yml              # 系统根配置
+├── sys-prj.yml              # 系统根配置（test_envs / pkg_include / pkg_exclude / protect / backup / contract）
 ├── version.txt
 ├── _gal/                    # GXL 工程文件（仅 kind: gxl）
 ├── values/                  # 值文件目录
@@ -723,21 +816,22 @@ gops self rollback --id 20260321123456
         └── vars.yml         # 系统设置变量定义（源）
 </code></pre>
 <p>纯 docker-compose 系统只保留 <code>sys_model.yml</code>、<code>docker-compose.yaml</code> 与 <code>setting/vars.yml</code>（详见 <a href="../operator/sys/structure/directory.html">System 目录结构</a>）。</p>
+<p><code>sys-prj.yml</code> 里的五个现场态声明<strong>互相独立</strong>（各由各自的命令消费，互不影响）：<code>pkg_include</code> / <code>pkg_exclude</code>（只服务 <code>sys package</code>）、<code>protect</code>（只服务 <code>sys update</code> / <code>prj sync</code> / <code>prj upgrade</code>）、<code>backup</code>（只服务 <code>prj backup</code> / <code>restore</code>）、<code>contract</code>（只服务 <code>prj contract export</code> / <code>import</code>）。另，对外契约归档的落点 / 份数写在项目侧 <code>ops-prj.yml: contract</code>。</p>
 <h2 id="最佳实践"><a class="header" href="#最佳实践">最佳实践</a></h2>
 <h3 id="工程管理"><a class="header" href="#工程管理">工程管理</a></h3>
 <pre><code class="language-bash"># 1. 创建新工程
 gops prj new --name my-project
 
-# 2. 导入系统到工程
+# 2. 导入系统到工程（打包产物：.tar.gz / git / http 地址）
 gops prj import --path /path/to/system --force 1
 
-# 3. 更新工程
-gops prj update
+# 3. 同步 / 补齐工程系统（包内内容非破坏覆盖；缺失系统按包导入）
+gops prj sync
 
-# 4. 按 ops-prj.yml 重新导入并保留 values/
-gops prj reimport
+# 4. 客户差异写在 values/&lt;system&gt;/value.yml（只写要覆盖的项）
 
-# 5. 客户差异写在 values/&lt;system&gt;/value.yml（只写要覆盖的项）
+# 5. 存一份现场态；或用 prj restore 还原
+gops prj backup
 </code></pre>
 <h3 id="模块开发"><a class="header" href="#模块开发">模块开发</a></h3>
 <pre><code class="language-bash"># 1. 创建示例模块（学习结构）
@@ -810,7 +904,7 @@ gops mod update --debug 2 --log mod=debug
 gops sys update --debug 3 --log sys=trace
 
 # 跟踪级别调试（工程）
-gops prj update --debug 3 --log all=debug
+gops prj sync --debug 3 --log all=debug
 </code></pre>
 <h3 id="日志配置示例"><a class="header" href="#日志配置示例">日志配置示例</a></h3>
 <pre><code class="language-bash"># 调试特定模块
@@ -851,8 +945,8 @@ gops prj new --name dev-project
 # 2. 导入开发系统
 gops prj import --path /path/to/dev-system --force 1
 
-# 3. 更新工程依赖
-gops prj update --debug 2
+# 3. 同步 / 补齐工程依赖
+gops prj sync --debug 2
 
 # 4. 写客户差异（项目值目录，只写要覆盖的项）
 #    dev-project/values/dev-system/value.yml
@@ -878,7 +972,7 @@ cd prod-system
 gops sys localize
 </code></pre>
 <h2 id="版本信息"><a class="header" href="#版本信息">版本信息</a></h2>
-<p>当前版本：<code>1.3.0</code></p>
+<p>当前版本：<code>2.3.1</code></p>
 <h2 id="功能状态"><a class="header" href="#功能状态">功能状态</a></h2>
 <div class="table-wrapper">
 <table>
@@ -887,19 +981,26 @@ gops sys localize
 </thead>
 <tbody>
 <tr><td><code>gops prj</code></td><td><code>new</code></td><td>✅ 完成</td><td>创建维护工程</td></tr>
-<tr><td><code>gops prj</code></td><td><code>import</code></td><td>✅ 完成</td><td>导入系统到工程（打包产物）</td></tr>
-<tr><td><code>gops prj</code></td><td><code>update</code></td><td>✅ 完成</td><td>更新工程</td></tr>
-<tr><td><code>gops prj</code></td><td><code>reimport</code></td><td>✅ 完成</td><td>按 <code>ops-prj.yml</code> 重新导入（保留 <code>values/</code>）</td></tr>
+<tr><td><code>gops prj</code></td><td><code>import</code></td><td>✅ 完成</td><td>导入系统到工程（打包产物 <code>.tar.gz</code> / git / http）</td></tr>
+<tr><td><code>gops prj</code></td><td><code>sync</code></td><td>✅ 完成</td><td>同步 / 补齐工程系统（旧名 <code>update</code>；非破坏覆盖 + 补齐缺失系统）</td></tr>
+<tr><td><code>gops prj</code></td><td><code>backup</code> / <code>restore</code></td><td>✅ 完成</td><td>现场态归档 / 还原（清单 + sha256，含私钥点名）</td></tr>
+<tr><td><code>gops prj</code></td><td><code>contract export</code> / <code>import</code></td><td>✅ 完成</td><td>对外契约独立归档 / 回填</td></tr>
+<tr><td><code>gops prj</code></td><td><code>upgrade</code></td><td>✅ 完成</td><td>事务式发布升级（目前仅 <code>kind: docker-compose</code>）</td></tr>
+<tr><td><code>gops prj</code></td><td><code>diagnose</code></td><td>✅ 完成</td><td>现场态只读诊断（旧名 <code>doctor</code>；<code>--strict</code> 卡口）</td></tr>
 <tr><td><code>gops mod</code></td><td><code>example</code></td><td>✅ 完成</td><td>创建示例模块结构</td></tr>
 <tr><td><code>gops mod</code></td><td><code>new</code></td><td>✅ 完成</td><td>定义新模块操作符</td></tr>
 <tr><td><code>gops mod</code></td><td><code>update</code></td><td>✅ 完成</td><td>更新现有模块操作符</td></tr>
 <tr><td><code>gops mod</code></td><td><code>localize</code></td><td>✅ 完成</td><td>本地化模块配置</td></tr>
+<tr><td><code>gops mod</code></td><td><code>diff</code></td><td>✅ 完成</td><td>展示模块值变更</td></tr>
 <tr><td><code>gops sys</code></td><td><code>new</code></td><td>✅ 完成</td><td>创建系统（<code>--kind gxl</code> / <code>docker-compose</code>）</td></tr>
 <tr><td><code>gops sys</code></td><td><code>update</code></td><td>✅ 完成</td><td>解析变量、初始化值文件</td></tr>
-<tr><td><code>gops sys</code></td><td><code>package</code></td><td>✅ 完成</td><td>先 update 再打包交付产物</td></tr>
+<tr><td><code>gops sys</code></td><td><code>package</code></td><td>✅ 完成</td><td>先 update 再打包交付产物（<code>--full</code> 整目录）</td></tr>
 <tr><td><code>gops sys</code></td><td><code>localize</code></td><td>✅ 完成</td><td>生成 <code>.env</code>（<code>--only</code> 跳过 update）</td></tr>
 <tr><td><code>gops sys</code></td><td><code>setting</code></td><td>✅ 完成</td><td>初始化系统设置</td></tr>
-<tr><td><code>gops sys</code></td><td><code>download/install/start/stop/uninstall/status/diagnose</code></td><td>✅ 完成</td><td>按 <code>kind</code> 分派（gxl→gx；docker-compose→docker compose）</td></tr>
+<tr><td><code>gops sys</code></td><td><code>check</code></td><td>✅ 完成</td><td>只读比对漂移（值改了没重新 localize）</td></tr>
+<tr><td><code>gops sys</code></td><td><code>diff</code></td><td>✅ 完成</td><td>展示系统值变更</td></tr>
+<tr><td><code>gops run</code></td><td><code>download/install/uninstall/start/stop/status/diagnose</code></td><td>✅ 完成</td><td>运行时运维（按 <code>kind</code> 分派：gxl→gx；docker-compose→docker compose）</td></tr>
+<tr><td><code>gops self</code></td><td><code>status/check/update/rollback/skill</code></td><td>✅ 完成</td><td>自升级闭环 + agent skills 管理</td></tr>
 </tbody>
 </table>
 </div>

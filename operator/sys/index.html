@@ -45,7 +45,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-0ed4a64d.js";
+            window.path_to_searchindex_js = "../../searchindex-ec8dea9d.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-18d2ed36.js"></script>
@@ -295,8 +295,7 @@ gops run status --env default
 gops sys new      -&gt; 组合模块形成系统
 gops prj new      -&gt; 创建运维项目
 gops prj import   -&gt; 把系统导入项目
-gops prj reimport -&gt; 按 ops-prj.yml 重新导入（保留 values/）
-gops prj update   -&gt; 同步项目本地引用
+gops prj sync     -&gt; 同步 / 补齐系统（旧名 update）
 </code></pre>
 <p>导入到运维项目后，项目值放在 <code>&lt;project&gt;/values/&lt;system&gt;/</code>。在项目内的系统目录执行 <code>gops sys localize</code> / <code>gops sys update</code> 时，会依据上层 <code>ops-prj.yml</code> 直接使用该项目值目录，不依赖 <code>&lt;sys&gt;/values</code> 符号链接是否完整。</p>
 <h2 id="现实边界"><a class="header" href="#现实边界">现实边界</a></h2>

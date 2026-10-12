@@ -45,7 +45,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-0ed4a64d.js";
+            window.path_to_searchindex_js = "../searchindex-ec8dea9d.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-18d2ed36.js"></script>
@@ -218,10 +218,10 @@
 <h3 id="部署项目命令"><a class="header" href="#部署项目命令">部署项目命令</a></h3>
 <pre><code class="language-bash">gops prj new --name &lt;name&gt;
 gops prj import --path &lt;system-path&gt;
-gops prj update
-gops prj reimport
+gops prj sync            # 同步 / 补齐系统（旧名 update）
+gops prj backup          # 存一份现场态
 </code></pre>
-<p><code>gops prj reimport</code> 按 <code>ops-prj.yml</code> 记录的 <code>sys_models</code> 重新导入系统，保留 <code>values/</code> 客户值。</p>
+<p><code>gops prj sync</code> 按 <code>ops-prj.yml</code> 记录的系统做<strong>非破坏同步</strong>：包内内容覆盖、<code>protect</code> 不碰、目录缺失就按包导入（补齐被删的系统）。<code>gops prj backup</code> / <code>restore</code> 与 <code>contract export</code> / <code>import</code> 管理现场态。</p>
 <h3 id="系统命令"><a class="header" href="#系统命令">系统命令</a></h3>
 <pre><code class="language-bash"># gops sys —— 定义 / 交付 / 工件
 gops sys new --name &lt;name&gt; [--kind gxl|docker-compose]

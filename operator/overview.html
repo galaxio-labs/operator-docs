@@ -45,7 +45,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-0ed4a64d.js";
+            window.path_to_searchindex_js = "../searchindex-ec8dea9d.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-18d2ed36.js"></script>
@@ -524,12 +524,12 @@
 <h3 id="5-密钥作为一等公民不落盘运行时注入诊断掩码"><a class="header" href="#5-密钥作为一等公民不落盘运行时注入诊断掩码">5. 密钥作为一等公民：不落盘、运行时注入、诊断掩码</a></h3>
 <p>compose 里用 <code>${SEC_xxx}</code> 占位；<code>gops run start</code> 运行时从 <code>~/.galaxy/sec_value.yml</code>（或 <code>./.galaxy/sec_value.yml</code>）读取，只注入 <strong>docker compose 子进程环境</strong>，不写 <code>.env</code>、不入库；<code>gops run diagnose</code>（<code>docker compose config</code>）注入的是掩码值 <code>********</code>。</p>
 <p>配置与敏感值在生命周期上被彻底分开，而不是仅靠 <code>.gitignore</code> 约定。</p>
-<h3 id="6-交付闭环打包--导入--重导入保值"><a class="header" href="#6-交付闭环打包--导入--重导入保值">6. 交付闭环：打包 → 导入 → 重导入保值</a></h3>
+<h3 id="6-交付闭环打包--导入--同步保值"><a class="header" href="#6-交付闭环打包--导入--同步保值">6. 交付闭环：打包 → 导入 → 同步保值</a></h3>
 <pre><code class="language-text">gops sys package   -&gt; &lt;name&gt;-&lt;version&gt;.tar.gz（先 update 解析变量）
 gops prj import    -&gt; 导入客户项目
-gops prj reimport  -&gt; 按 ops-prj.yml 重建系统，保留 values/ 客户值
+gops prj sync      -&gt; 同步 / 补齐系统（包内内容非破坏覆盖，缺失系统按包导入）
 </code></pre>
-<p><code>reimport</code> 体现了核心主张：<strong>系统目录可被删除重建，但客户值永不丢失</strong>。产品升级与客户现场数据成为两个独立生命周期。</p>
+<p><code>prj sync</code> 体现了核心主张：<strong>系统目录可被删除重建，但客户值 / 现场态（<code>protect</code>）永不丢失</strong>。产品升级与客户现场数据成为两个独立生命周期。</p>
 <h3 id="7-单体-cli无历史包袱"><a class="header" href="#7-单体-cli无历史包袱">7. 单体 CLI，无历史包袱</a></h3>
 <p>一个 <code>gops</code> 二进制覆盖 <code>mod</code> / <code>sys</code> / <code>prj</code>，不存在 <code>gmod</code> / <code>gsys</code> 的历史分裂；文档以当前代码实现为唯一真源。</p>
 <h2 id="与常见工具的边界"><a class="header" href="#与常见工具的边界">与常见工具的边界</a></h2>
