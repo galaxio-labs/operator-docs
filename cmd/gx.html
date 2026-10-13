@@ -45,7 +45,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-be10778c.js";
+            window.path_to_searchindex_js = "../searchindex-89adeffe.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-18d2ed36.js"></script>
@@ -214,10 +214,13 @@
 <tr><td><code>gx mod update</code></td><td>更新项目模块（依据本地 <code>_gal</code> 配置）</td></tr>
 <tr><td><code>gx doc [TOPIC]</code></td><td>查看内置文档</td></tr>
 <tr><td><code>gx check</code></td><td>打印当前运行环境信息</td></tr>
-<tr><td><code>gx self check|update|rollback</code></td><td>自更新管理</td></tr>
+<tr><td><code>gx self check|update|rollback</code></td><td>自更新管理（<code>check</code> / <code>update</code> 支持 `–mirror &lt;PRESET</td></tr>
 </tbody>
 </table>
 </div>
+<blockquote>
+<p><code>gx self check</code> / <code>gx self update</code> 的 <code>--mirror &lt;PRESET|URL&gt;</code>：把清单与制品下载地址改为经过镜像前缀，内置预设 <code>githubproxy</code>（= <code>https://githubproxy.cc/</code>），也可传自定义前缀 URL；只重写绝对 <code>http(s)</code> 地址，<code>sha256</code> 校验不变，未知预设名会报错。</p>
+</blockquote>
 <h2 id="参数说明"><a class="header" href="#参数说明">参数说明</a></h2>
 <h3 id="位置参数"><a class="header" href="#位置参数">位置参数</a></h3>
 <ul>

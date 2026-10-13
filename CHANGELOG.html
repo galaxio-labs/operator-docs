@@ -45,7 +45,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-be10778c.js";
+            window.path_to_searchindex_js = "searchindex-89adeffe.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-18d2ed36.js"></script>
@@ -188,6 +188,11 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="changelog"><a class="header" href="#changelog">Changelog</a></h1>
+<h1 id="文档更新-2026-10-14--gops-self--gx-self-支持下载镜像---mirror"><a class="header" href="#文档更新-2026-10-14--gops-self--gx-self-支持下载镜像---mirror">文档更新 2026-10-14 —— <code>gops self</code> / <code>gx self</code> 支持下载镜像 <code>--mirror</code></a></h1>
+<ul>
+<li><strong><code>cmd/gops.md</code></strong>：<code>自升级命令 (gops self)</code> 新增「下载镜像（<code>--mirror</code>）」小节，并在「检查更新」「升级」示例中补充 <code>--mirror</code> 用法</li>
+<li><strong><code>cmd/gx.md</code></strong>：命令列表标注 <code>gx self check|update</code> 支持 <code>--mirror &lt;PRESET|URL&gt;</code>，并补一条说明（内置预设 <code>githubproxy</code> = <code>https://githubproxy.cc/</code>，只重写绝对 <code>http(s)</code> 地址，<code>sha256</code> 校验不变）</li>
+</ul>
 <h1 id="文档更新-2026-10-13--现场态五声明解耦sys-update--sys-resolve移除-sys-setting--sys-check"><a class="header" href="#文档更新-2026-10-13--现场态五声明解耦sys-update--sys-resolve移除-sys-setting--sys-check">文档更新 2026-10-13 —— 现场态五声明解耦；<code>sys update</code> → <code>sys resolve</code>；移除 <code>sys setting</code> / <code>sys check</code></a></h1>
 <ul>
 <li><strong><code>cmd/gops.md</code></strong>：<code>gops prj</code> 一节重写（<code>sync</code> / <code>backup</code> / <code>restore</code> / <code>contract export|import</code> / <code>upgrade</code> / <code>diagnose</code>，移除 <code>update</code> / <code>reimport</code>）；新增现场态五声明「互相独立」总表；<code>sys package</code> 的 <code>ignore:</code> 改为 <code>pkg_exclude:</code> + <code>pkg_include:</code>；版本与功能状态表更新为 2.3.x</li>

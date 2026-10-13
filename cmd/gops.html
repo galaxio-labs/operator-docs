@@ -45,7 +45,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-be10778c.js";
+            window.path_to_searchindex_js = "../searchindex-89adeffe.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-18d2ed36.js"></script>
@@ -726,6 +726,9 @@ gops self check --channel alpha
 
 # 机器可读输出（stdout 仅 JSON，不含版本横幅）
 gops self check --channel alpha --json
+
+# 走下载镜像
+gops self check --channel alpha --mirror githubproxy
 </code></pre>
 <h3 id="升级"><a class="header" href="#升级">升级</a></h3>
 <pre><code class="language-bash"># 升级到通道最新版
@@ -742,6 +745,10 @@ gops self update --channel alpha --to 2.1.0
 
 # 已是最新时强制重装
 gops self update --channel alpha --force
+
+# 走下载镜像（预设，或自定义前缀 URL）
+gops self update --channel alpha --mirror githubproxy
+gops self update --channel alpha --mirror https://githubproxy.cc/
 </code></pre>
 <p>更新前会备份当前二进制；新版本 <code>--version</code> 健康检查失败会自动回滚。</p>
 <h3 id="回滚"><a class="header" href="#回滚">回滚</a></h3>
@@ -751,6 +758,19 @@ gops self rollback
 # 指定备份 id（14 位时间戳）
 gops self rollback --id 20260321123456
 </code></pre>
+<h3 id="下载镜像--mirror"><a class="header" href="#下载镜像--mirror">下载镜像（<code>--mirror</code>）</a></h3>
+<p><code>check</code> / <code>update</code> 均支持 <code>--mirror &lt;PRESET|URL&gt;</code>：把清单与制品的下载地址改为经过镜像前缀。</p>
+<pre><code class="language-bash"># 内置预设：githubproxy → https://githubproxy.cc/
+gops self update --channel alpha --mirror githubproxy
+
+# 自定义前缀（必须是带 scheme 的完整 URL）
+gops self update --channel alpha --mirror https://githubproxy.cc/
+</code></pre>
+<ul>
+<li>只重写<strong>绝对的 <code>http(s)</code> 下载地址</strong>，<code>sha256</code> 校验不变；本地/相对路径不受影响。</li>
+<li>未知预设名（既不是预设、也不是带 <code>scheme</code> 的 URL）会<strong>直接报错</strong>，不会被当作 URL 使用。</li>
+<li>适用于 GitHub 访问慢或被阻断的网络环境。</li>
+</ul>
 <h3 id="说明"><a class="header" href="#说明">说明</a></h3>
 <ul>
 <li>制品清单来自 <code>galaxio-labs/get</code> 的 <code>updates/gops</code> 通道，与 <code>inst-x.sh gops &lt;channel&gt;</code> 同一来源。</li>
