@@ -258,7 +258,7 @@ flowchart TD
     P -->|gops prj reimport 保留 values| P
 ```
 
-关键机制：在项目内的系统目录执行 `gops sys localize` / `sys update` 时，会依据上层 `ops-prj.yml` 反向解析出该项目为该系统维护的值目录，而不是使用系统自带的 `values/`。产品定义与客户现场在磁盘结构上天然分离。
+关键机制：在项目内的系统目录执行 `gops sys localize` / `sys resolve` 时，会依据上层 `ops-prj.yml` 反向解析出该项目为该系统维护的值目录，而不是使用系统自带的 `values/`。产品定义与客户现场在磁盘结构上天然分离。
 
 ### 2. 执行中立：同一命令面，两种后端
 
@@ -303,7 +303,7 @@ flowchart TD
 ```
 
 - `.env = merged_vars 默认值 ⊕ values/sys_value.yml ⊕ values/value.yml`
-- `sys update` 生成的 `values/sys_value.yml` 是**整份注释模板**：保持注释即"空覆盖"，取消注释才生效，默认值不会被钉死。
+- `sys resolve` 生成的 `values/sys_value.yml` 是**整份注释模板**：保持注释即"空覆盖"，取消注释才生效，默认值不会被钉死。
 - 优先级明确：`value.yml`（客户覆盖） > `sys_value.yml`（系统值） > `merged_vars`（默认）。
 - 来源可追踪：本地化会写出实际使用的值，能回答"这个最终值是谁给的"。
 
@@ -316,7 +316,7 @@ compose 里用 `${SEC_xxx}` 占位；`gops run start` 运行时从 `~/.galaxy/se
 ### 6. 交付闭环：打包 → 导入 → 同步保值
 
 ```text
-gops sys package   -> <name>-<version>.tar.gz（先 update 解析变量）
+gops sys package   -> <name>-<version>.tar.gz（先 resolve 解析变量）
 gops prj import    -> 导入客户项目
 gops prj sync      -> 同步 / 补齐系统（包内内容非破坏覆盖，缺失系统按包导入）
 ```

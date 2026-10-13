@@ -17,11 +17,9 @@
 ```bash
 # gops sys —— 定义 / 交付 / 工件
 gops sys new --name <name> [--kind gxl|docker-compose]
-gops sys update [--force]
+gops sys resolve [--force]
 gops sys package [--force] [--output <path>] [--full]
 gops sys localize [--mod <module>] [--only]
-gops sys setting --init
-gops sys check
 
 # gops run —— 运行时运维（在环境里落地/运行）
 gops run download [--mod <module>] [--env <env>]
@@ -68,9 +66,9 @@ gops sys new --name gateway --kind docker-compose   # 纯 compose（无型号）
 - `sys/mod_list.yml`：模块列表（GXL；纯 compose 可省略）
 - `sys/setting/vars.yml`：系统设置变量定义（源）
 - `sys/setting/list.yml`：按模块的本地化列表（可选）
-- `sys/merged_vars.yml`：聚合变量（`sys update` 生成：模块变量 ⊕ 系统变量，需入库）
+- `sys/merged_vars.yml`：聚合变量（`sys resolve` 生成：模块变量 ⊕ 系统变量，需入库）
 - `sys/workflows/operators.gxl`：系统级工作流（GXL）
-- `values/sys_value.yml`：值文件（`sys update` 生成**注释模板**，取消注释即覆盖）
+- `values/sys_value.yml`：值文件（`sys resolve` 生成**注释模板**，取消注释即覆盖）
 - `values/value.yml`：额外覆盖层（适合入库的客户覆盖）
 - `sys/docker-compose.yaml`：系统级 compose 定义（用 `${VAR}` 占位；放在系统根（旧布局）仍受支持）
 - `.env`：`sys localize` 生成的非密钥配置（供 compose 消费）
@@ -78,13 +76,13 @@ gops sys new --name gateway --kind docker-compose   # 纯 compose（无型号）
 ## 值 / 本地化流程
 
 ```text
-gops sys update   -> sys/merged_vars.yml（系统默认值）+ values/sys_value.yml（注释模板）
+gops sys resolve   -> sys/merged_vars.yml（系统默认值）+ values/sys_value.yml（注释模板）
 gops sys localize -> .env = merged_vars 默认值 ⊕ values/sys_value.yml ⊕ values/value.yml
 ```
 
 两个值文件都是**可选、可部分覆盖**：只写需要修改的项，其余取系统默认值。保持注释模板原样时等价于空覆盖。
 
-`sys localize` 默认**总是先解析变量**（等价于先跑一次 `update`，含解析/下载模块），再生成 `.env`；`--only` 跳过解析（用现有 `sys/merged_vars.yml`，缺失则明确报错）。
+`sys localize` 默认**总是先解析变量**（等价于先跑一次 `resolve`，含解析/下载模块），再生成 `.env`；`--only` 跳过解析（用现有 `sys/merged_vars.yml`，缺失则明确报错）。
 
 ## 密钥
 
@@ -92,17 +90,17 @@ gops sys localize -> .env = merged_vars 默认值 ⊕ values/sys_value.yml ⊕ v
 
 ## 常见流程
 
-### 更新系统本地引用
+### 解析系统定义（取模块 / 解析变量）
 
 ```bash
-gops sys update
-gops sys update --force
+gops sys resolve
+gops sys resolve --force
 ```
 
 ### 本地化系统
 
 ```bash
-gops sys localize            # 默认先解析变量（等价于先 update），再生成 .env
+gops sys localize            # 默认先解析变量（等价于先 resolve），再生成 .env
 gops sys localize --only     # 只 localize，不解析/下载模块（用现有 merged_vars.yml）
 gops sys localize --mod nginx
 ```
@@ -110,13 +108,7 @@ gops sys localize --mod nginx
 ### 打包交付
 
 ```bash
-gops sys package             # 先 update 再打包 → ../<name>-<version>.tar.gz
-```
-
-### 初始化系统设置
-
-```bash
-gops sys setting --init
+gops sys package             # 先 resolve 再打包 → ../<name>-<version>.tar.gz
 ```
 
 ### 执行系统操作
@@ -136,7 +128,7 @@ gops prj import   -> 把系统导入项目
 gops prj sync     -> 同步 / 补齐系统（旧名 update）
 ```
 
-导入到运维项目后，项目值放在 `<project>/values/<system>/`。在项目内的系统目录执行 `gops sys localize` / `gops sys update` 时，会依据上层 `ops-prj.yml` 直接使用该项目值目录，不依赖 `<sys>/values` 符号链接是否完整。
+导入到运维项目后，项目值放在 `<project>/values/<system>/`。在项目内的系统目录执行 `gops sys localize` / `gops sys resolve` 时，会依据上层 `ops-prj.yml` 直接使用该项目值目录，不依赖 `<sys>/values` 符号链接是否完整。
 
 ## 现实边界
 

@@ -21,17 +21,11 @@ cd microservice-stack
 
 在 `sys/mod_list.yml` 中把需要的模块加入系统。
 
-## 4. 初始化系统设置（可选）
+## 4. 解析变量并本地化
 
 ```bash
-gops sys setting --init
-```
-
-## 5. 解析变量并本地化
-
-```bash
-gops sys update      # 解析变量 -> sys/merged_vars.yml，并生成 values/sys_value.yml（注释模板）
-gops sys localize    # 生成 .env（默认先解析变量，等价于先 update）
+gops sys resolve      # 解析变量 -> sys/merged_vars.yml，并生成 values/sys_value.yml（注释模板）
+gops sys localize    # 生成 .env（默认先解析变量，等价于先 resolve）
 ```
 
 如果只想处理某个模块：
@@ -49,13 +43,13 @@ HTTP_PORT: 8081
 
 也可以在同目录放 `values/value.yml` 作为额外覆盖层（优先级最高，适合入库的客户覆盖）。
 
-## 6. 打包交付
+## 5. 打包交付
 
 ```bash
 gops sys package     # -> ../microservice-stack-<version>.tar.gz
 ```
 
-## 7. 在运维项目中使用（客户差异）
+## 6. 在运维项目中使用（客户差异）
 
 ```bash
 cd ..
@@ -66,7 +60,7 @@ cd microservice-stack
 gops sys localize    # 值取自 <project>/values/microservice-stack/
 ```
 
-## 8. 执行系统操作
+## 7. 执行系统操作
 
 ```bash
 gops run download --env default

@@ -47,7 +47,7 @@ vender: ''
 
 - `sys/mod_list.yml`：模块列表（仅 `gxl` 需要）
 - `sys/setting/vars.yml`：系统设置变量定义（源）
-- `sys/merged_vars.yml`：`gops sys update` 解析出的聚合变量（需入库）
+- `sys/merged_vars.yml`：`gops sys resolve` 解析出的聚合变量（需入库）
 
 ## 在流程中的作用
 

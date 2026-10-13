@@ -1,5 +1,12 @@
 # Changelog
 
+# 文档更新 2026-10-13 —— 现场态五声明解耦；`sys update` → `sys resolve`；移除 `sys setting` / `sys check`
+
+- **`cmd/gops.md`**：`gops prj` 一节重写（`sync` / `backup` / `restore` / `contract export|import` / `upgrade` / `diagnose`，移除 `update` / `reimport`）；新增现场态五声明「互相独立」总表；`sys package` 的 `ignore:` 改为 `pkg_exclude:` + `pkg_include:`；版本与功能状态表更新为 2.3.x
+- **`gops sys update` 更名为 `gops sys resolve`**（旧名 `update` 保留为隐藏别名）：`cmd/gops.md` 及 `operator/`（`overview` / `README` / `sys/*`）相关说明同步
+- **移除 `gops sys setting`**（只在 `--init` 时覆盖成示例值、与 `gops sys new` 重叠）；`cmd/gops.md`、`operator/README.md`、`operator/sys/{README,examples,troubleshooting,structure}` 同步移除引用，「不再使用的旧说法」补充
+- **移除 `gops sys check`**（只读漂移检查；保留部分并入 `sys localize` 结尾的 `[WARN]`）；`cmd/gops.md`（功能状态表、漂移说明）、`operator/README.md`、`operator/sys/README.md` 同步；`operator/roadmap.md` 的 ② 提案改用 `gops sys validate`、⑥ 标注已实现后移除
+
 # 文档更新 2026-09-30 —— 值变更表（`gops sys diff` / `gops mod diff`）
 
 - **命令行工具**：`cmd/gops.md` 新增「展示系统值变更」与「展示模块值变更」两节（列含义、未展开值比对、`--json`、`localize` 末尾附带变更表）；`gops prj diff` 标注暂不提供；`mod localize` / `sys localize` 补**文件变更表**（`created`/`replaced`，前后内容指纹比对）；`sys diff` 补 **gxl 系统的模块分组**（`[mod: <name>]`，`values/<mod>/mod_value.yml`）与 `--json` 新结构

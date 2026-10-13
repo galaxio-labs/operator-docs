@@ -70,7 +70,7 @@ gops [全局选项] <主命令> [子命令选项] <子命令>
 | --- | --- | --- |
 | `pkg_include:` | `gops sys package` | 基准集之外额外纳入交付包的路径（默认模式补未被 git 跟踪的生成物）；`pkg_exclude` 优先 |
 | `pkg_exclude:` | `gops sys package` | 打包排除的路径（旧名 `ignore`；默认与 `--full` 都生效） |
-| `protect:` | `prj sync` / `sys update` / `prj upgrade` | 升级 / 重建不覆盖、也不删（旧名 `preserve`） |
+| `protect:` | `prj sync` / `sys resolve` / `prj upgrade` | 升级 / 重建不覆盖、也不删（旧名 `preserve`） |
 | `backup:` | `prj backup` / `prj restore` | 备份选取的现场态（扁平列表；只表达“丢失的代价”，**不触发任何删除**） |
 | `contract:` | `prj contract export` / `import` | 对外契约（不可重建的**公开**现场事实：对外域名 / 端点 / 公开证书） |
 
@@ -224,7 +224,7 @@ gops prj upgrade [NAME] --to <VERSION|URL|PATH> --on-failure <rollback-all|halt>
 - `-f, --force <LEVEL>` / `-d, --debug <LEVEL>` / `--log <LOG>`
 
 **功能：**
-- 对已导入的系统做一次**带事务边界**的发布升级：diagnose → backup → apply（覆盖包内内容）→ regenerate（`sys update` + `localize`）→ pull → up → health
+- 对已导入的系统做一次**带事务边界**的发布升级：diagnose → backup → apply（覆盖包内内容）→ regenerate（`sys resolve` + `localize`）→ pull → up → health
 - 失败按 `--on-failure` 处置
 - 第 1 版只支持 `kind: docker-compose` 的系统
 
@@ -406,32 +406,32 @@ gops sys new --name gateway --kind docker-compose
 TEST_MODE=1 gops sys new --name test-system
 ```
 
-### 更新系统配置
+### 解析系统定义 (sys resolve)
 
 ```bash
-gops sys update [OPTIONS]
+gops sys resolve [OPTIONS]      # 旧名 update 仍可用（隐藏别名）
 ```
 
 **选项：**
 - `-d, --debug <LEVEL>` - 调试级别
 - `--log <LOG>` - 日志配置
-- `-f, --force <LEVEL>` - 强制更新级别
+- `-f, --force` - 强制重新拉取模块 / 依赖
 
 **功能：**
-- 更新现有系统配置
-- 更新系统规范或依赖关系
-- 支持强制更新以不确认的情况下覆盖配置
+- 按 `sys/mod_list.yml` 各模块的 `addr` 把它们取到新布局 `sys/<model>/mods/<mod>/`，并解析模块 / 系统依赖
+- 把模块变量 ⊕ 系统 `sys/setting/vars.yml` 变量聚合写入 `sys/merged_vars.yml`（解析结果，需入库），并刷新 `values/sys_value.yml` 注释模板
+- 只动定义与磁盘内容：**不生成 `.env`**（用 `sys localize`）、**不碰运行中的服务**（用 `gops run`）
 
 **示例：**
 ```bash
-# 正常更新系统
-gops sys update
+# 解析系统定义
+gops sys resolve
 
-# 强制更新系统（跳过确认）
-gops sys update --force 1
+# 强制重新拉取
+gops sys resolve --force
 
-# 详细调试更新过程
-gops sys update --debug 3 --log sys=debug
+# 详细调试
+gops sys resolve --debug 3 --log sys=debug
 ```
 
 ### 打包系统
@@ -441,12 +441,12 @@ gops sys package [OPTIONS]
 ```
 
 **选项：**
-- `-f, --force <LEVEL>` - 强制更新级别
+- `-f, --force` - 强制更新级别
 - `--output <PATH>` - 输出路径（默认：父目录下 `<name>-<version>.tar.gz`）
 - `--full` - 打当前目录**全部**（含制品与本地化产物，用于隔离网络交付；默认只打 git 入库文件）。旧名 `--no-git` 仍可用（隐藏别名）
 
 **功能：**
-- 先执行一次 `update`（解析变量、生成 `sys/merged_vars.yml`），保证交付包可被 `gops prj import` 完整导入
+- 先执行一次 `sys resolve`（取模块、解析变量、生成 `sys/merged_vars.yml`），保证交付包可被 `gops prj import` 完整导入
 - 再打包为 `.tar.gz`：**默认只含 git 入库文件**（`git ls-files`，等价 `git archive` 的“只含入库文件”，需在 git 仓库内运行），自然排除被 `.gitignore` 忽略的产物（`sys/*/mods/`、`**/local`、`.env` 等）；`--full` 则打当前目录全部（含制品/本地化产物）
 - 两种模式都会排除 `sys-prj.yml` 的 `pkg_exclude:` 节列出的路径；`pkg_include:` 则在基准集之外**额外纳入**命中它的路径（用于让**未被 git 跟踪**的生成物随包走，默认模式，可覆盖 `.gitignore`）；`deliver.lock` 作为交付清单始终随包分发（不受影响）
 
@@ -486,12 +486,13 @@ gops sys localize [OPTIONS]
 - `-d, --debug <LEVEL>` - 调试级别
 - `--log <LOG>` - 日志配置
 - `--mod <MODULE>` - 只处理指定模块
-- `--only` - 只 localize，跳过 update（不解析/下载模块）
+- `--only` - 只 localize，跳过 resolve（不解析/下载模块）
 
 **功能：**
 - 生成 `.env`：`sys/merged_vars.yml` 默认值 ⊕ `values/sys_value.yml` ⊕ `values/value.yml`
 - 两个值文件都是可选、可部分覆盖：只写需要修改的项，其余取系统默认值
-- **默认先解析变量**：`gops sys localize` 默认**无条件**先解析（等价于先跑一次 `gops sys update`，含解析/下载模块），因此改完 `sys/setting/vars.yml` 一条命令即生效；`--only` 跳过该步骤（用现有 `sys/merged_vars.yml`，**缺失时会明确报错**）。
+- **默认先解析变量**：`gops sys localize` 默认**无条件**先解析（等价于先跑一次 `gops sys resolve`，含解析/下载模块），因此改完 `sys/setting/vars.yml` 一条命令即生效；`--only` 跳过该步骤（用现有 `sys/merged_vars.yml`，**缺失时会明确报错**）。
+- 若变量定义（`sys/setting/vars.yml` 等）比 `sys/merged_vars.yml` 新（常见于 `--only` 跳过解析），结尾会打印一行 `[WARN]`（仅比对 `.env` 看不到这层陈旧）
 - `kind: docker-compose` 时，`.env` 供 compose 消费（默认 compose 文件为 `sys/docker-compose.yaml`，`.env` 仍在系统根）
 
 **示例：**
@@ -506,11 +507,11 @@ gops sys localize --only
 gops sys localize --mod gateway
 ```
 
-**值文件说明：** `values/sys_value.yml` 由 `sys update` 首次生成，整份是**注释模板**——取消注释需要覆盖的项即可；`values/value.yml` 优先级更高（覆盖层优先：`value.yml` > `sys_value.yml` > 变量定义），适合入库的客户覆盖。
+**值文件说明：** `values/sys_value.yml` 由 `sys resolve` 首次生成，整份是**注释模板**——取消注释需要覆盖的项即可；`values/value.yml` 优先级更高（覆盖层优先：`value.yml` > `sys_value.yml` > 变量定义），适合入库的客户覆盖。
 
 `localize` 渲染 sys setting 模板（`src` → `dst`）后，会打印**文件变更表**（`FILE | STATE`，`created` / `replaced`），用前后内容指纹（sha256）比对：清空输出树再重建不会把内容未变的文件误报为变更，删除不报。
 
-> 改了 `sys/setting/vars.yml` 而未重新 localize 时，`gops sys check` 会输出 `[WARN]` 提示（仅比对 `.env` 看不到这层陈旧）。
+> 改了 `sys/setting/vars.yml` 而未重新解析时，`gops sys localize` 结尾会输出一行 `[WARN]`（仅比对 `.env` 看不到这层陈旧）。
 
 ### 展示系统值变更
 
@@ -531,7 +532,7 @@ gops sys diff [--json]
 
 比对用**未展开**值（`${VAR}` 展开前），避免伪变更。`gops sys localize` 结束时也会打印同一张表（无覆盖时打 `[OK] 值无覆盖`）。
 
-对 **gxl 系统**（有 `sys/mod_list.yml`），`sys localize` 会逐模块消费 `values/<mod>/mod_value.yml`，故 `sys diff` / `localize` 还按模块分组呈现 `[mod: <name>]`（初始层 = `sys/<model>/mods/<mod>/vars.yml`；生效层 ⊕ `values/<mod>/value.yml` ⊕ `values/<mod>/mod_value.yml` ⊕ 系统层）。模块内容未下载时给 `[WARN]`（先 `gops sys update`）。
+对 **gxl 系统**（有 `sys/mod_list.yml`），`sys localize` 会逐模块消费 `values/<mod>/mod_value.yml`，故 `sys diff` / `localize` 还按模块分组呈现 `[mod: <name>]`（初始层 = `sys/<model>/mods/<mod>/vars.yml`；生效层 ⊕ `values/<mod>/value.yml` ⊕ `values/<mod>/mod_value.yml` ⊕ 系统层）。模块内容未下载时给 `[WARN]`（先 `gops sys resolve`）。
 
 值文件键**大小写不敏感**（加载时归一化为大写）。`--json` 为 `{ "system": [...], "modules": [{ "module": …, "changes": [...] }], "files": [{ "target": …, "changes": [...] }] }`（只含有变更的分组）。
 
@@ -568,7 +569,7 @@ gops run diagnose    # 诊断问题        compose: config（密钥掩码注入�
 
 **通用选项：** `--mod <MODULE>`、`-e, --env <ENV>`（默认 `default`）、`-d/--debug`、`--log`。
 
-> 与 `gops sys`（**定义/交付/工件**：`new`/`update`/`localize`/`package`/`setting`/`check`/`diff`）区分：`gops run` 只管「在环境里落地/运行」。
+> 与 `gops sys`（**定义/交付/工件**：`new`/`resolve`/`localize`/`package`/`diff`）区分：`gops run` 只管「在环境里落地/运行」。
 
 **示例：**
 ```bash
@@ -690,7 +691,7 @@ my-system/
     ├── sys_model.yml        # name / model / kind / vender
     ├── docker-compose.yaml  # 系统级 compose 定义（${VAR} 占位）
     ├── mod_list.yml         # 模块列表（GXL；可选）
-    ├── merged_vars.yml      # 聚合变量（sys update 生成，需入库）
+    ├── merged_vars.yml      # 聚合变量（sys resolve 生成，需入库）
     ├── workflows/           # GXL 工作流（可选）
     └── setting/
         ├── list.yml         # 可选
@@ -699,7 +700,7 @@ my-system/
 
 纯 docker-compose 系统只保留 `sys_model.yml`、`docker-compose.yaml` 与 `setting/vars.yml`（详见 [System 目录结构](../operator/sys/structure/directory.md)）。
 
-`sys-prj.yml` 里的五个现场态声明**互相独立**（各由各自的命令消费，互不影响）：`pkg_include` / `pkg_exclude`（只服务 `sys package`）、`protect`（只服务 `sys update` / `prj sync` / `prj upgrade`）、`backup`（只服务 `prj backup` / `restore`）、`contract`（只服务 `prj contract export` / `import`）。另，对外契约归档的落点 / 份数写在项目侧 `ops-prj.yml: contract`。
+`sys-prj.yml` 里的五个现场态声明**互相独立**（各由各自的命令消费，互不影响）：`pkg_include` / `pkg_exclude`（只服务 `sys package`）、`protect`（只服务 `sys resolve` / `prj sync` / `prj upgrade`）、`backup`（只服务 `prj backup` / `restore`）、`contract`（只服务 `prj contract export` / `import`）。另，对外契约归档的落点 / 份数写在项目侧 `ops-prj.yml: contract`。
 
 ## 最佳实践
 
@@ -741,7 +742,7 @@ gops mod localize --value dev-values.yml
 gops sys new --name my-system
 
 # 2. 解析变量 / 初始化值文件
-gops sys update --force 1
+gops sys resolve --force 1
 
 # 3. 本地化（生成 .env）
 gops sys localize
@@ -756,10 +757,7 @@ gops prj import --path /test --debug 3 --log all=debug
 gops mod update --debug 3 --log mod=debug
 
 # 调试系统操作
-gops sys update --debug 3 --log sys=debug
-
-# 调试设置操作
-gops sys setting --init --debug 2 --log setting=debug
+gops sys resolve --debug 3 --log sys=debug
 ```
 
 ## 故障排除
@@ -792,12 +790,6 @@ gops mod update --debug 3 --log mod=debug
 TEST_MODE=1 gops sys new --name test-system
 ```
 
-**Q: 设置命令在非交互模式下失败**
-```
-解决：确保 sys/setting/ 目录存在，并在系统根目录执行
-gops sys setting --init --debug 2
-```
-
 ### 调试模式使用
 
 ```bash
@@ -808,7 +800,7 @@ gops prj import --path /test --debug 1
 gops mod update --debug 2 --log mod=debug
 
 # 跟踪级别调试
-gops sys update --debug 3 --log sys=trace
+gops sys resolve --debug 3 --log sys=trace
 
 # 跟踪级别调试（工程）
 gops prj sync --debug 3 --log all=debug
@@ -821,7 +813,7 @@ gops prj sync --debug 3 --log all=debug
 gops mod update --log mod=debug
 
 # 调试多个模块
-gops sys update --log sys=debug,net=info
+gops sys resolve --log sys=debug,net=info
 
 # 设置不同级别
 gops prj import --log import=debug,system=info,net=trace
@@ -846,10 +838,6 @@ cargo test -- --nocapture
 
 # 在测试环境中运行
 TEST_MODE=true cargo test
-
-# 运行特定命令的测试
-cargo test test_ia_setting_interactive
-cargo test test_ia_setting_non_interactive
 ```
 
 ## 示例工作流
@@ -914,11 +902,9 @@ gops sys localize
 | `gops mod` | `localize` | ✅ 完成 | 本地化模块配置 |
 | `gops mod` | `diff` | ✅ 完成 | 展示模块值变更 |
 | `gops sys` | `new` | ✅ 完成 | 创建系统（`--kind gxl` / `docker-compose`） |
-| `gops sys` | `update` | ✅ 完成 | 解析变量、初始化值文件 |
-| `gops sys` | `package` | ✅ 完成 | 先 update 再打包交付产物（`--full` 整目录） |
-| `gops sys` | `localize` | ✅ 完成 | 生成 `.env`（`--only` 跳过 update） |
-| `gops sys` | `setting` | ✅ 完成 | 初始化系统设置 |
-| `gops sys` | `check` | ✅ 完成 | 只读比对漂移（值改了没重新 localize） |
+| `gops sys` | `resolve` | ✅ 完成 | 解析系统定义（旧名 `update`）：取模块 + 解析变量、初始化值文件 |
+| `gops sys` | `package` | ✅ 完成 | 先 resolve 再打包交付产物（`--full` 整目录） |
+| `gops sys` | `localize` | ✅ 完成 | 生成 `.env`（`--only` 跳过 resolve） |
 | `gops sys` | `diff` | ✅ 完成 | 展示系统值变更 |
 | `gops run` | `download/install/uninstall/start/stop/status/diagnose` | ✅ 完成 | 运行时运维（按 `kind` 分派：gxl→gx；docker-compose→docker compose） |
 | `gops self` | `status/check/update/rollback/skill` | ✅ 完成 | 自升级闭环 + agent skills 管理 |

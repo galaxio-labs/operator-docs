@@ -67,7 +67,7 @@ key 会归一化为大写并加 `SEC_` 前缀：`postgres_password` → `SEC_POS
 ## 3. 生成 `.env`
 
 ```bash
-gops sys localize        # 默认先解析变量（等价于先 update），再生成 .env
+gops sys localize        # 默认先解析变量（等价于先 resolve），再生成 .env
 cat .env
 ```
 
@@ -77,7 +77,7 @@ cat .env
 .env = sys/merged_vars.yml 默认值 ⊕ values/sys_value.yml ⊕ values/value.yml
 ```
 
-- `values/sys_value.yml` 是 `sys update` 生成的**注释模板**：取消注释要覆盖的项即可，其余取默认值。
+- `values/sys_value.yml` 是 `sys resolve` 生成的**注释模板**：取消注释要覆盖的项即可，其余取默认值。
 - `values/value.yml` 是更高优先级的覆盖层。
 
 例如只想改端口与副本数：
@@ -109,7 +109,7 @@ gops run uninstall   # docker compose down
 ## 5. 交付给客户（运维项目）
 
 ```bash
-gops sys package                          # 先 update 再打包 -> ../gateway-<version>.tar.gz
+gops sys package                          # 先 resolve 再打包 -> ../gateway-<version>.tar.gz
 cd ..
 gops prj new --name customer-a
 cd customer-a
@@ -119,4 +119,4 @@ gops sys localize                         # 使用 <project>/values/gateway/ 下
 gops run start
 ```
 
-客户差异写在 `<project>/values/gateway/`（例如 `value.yml`）。在项目内的系统目录执行 `gops sys localize` / `sys update` 时，会依据上层 `ops-prj.yml` 直接使用该项目值目录。
+客户差异写在 `<project>/values/gateway/`（例如 `value.yml`）。在项目内的系统目录执行 `gops sys localize` / `sys resolve` 时，会依据上层 `ops-prj.yml` 直接使用该项目值目录。

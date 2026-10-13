@@ -49,11 +49,9 @@ gops prj backup          # 存一份现场态
 ```bash
 # gops sys —— 定义 / 交付 / 工件
 gops sys new --name <name> [--kind gxl|docker-compose]
-gops sys update
+gops sys resolve
 gops sys package [--full]
 gops sys localize [--mod <module>] [--only]
-gops sys setting --init
-gops sys check
 
 # gops run —— 运行时运维（在环境里落地/运行）
 gops run download [--mod <module>] [--env <env>]

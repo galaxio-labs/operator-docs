@@ -12,19 +12,12 @@
 - 自动化测试场景可设置 `TEST_MODE=1`
 - 不需要型号的纯 compose 系统用 `gops sys new --kind docker-compose`（不询问型号）
 
-## 2. `gops sys setting --init` 没有生成预期文件
-
-确认点：
-
-- 当前目录必须是系统根目录
-- `sys/setting/` 目录是否存在
-
-## 3. `gops sys localize` 失败
+## 2. `gops sys localize` 失败
 
 常见原因与报错：
 
 - **`系统变量未解析：缺少 .../sys/merged_vars.yml`**
-  → 先执行 `gops sys update` 解析变量；或去掉 `--only`，让 `localize` 自动先 `update`。
+  → 先执行 `gops sys resolve` 解析变量；或去掉 `--only`，让 `localize` 自动先 `resolve`。
 - `sys_model.yml` 缺失
 - 值文件内容不是合法 YAML
   （提示：全注释 / 空文件会被视为**空覆盖**，不会报错）
@@ -37,15 +30,15 @@ gops sys localize --debug 2
 
 先打开调试输出定位是哪一层配置缺失。
 
-## 4. 值文件写了却没生效
+## 3. 值文件写了却没生效
 
 确认点：
 
-- `values/sys_value.yml` 里对应的行**已取消注释**——`sys update` 生成的是整份注释模板，保持注释等价于空覆盖
+- `values/sys_value.yml` 里对应的行**已取消注释**——`sys resolve` 生成的是整份注释模板，保持注释等价于空覆盖
 - 优先级：`values/value.yml` > `values/sys_value.yml` > `sys/merged_vars.yml` 的系统默认值
 - 在运维项目内执行时，值来自 `<project>/values/<system>/`（依据上层 `ops-prj.yml` 解析），而不是系统自带的 `<sys>/values`
 
-## 5. 日志出现 `unexpanded variable in localize path` 且本地化被跳过
+## 4. 日志出现 `unexpanded variable in localize path` 且本地化被跳过
 
 原因：`sys/setting/list.yml` 里的路径模板引用了未设置的变量（常见是 `${GXL_PRJ_ROOT}`）。
 
@@ -56,7 +49,7 @@ gops sys localize --debug 2
 
 建议：确认是在系统目录内执行，且该目录（或其上层）存在 `_gal/project.toml`。
 
-## 6. `download/install/start` 等系统命令失败
+## 5. `download/install/start` 等系统命令失败
 
 分两种情况（由 `sys/sys_model.yml` 的 `kind` 决定）：
 
@@ -69,7 +62,7 @@ gops sys localize --debug 2
   - 确认 `.env` 已生成（`gops sys localize`）
   - `--mod` 会被忽略（纯 compose 系统没有模块）
 
-## 7. `docker compose` 报变量未定义
+## 6. `docker compose` 报变量未定义
 
 确认点：
 
@@ -77,7 +70,7 @@ gops sys localize --debug 2
 - `.env` 位于系统根；compose 文件默认在 `sys/`（项目目录锚定系统根，`${VAR}` 由系统根的 `.env` 注入）
 - 密钥类变量用 `${SEC_xxx}` 占位，由 `gops run start` 从 `~/.galaxy/sec_value.yml` 注入；直接用 `docker compose up` 不会自动注入密钥
 
-## 8. 文档和目录树不一致
+## 7. 文档和目录树不一致
 
 处理原则：
 

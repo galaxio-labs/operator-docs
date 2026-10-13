@@ -9,7 +9,7 @@
 | 改进点 | 对应问题 | 现状（代码证据） | 价值 |
 | --- | --- | --- | --- |
 | ① `gops sys new --model <modelsdt>`（非交互选型） | 采用前置 | `ia_model_std()` 只能交互；自动选型靠 `TEST_MODE=1` 这种 hack | 解锁 CI / 自动化，实现极小 |
-| ② `gops sys check` 部署前校验 | 问题 1（后果严重） | `sys localize` 只导出 `.env`（`export_env_file`），**不校验** `sys/docker-compose.yaml` 里的 `${VAR}` 是否都有定义 | 把"上线才炸"提前到"localize 前报错" |
+| ② `gops sys validate` 部署前校验 | 问题 1（后果严重） | `sys localize` 只导出 `.env`（`export_env_file`），**不校验** `sys/docker-compose.yaml` 里的 `${VAR}` 是否都有定义 | 把"上线才炸"提前到"localize 前报错" |
 | ③ 密钥缺失 fail-fast | 问题 1（容易遗忘） | `run_compose_cmd` 无脑 `load_sec_dict()` 注入，不校验被引用的 `${SEC_x}` 是否存在 | 挡住"空密码静默上线" |
 | ④ `gops sys diff` | 问题 1（容易遗忘） | 有值来源追踪（`_used.json`），但没有"客户值 vs 系统默认"的差异视图 | 一眼看清"改了哪些、哪些还是默认" |
 
@@ -20,7 +20,7 @@
 | 改进点 | 对应问题 | 现状（代码证据） | 价值 |
 | --- | --- | --- | --- |
 | ⑤ 锁文件 / manifest | 问题 1、2（记录保值） | `merged_vars.yml` 已入库，但未记录系统版本 / 模块版本 / 值哈希 | "部署的是哪一版、用了什么值"可复现，回滚有依据 |
-| ⑥ 轻量漂移报告 | 问题 1 | `status` / `diagnose` 不比对"值文件改动 vs 已生成的 `.env`" | 报"值变了但没重新 localize"，不必做完整 reconcile |
+| ⑥ 轻量漂移报告 | 问题 1 | `status` / `diagnose` 不比对"值文件改动 vs 已生成的 `.env`" | 报"值变了但没重新 localize"，不必做完整 reconcile（曾以只读 `sys check` 实现，2.3.x 移除；保留部分并入 `sys localize` 结尾的 `[WARN]`） |
 | ⑦ `values/` 提交检查（`gops prj doctor` 或 CI `--check`） | 问题 1 | 无，全靠 git 纪律（定位页「边界」已承认） | 把"靠纪律"补成"靠工具提醒" |
 
 ⑤⑥⑦ 的共同作用：把"记录与保值"从**靠纪律**变成**靠工具提醒**。
@@ -78,7 +78,9 @@
 
 **成本 / 风险**：S。低风险；注意 `--model` × `--kind` 的互斥校验。
 
-### ② `gops sys check`：部署前变量校验
+### ② `gops sys validate`：部署前变量校验
+
+> 注：`gops sys check` 这个名字曾用于一个只读的「`.env` 漂移」检查，已在 2.3.x 移除（保留部分并入 `sys localize` 结尾的 `[WARN]`）；故此处改用 `validate`。
 
 **目标**：在 `localize` 之后、`start` 之前，把"上线才炸"的未定义变量提前成一条明确报错。
 
@@ -89,7 +91,7 @@
 
 **期望行为**
 
-- 新增只读命令 `gops sys check`：扫描系统内 compose 文件（`sys/docker-compose.{yaml,yml}` 等）的插值占位
+- 新增只读命令 `gops sys validate`：扫描系统内 compose 文件（`sys/docker-compose.{yaml,yml}` 等）的插值占位
   - 形态：`${VAR}`、`${VAR:-default}`、`${VAR-default}`、`$VAR`；带 `:-` / `-` 默认值的视为可选；
   - 其余必须在"合并值字典（∪ 生成的 `.env`）"中存在；
   - 输出缺失清单（`文件:行号  变量名`），有缺失即非 0 退出。
@@ -172,7 +174,7 @@
 ## 如果只做三件事
 
 1. **`gops sys new --model`** —— 解锁 CI / 自动化，门槛最低。
-2. **`gops sys check` 部署前校验** —— 变量 + 密钥占位双校验，直打"后果严重"。
+2. **`gops sys validate` 部署前校验** —— 变量 + 密钥占位双校验，直打"后果严重"。
 3. **`gops sys diff`** —— 直打"容易遗忘"，且能作为对外卖点。
 
 这三条合起来，正好把问题 1 的三个症状（**时常修改 / 容易遗忘 / 后果严重**）各自对应上一个可交付的功能，且都不动核心架构。
