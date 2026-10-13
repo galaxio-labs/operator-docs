@@ -46,7 +46,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-ec8dea9d.js";
+            window.path_to_searchindex_js = "searchindex-be10778c.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-18d2ed36.js"></script>
@@ -222,6 +222,13 @@ scripts/sync-gxl-docs.sh check --dest &lt;operator-docs&gt;/src/gxl
 </blockquote>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="changelog"><a class="header" href="#changelog">Changelog</a></h1>
+<h1 id="文档更新-2026-10-13--现场态五声明解耦sys-update--sys-resolve移除-sys-setting--sys-check"><a class="header" href="#文档更新-2026-10-13--现场态五声明解耦sys-update--sys-resolve移除-sys-setting--sys-check">文档更新 2026-10-13 —— 现场态五声明解耦；<code>sys update</code> → <code>sys resolve</code>；移除 <code>sys setting</code> / <code>sys check</code></a></h1>
+<ul>
+<li><strong><code>cmd/gops.md</code></strong>：<code>gops prj</code> 一节重写（<code>sync</code> / <code>backup</code> / <code>restore</code> / <code>contract export|import</code> / <code>upgrade</code> / <code>diagnose</code>，移除 <code>update</code> / <code>reimport</code>）；新增现场态五声明「互相独立」总表；<code>sys package</code> 的 <code>ignore:</code> 改为 <code>pkg_exclude:</code> + <code>pkg_include:</code>；版本与功能状态表更新为 2.3.x</li>
+<li><strong><code>gops sys update</code> 更名为 <code>gops sys resolve</code></strong>（旧名 <code>update</code> 保留为隐藏别名）：<code>cmd/gops.md</code> 及 <code>operator/</code>（<code>overview</code> / <code>README</code> / <code>sys/*</code>）相关说明同步</li>
+<li><strong>移除 <code>gops sys setting</code></strong>（只在 <code>--init</code> 时覆盖成示例值、与 <code>gops sys new</code> 重叠）；<code>cmd/gops.md</code>、<code>operator/README.md</code>、<code>operator/sys/{README,examples,troubleshooting,structure}</code> 同步移除引用，「不再使用的旧说法」补充</li>
+<li><strong>移除 <code>gops sys check</code></strong>（只读漂移检查；保留部分并入 <code>sys localize</code> 结尾的 <code>[WARN]</code>）；<code>cmd/gops.md</code>（功能状态表、漂移说明）、<code>operator/README.md</code>、<code>operator/sys/README.md</code> 同步；<code>operator/roadmap.md</code> 的 ② 提案改用 <code>gops sys validate</code>、⑥ 标注已实现后移除</li>
+</ul>
 <h1 id="文档更新-2026-09-30--值变更表gops-sys-diff--gops-mod-diff"><a class="header" href="#文档更新-2026-09-30--值变更表gops-sys-diff--gops-mod-diff">文档更新 2026-09-30 —— 值变更表（<code>gops sys diff</code> / <code>gops mod diff</code>）</a></h1>
 <ul>
 <li><strong>命令行工具</strong>：<code>cmd/gops.md</code> 新增「展示系统值变更」与「展示模块值变更」两节（列含义、未展开值比对、<code>--json</code>、<code>localize</code> 末尾附带变更表）；<code>gops prj diff</code> 标注暂不提供；<code>mod localize</code> / <code>sys localize</code> 补<strong>文件变更表</strong>（<code>created</code>/<code>replaced</code>，前后内容指纹比对）；<code>sys diff</code> 补 <strong>gxl 系统的模块分组</strong>（<code>[mod: &lt;name&gt;]</code>，<code>values/&lt;mod&gt;/mod_value.yml</code>）与 <code>--json</code> 新结构</li>
@@ -509,7 +516,7 @@ gops &lt;command&gt; &lt;subcommand&gt; --help
 <tbody>
 <tr><td><code>pkg_include:</code></td><td><code>gops sys package</code></td><td>基准集之外额外纳入交付包的路径（默认模式补未被 git 跟踪的生成物）；<code>pkg_exclude</code> 优先</td></tr>
 <tr><td><code>pkg_exclude:</code></td><td><code>gops sys package</code></td><td>打包排除的路径（旧名 <code>ignore</code>；默认与 <code>--full</code> 都生效）</td></tr>
-<tr><td><code>protect:</code></td><td><code>prj sync</code> / <code>sys update</code> / <code>prj upgrade</code></td><td>升级 / 重建不覆盖、也不删（旧名 <code>preserve</code>）</td></tr>
+<tr><td><code>protect:</code></td><td><code>prj sync</code> / <code>sys resolve</code> / <code>prj upgrade</code></td><td>升级 / 重建不覆盖、也不删（旧名 <code>preserve</code>）</td></tr>
 <tr><td><code>backup:</code></td><td><code>prj backup</code> / <code>prj restore</code></td><td>备份选取的现场态（扁平列表；只表达“丢失的代价”，<strong>不触发任何删除</strong>）</td></tr>
 <tr><td><code>contract:</code></td><td><code>prj contract export</code> / <code>import</code></td><td>对外契约（不可重建的<strong>公开</strong>现场事实：对外域名 / 端点 / 公开证书）</td></tr>
 </tbody>
@@ -652,7 +659,7 @@ gops prj contract import &lt;ARCHIVE&gt;
 </ul>
 <p><strong>功能：</strong></p>
 <ul>
-<li>对已导入的系统做一次<strong>带事务边界</strong>的发布升级：diagnose → backup → apply（覆盖包内内容）→ regenerate（<code>sys update</code> + <code>localize</code>）→ pull → up → health</li>
+<li>对已导入的系统做一次<strong>带事务边界</strong>的发布升级：diagnose → backup → apply（覆盖包内内容）→ regenerate（<code>sys resolve</code> + <code>localize</code>）→ pull → up → health</li>
 <li>失败按 <code>--on-failure</code> 处置</li>
 <li>第 1 版只支持 <code>kind: docker-compose</code> 的系统</li>
 </ul>
@@ -814,43 +821,43 @@ gops sys new --name gateway --kind docker-compose
 # 在测试环境中创建系统
 TEST_MODE=1 gops sys new --name test-system
 </code></pre>
-<h3 id="更新系统配置"><a class="header" href="#更新系统配置">更新系统配置</a></h3>
-<pre><code class="language-bash">gops sys update [OPTIONS]
+<h3 id="解析系统定义-sys-resolve"><a class="header" href="#解析系统定义-sys-resolve">解析系统定义 (sys resolve)</a></h3>
+<pre><code class="language-bash">gops sys resolve [OPTIONS]      # 旧名 update 仍可用（隐藏别名）
 </code></pre>
 <p><strong>选项：</strong></p>
 <ul>
 <li><code>-d, --debug &lt;LEVEL&gt;</code> - 调试级别</li>
 <li><code>--log &lt;LOG&gt;</code> - 日志配置</li>
-<li><code>-f, --force &lt;LEVEL&gt;</code> - 强制更新级别</li>
+<li><code>-f, --force</code> - 强制重新拉取模块 / 依赖</li>
 </ul>
 <p><strong>功能：</strong></p>
 <ul>
-<li>更新现有系统配置</li>
-<li>更新系统规范或依赖关系</li>
-<li>支持强制更新以不确认的情况下覆盖配置</li>
+<li>按 <code>sys/mod_list.yml</code> 各模块的 <code>addr</code> 把它们取到新布局 <code>sys/&lt;model&gt;/mods/&lt;mod&gt;/</code>，并解析模块 / 系统依赖</li>
+<li>把模块变量 ⊕ 系统 <code>sys/setting/vars.yml</code> 变量聚合写入 <code>sys/merged_vars.yml</code>（解析结果，需入库），并刷新 <code>values/sys_value.yml</code> 注释模板</li>
+<li>只动定义与磁盘内容：<strong>不生成 <code>.env</code></strong>（用 <code>sys localize</code>）、<strong>不碰运行中的服务</strong>（用 <code>gops run</code>）</li>
 </ul>
 <p><strong>示例：</strong></p>
-<pre><code class="language-bash"># 正常更新系统
-gops sys update
+<pre><code class="language-bash"># 解析系统定义
+gops sys resolve
 
-# 强制更新系统（跳过确认）
-gops sys update --force 1
+# 强制重新拉取
+gops sys resolve --force
 
-# 详细调试更新过程
-gops sys update --debug 3 --log sys=debug
+# 详细调试
+gops sys resolve --debug 3 --log sys=debug
 </code></pre>
 <h3 id="打包系统"><a class="header" href="#打包系统">打包系统</a></h3>
 <pre><code class="language-bash">gops sys package [OPTIONS]
 </code></pre>
 <p><strong>选项：</strong></p>
 <ul>
-<li><code>-f, --force &lt;LEVEL&gt;</code> - 强制更新级别</li>
+<li><code>-f, --force</code> - 强制更新级别</li>
 <li><code>--output &lt;PATH&gt;</code> - 输出路径（默认：父目录下 <code>&lt;name&gt;-&lt;version&gt;.tar.gz</code>）</li>
 <li><code>--full</code> - 打当前目录<strong>全部</strong>（含制品与本地化产物，用于隔离网络交付；默认只打 git 入库文件）。旧名 <code>--no-git</code> 仍可用（隐藏别名）</li>
 </ul>
 <p><strong>功能：</strong></p>
 <ul>
-<li>先执行一次 <code>update</code>（解析变量、生成 <code>sys/merged_vars.yml</code>），保证交付包可被 <code>gops prj import</code> 完整导入</li>
+<li>先执行一次 <code>sys resolve</code>（取模块、解析变量、生成 <code>sys/merged_vars.yml</code>），保证交付包可被 <code>gops prj import</code> 完整导入</li>
 <li>再打包为 <code>.tar.gz</code>：<strong>默认只含 git 入库文件</strong>（<code>git ls-files</code>，等价 <code>git archive</code> 的“只含入库文件”，需在 git 仓库内运行），自然排除被 <code>.gitignore</code> 忽略的产物（<code>sys/*/mods/</code>、<code>**/local</code>、<code>.env</code> 等）；<code>--full</code> 则打当前目录全部（含制品/本地化产物）</li>
 <li>两种模式都会排除 <code>sys-prj.yml</code> 的 <code>pkg_exclude:</code> 节列出的路径；<code>pkg_include:</code> 则在基准集之外<strong>额外纳入</strong>命中它的路径（用于让<strong>未被 git 跟踪</strong>的生成物随包走，默认模式，可覆盖 <code>.gitignore</code>）；<code>deliver.lock</code> 作为交付清单始终随包分发（不受影响）</li>
 </ul>
@@ -883,13 +890,14 @@ gops sys package --output /tmp/gateway-0.1.0.tar.gz
 <li><code>-d, --debug &lt;LEVEL&gt;</code> - 调试级别</li>
 <li><code>--log &lt;LOG&gt;</code> - 日志配置</li>
 <li><code>--mod &lt;MODULE&gt;</code> - 只处理指定模块</li>
-<li><code>--only</code> - 只 localize，跳过 update（不解析/下载模块）</li>
+<li><code>--only</code> - 只 localize，跳过 resolve（不解析/下载模块）</li>
 </ul>
 <p><strong>功能：</strong></p>
 <ul>
 <li>生成 <code>.env</code>：<code>sys/merged_vars.yml</code> 默认值 ⊕ <code>values/sys_value.yml</code> ⊕ <code>values/value.yml</code></li>
 <li>两个值文件都是可选、可部分覆盖：只写需要修改的项，其余取系统默认值</li>
-<li><strong>默认先解析变量</strong>：<code>gops sys localize</code> 默认<strong>无条件</strong>先解析（等价于先跑一次 <code>gops sys update</code>，含解析/下载模块），因此改完 <code>sys/setting/vars.yml</code> 一条命令即生效；<code>--only</code> 跳过该步骤（用现有 <code>sys/merged_vars.yml</code>，<strong>缺失时会明确报错</strong>）。</li>
+<li><strong>默认先解析变量</strong>：<code>gops sys localize</code> 默认<strong>无条件</strong>先解析（等价于先跑一次 <code>gops sys resolve</code>，含解析/下载模块），因此改完 <code>sys/setting/vars.yml</code> 一条命令即生效；<code>--only</code> 跳过该步骤（用现有 <code>sys/merged_vars.yml</code>，<strong>缺失时会明确报错</strong>）。</li>
+<li>若变量定义（<code>sys/setting/vars.yml</code> 等）比 <code>sys/merged_vars.yml</code> 新（常见于 <code>--only</code> 跳过解析），结尾会打印一行 <code>[WARN]</code>（仅比对 <code>.env</code> 看不到这层陈旧）</li>
 <li><code>kind: docker-compose</code> 时，<code>.env</code> 供 compose 消费（默认 compose 文件为 <code>sys/docker-compose.yaml</code>，<code>.env</code> 仍在系统根）</li>
 </ul>
 <p><strong>示例：</strong></p>
@@ -902,10 +910,10 @@ gops sys localize --only
 # 只处理某个模块
 gops sys localize --mod gateway
 </code></pre>
-<p><strong>值文件说明：</strong> <code>values/sys_value.yml</code> 由 <code>sys update</code> 首次生成，整份是<strong>注释模板</strong>——取消注释需要覆盖的项即可；<code>values/value.yml</code> 优先级更高（覆盖层优先：<code>value.yml</code> &gt; <code>sys_value.yml</code> &gt; 变量定义），适合入库的客户覆盖。</p>
+<p><strong>值文件说明：</strong> <code>values/sys_value.yml</code> 由 <code>sys resolve</code> 首次生成，整份是<strong>注释模板</strong>——取消注释需要覆盖的项即可；<code>values/value.yml</code> 优先级更高（覆盖层优先：<code>value.yml</code> &gt; <code>sys_value.yml</code> &gt; 变量定义），适合入库的客户覆盖。</p>
 <p><code>localize</code> 渲染 sys setting 模板（<code>src</code> → <code>dst</code>）后，会打印<strong>文件变更表</strong>（<code>FILE | STATE</code>，<code>created</code> / <code>replaced</code>），用前后内容指纹（sha256）比对：清空输出树再重建不会把内容未变的文件误报为变更，删除不报。</p>
 <blockquote>
-<p>改了 <code>sys/setting/vars.yml</code> 而未重新 localize 时，<code>gops sys check</code> 会输出 <code>[WARN]</code> 提示（仅比对 <code>.env</code> 看不到这层陈旧）。</p>
+<p>改了 <code>sys/setting/vars.yml</code> 而未重新解析时，<code>gops sys localize</code> 结尾会输出一行 <code>[WARN]</code>（仅比对 <code>.env</code> 看不到这层陈旧）。</p>
 </blockquote>
 <h3 id="展示系统值变更"><a class="header" href="#展示系统值变更">展示系统值变更</a></h3>
 <pre><code class="language-bash">gops sys diff [--json]
@@ -927,7 +935,7 @@ gops sys localize --mod gateway
 </table>
 </div>
 <p>比对用<strong>未展开</strong>值（<code>${VAR}</code> 展开前），避免伪变更。<code>gops sys localize</code> 结束时也会打印同一张表（无覆盖时打 <code>[OK] 值无覆盖</code>）。</p>
-<p>对 <strong>gxl 系统</strong>（有 <code>sys/mod_list.yml</code>），<code>sys localize</code> 会逐模块消费 <code>values/&lt;mod&gt;/mod_value.yml</code>，故 <code>sys diff</code> / <code>localize</code> 还按模块分组呈现 <code>[mod: &lt;name&gt;]</code>（初始层 = <code>sys/&lt;model&gt;/mods/&lt;mod&gt;/vars.yml</code>；生效层 ⊕ <code>values/&lt;mod&gt;/value.yml</code> ⊕ <code>values/&lt;mod&gt;/mod_value.yml</code> ⊕ 系统层）。模块内容未下载时给 <code>[WARN]</code>（先 <code>gops sys update</code>）。</p>
+<p>对 <strong>gxl 系统</strong>（有 <code>sys/mod_list.yml</code>），<code>sys localize</code> 会逐模块消费 <code>values/&lt;mod&gt;/mod_value.yml</code>，故 <code>sys diff</code> / <code>localize</code> 还按模块分组呈现 <code>[mod: &lt;name&gt;]</code>（初始层 = <code>sys/&lt;model&gt;/mods/&lt;mod&gt;/vars.yml</code>；生效层 ⊕ <code>values/&lt;mod&gt;/value.yml</code> ⊕ <code>values/&lt;mod&gt;/mod_value.yml</code> ⊕ 系统层）。模块内容未下载时给 <code>[WARN]</code>（先 <code>gops sys resolve</code>）。</p>
 <p>值文件键<strong>大小写不敏感</strong>（加载时归一化为大写）。<code>--json</code> 为 <code>{ "system": [...], "modules": [{ "module": …, "changes": [...] }], "files": [{ "target": …, "changes": [...] }] }</code>（只含有变更的分组）。</p>
 <p><strong>文件覆盖层：</strong> 除值以外，<code>sys diff</code> 还会列出 <code>sys/setting/&lt;mod&gt;/**</code> 相对模块 <code>&lt;mod&gt;/spec/**</code> 的<strong>新增 / 替换</strong>（localize 把两者都渲染进 <code>local/</code>，即「setting 覆盖了模块默认的哪些文件」）；纯路径 + 内容比对，不需渲染，也不依赖上次 localize 的磁盘状态。</p>
 <p><strong>示例：</strong></p>
@@ -956,7 +964,7 @@ gops run diagnose    # 诊断问题        compose: config（密钥掩码注入�
 </code></pre>
 <p><strong>通用选项：</strong> <code>--mod &lt;MODULE&gt;</code>、<code>-e, --env &lt;ENV&gt;</code>（默认 <code>default</code>）、<code>-d/--debug</code>、<code>--log</code>。</p>
 <blockquote>
-<p>与 <code>gops sys</code>（<strong>定义/交付/工件</strong>：<code>new</code>/<code>update</code>/<code>localize</code>/<code>package</code>/<code>setting</code>/<code>check</code>/<code>diff</code>）区分：<code>gops run</code> 只管「在环境里落地/运行」。</p>
+<p>与 <code>gops sys</code>（<strong>定义/交付/工件</strong>：<code>new</code>/<code>resolve</code>/<code>localize</code>/<code>package</code>/<code>diff</code>）区分：<code>gops run</code> 只管「在环境里落地/运行」。</p>
 </blockquote>
 <p><strong>示例：</strong></p>
 <pre><code class="language-bash">gops run start --env default
@@ -1062,14 +1070,14 @@ gops self rollback --id 20260321123456
     ├── sys_model.yml        # name / model / kind / vender
     ├── docker-compose.yaml  # 系统级 compose 定义（${VAR} 占位）
     ├── mod_list.yml         # 模块列表（GXL；可选）
-    ├── merged_vars.yml      # 聚合变量（sys update 生成，需入库）
+    ├── merged_vars.yml      # 聚合变量（sys resolve 生成，需入库）
     ├── workflows/           # GXL 工作流（可选）
     └── setting/
         ├── list.yml         # 可选
         └── vars.yml         # 系统设置变量定义（源）
 </code></pre>
 <p>纯 docker-compose 系统只保留 <code>sys_model.yml</code>、<code>docker-compose.yaml</code> 与 <code>setting/vars.yml</code>（详见 <a href="#system-目录结构">System 目录结构</a>）。</p>
-<p><code>sys-prj.yml</code> 里的五个现场态声明<strong>互相独立</strong>（各由各自的命令消费，互不影响）：<code>pkg_include</code> / <code>pkg_exclude</code>（只服务 <code>sys package</code>）、<code>protect</code>（只服务 <code>sys update</code> / <code>prj sync</code> / <code>prj upgrade</code>）、<code>backup</code>（只服务 <code>prj backup</code> / <code>restore</code>）、<code>contract</code>（只服务 <code>prj contract export</code> / <code>import</code>）。另，对外契约归档的落点 / 份数写在项目侧 <code>ops-prj.yml: contract</code>。</p>
+<p><code>sys-prj.yml</code> 里的五个现场态声明<strong>互相独立</strong>（各由各自的命令消费，互不影响）：<code>pkg_include</code> / <code>pkg_exclude</code>（只服务 <code>sys package</code>）、<code>protect</code>（只服务 <code>sys resolve</code> / <code>prj sync</code> / <code>prj upgrade</code>）、<code>backup</code>（只服务 <code>prj backup</code> / <code>restore</code>）、<code>contract</code>（只服务 <code>prj contract export</code> / <code>import</code>）。另，对外契约归档的落点 / 份数写在项目侧 <code>ops-prj.yml: contract</code>。</p>
 <h2 id="最佳实践"><a class="header" href="#最佳实践">最佳实践</a></h2>
 <h3 id="工程管理"><a class="header" href="#工程管理">工程管理</a></h3>
 <pre><code class="language-bash"># 1. 创建新工程
@@ -1104,7 +1112,7 @@ gops mod localize --value dev-values.yml
 gops sys new --name my-system
 
 # 2. 解析变量 / 初始化值文件
-gops sys update --force 1
+gops sys resolve --force 1
 
 # 3. 本地化（生成 .env）
 gops sys localize
@@ -1117,10 +1125,7 @@ gops prj import --path /test --debug 3 --log all=debug
 gops mod update --debug 3 --log mod=debug
 
 # 调试系统操作
-gops sys update --debug 3 --log sys=debug
-
-# 调试设置操作
-gops sys setting --init --debug 2 --log setting=debug
+gops sys resolve --debug 3 --log sys=debug
 </code></pre>
 <h2 id="故障排除"><a class="header" href="#故障排除">故障排除</a></h2>
 <h3 id="常见错误及解决方案"><a class="header" href="#常见错误及解决方案">常见错误及解决方案</a></h3>
@@ -1142,10 +1147,6 @@ gops mod update --debug 3 --log mod=debug
 <pre><code>解决：在测试环境中设置 TEST_MODE 环境变量
 TEST_MODE=1 gops sys new --name test-system
 </code></pre>
-<p><strong>Q: 设置命令在非交互模式下失败</strong></p>
-<pre><code>解决：确保 sys/setting/ 目录存在，并在系统根目录执行
-gops sys setting --init --debug 2
-</code></pre>
 <h3 id="调试模式使用"><a class="header" href="#调试模式使用">调试模式使用</a></h3>
 <pre><code class="language-bash"># 基础调试
 gops prj import --path /test --debug 1
@@ -1154,7 +1155,7 @@ gops prj import --path /test --debug 1
 gops mod update --debug 2 --log mod=debug
 
 # 跟踪级别调试
-gops sys update --debug 3 --log sys=trace
+gops sys resolve --debug 3 --log sys=trace
 
 # 跟踪级别调试（工程）
 gops prj sync --debug 3 --log all=debug
@@ -1164,7 +1165,7 @@ gops prj sync --debug 3 --log all=debug
 gops mod update --log mod=debug
 
 # 调试多个模块
-gops sys update --log sys=debug,net=info
+gops sys resolve --log sys=debug,net=info
 
 # 设置不同级别
 gops prj import --log import=debug,system=info,net=trace
@@ -1185,10 +1186,6 @@ cargo test -- --nocapture
 
 # 在测试环境中运行
 TEST_MODE=true cargo test
-
-# 运行特定命令的测试
-cargo test test_ia_setting_interactive
-cargo test test_ia_setting_non_interactive
 </code></pre>
 <h2 id="示例工作流"><a class="header" href="#示例工作流">示例工作流</a></h2>
 <h3 id="开发环境设置"><a class="header" href="#开发环境设置">开发环境设置</a></h3>
@@ -1246,11 +1243,9 @@ gops sys localize
 <tr><td><code>gops mod</code></td><td><code>localize</code></td><td>✅ 完成</td><td>本地化模块配置</td></tr>
 <tr><td><code>gops mod</code></td><td><code>diff</code></td><td>✅ 完成</td><td>展示模块值变更</td></tr>
 <tr><td><code>gops sys</code></td><td><code>new</code></td><td>✅ 完成</td><td>创建系统（<code>--kind gxl</code> / <code>docker-compose</code>）</td></tr>
-<tr><td><code>gops sys</code></td><td><code>update</code></td><td>✅ 完成</td><td>解析变量、初始化值文件</td></tr>
-<tr><td><code>gops sys</code></td><td><code>package</code></td><td>✅ 完成</td><td>先 update 再打包交付产物（<code>--full</code> 整目录）</td></tr>
-<tr><td><code>gops sys</code></td><td><code>localize</code></td><td>✅ 完成</td><td>生成 <code>.env</code>（<code>--only</code> 跳过 update）</td></tr>
-<tr><td><code>gops sys</code></td><td><code>setting</code></td><td>✅ 完成</td><td>初始化系统设置</td></tr>
-<tr><td><code>gops sys</code></td><td><code>check</code></td><td>✅ 完成</td><td>只读比对漂移（值改了没重新 localize）</td></tr>
+<tr><td><code>gops sys</code></td><td><code>resolve</code></td><td>✅ 完成</td><td>解析系统定义（旧名 <code>update</code>）：取模块 + 解析变量、初始化值文件</td></tr>
+<tr><td><code>gops sys</code></td><td><code>package</code></td><td>✅ 完成</td><td>先 resolve 再打包交付产物（<code>--full</code> 整目录）</td></tr>
+<tr><td><code>gops sys</code></td><td><code>localize</code></td><td>✅ 完成</td><td>生成 <code>.env</code>（<code>--only</code> 跳过 resolve）</td></tr>
 <tr><td><code>gops sys</code></td><td><code>diff</code></td><td>✅ 完成</td><td>展示系统值变更</td></tr>
 <tr><td><code>gops run</code></td><td><code>download/install/uninstall/start/stop/status/diagnose</code></td><td>✅ 完成</td><td>运行时运维（按 <code>kind</code> 分派：gxl→gx；docker-compose→docker compose）</td></tr>
 <tr><td><code>gops self</code></td><td><code>status/check/update/rollback/skill</code></td><td>✅ 完成</td><td>自升级闭环 + agent skills 管理</td></tr>
@@ -1300,11 +1295,9 @@ gops prj backup          # 存一份现场态
 <h3 id="系统命令"><a class="header" href="#系统命令">系统命令</a></h3>
 <pre><code class="language-bash"># gops sys —— 定义 / 交付 / 工件
 gops sys new --name &lt;name&gt; [--kind gxl|docker-compose]
-gops sys update
+gops sys resolve
 gops sys package [--full]
 gops sys localize [--mod &lt;module&gt;] [--only]
-gops sys setting --init
-gops sys check
 
 # gops run —— 运行时运维（在环境里落地/运行）
 gops run download [--mod &lt;module&gt;] [--env &lt;env&gt;]
@@ -1635,7 +1628,7 @@ gops mod localize [--value &lt;file&gt; | --default]
     P --&gt;|gops prj reimport 保留 values| P
 </pre>
 
-<p>关键机制：在项目内的系统目录执行 <code>gops sys localize</code> / <code>sys update</code> 时，会依据上层 <code>ops-prj.yml</code> 反向解析出该项目为该系统维护的值目录，而不是使用系统自带的 <code>values/</code>。产品定义与客户现场在磁盘结构上天然分离。</p>
+<p>关键机制：在项目内的系统目录执行 <code>gops sys localize</code> / <code>sys resolve</code> 时，会依据上层 <code>ops-prj.yml</code> 反向解析出该项目为该系统维护的值目录，而不是使用系统自带的 <code>values/</code>。产品定义与客户现场在磁盘结构上天然分离。</p>
 <h3 id="2-执行中立同一命令面两种后端"><a class="header" href="#2-执行中立同一命令面两种后端">2. 执行中立：同一命令面，两种后端</a></h3>
 <p><code>sys/sys_model.yml</code> 的 <code>kind</code> 决定行为，但操作员的命令是同一套：</p>
 <pre class="mermaid">flowchart LR
@@ -1677,7 +1670,7 @@ gops mod localize [--value &lt;file&gt; | --default]
 
 <ul>
 <li><code>.env = merged_vars 默认值 ⊕ values/sys_value.yml ⊕ values/value.yml</code></li>
-<li><code>sys update</code> 生成的 <code>values/sys_value.yml</code> 是<strong>整份注释模板</strong>：保持注释即“空覆盖“，取消注释才生效，默认值不会被钉死。</li>
+<li><code>sys resolve</code> 生成的 <code>values/sys_value.yml</code> 是<strong>整份注释模板</strong>：保持注释即“空覆盖“，取消注释才生效，默认值不会被钉死。</li>
 <li>优先级明确：<code>value.yml</code>（客户覆盖） &gt; <code>sys_value.yml</code>（系统值） &gt; <code>merged_vars</code>（默认）。</li>
 <li>来源可追踪：本地化会写出实际使用的值，能回答“这个最终值是谁给的“。</li>
 </ul>
@@ -1685,7 +1678,7 @@ gops mod localize [--value &lt;file&gt; | --default]
 <p>compose 里用 <code>${SEC_xxx}</code> 占位；<code>gops run start</code> 运行时从 <code>~/.galaxy/sec_value.yml</code>（或 <code>./.galaxy/sec_value.yml</code>）读取，只注入 <strong>docker compose 子进程环境</strong>，不写 <code>.env</code>、不入库；<code>gops run diagnose</code>（<code>docker compose config</code>）注入的是掩码值 <code>********</code>。</p>
 <p>配置与敏感值在生命周期上被彻底分开，而不是仅靠 <code>.gitignore</code> 约定。</p>
 <h3 id="6-交付闭环打包--导入--同步保值"><a class="header" href="#6-交付闭环打包--导入--同步保值">6. 交付闭环：打包 → 导入 → 同步保值</a></h3>
-<pre><code class="language-text">gops sys package   -&gt; &lt;name&gt;-&lt;version&gt;.tar.gz（先 update 解析变量）
+<pre><code class="language-text">gops sys package   -&gt; &lt;name&gt;-&lt;version&gt;.tar.gz（先 resolve 解析变量）
 gops prj import    -&gt; 导入客户项目
 gops prj sync      -&gt; 同步 / 补齐系统（包内内容非破坏覆盖，缺失系统按包导入）
 </code></pre>
@@ -1728,7 +1721,7 @@ gops prj sync      -&gt; 同步 / 补齐系统（包内内容非破坏覆盖，�
 </thead>
 <tbody>
 <tr><td>① <code>gops sys new --model &lt;modelsdt&gt;</code>（非交互选型）</td><td>采用前置</td><td><code>ia_model_std()</code> 只能交互；自动选型靠 <code>TEST_MODE=1</code> 这种 hack</td><td>解锁 CI / 自动化，实现极小</td></tr>
-<tr><td>② <code>gops sys check</code> 部署前校验</td><td>问题 1（后果严重）</td><td><code>sys localize</code> 只导出 <code>.env</code>（<code>export_env_file</code>），<strong>不校验</strong> <code>sys/docker-compose.yaml</code> 里的 <code>${VAR}</code> 是否都有定义</td><td>把“上线才炸“提前到“localize 前报错“</td></tr>
+<tr><td>② <code>gops sys validate</code> 部署前校验</td><td>问题 1（后果严重）</td><td><code>sys localize</code> 只导出 <code>.env</code>（<code>export_env_file</code>），<strong>不校验</strong> <code>sys/docker-compose.yaml</code> 里的 <code>${VAR}</code> 是否都有定义</td><td>把“上线才炸“提前到“localize 前报错“</td></tr>
 <tr><td>③ 密钥缺失 fail-fast</td><td>问题 1（容易遗忘）</td><td><code>run_compose_cmd</code> 无脑 <code>load_sec_dict()</code> 注入，不校验被引用的 <code>${SEC_x}</code> 是否存在</td><td>挡住“空密码静默上线“</td></tr>
 <tr><td>④ <code>gops sys diff</code></td><td>问题 1（容易遗忘）</td><td>有值来源追踪（<code>_used.json</code>），但没有“客户值 vs 系统默认“的差异视图</td><td>一眼看清“改了哪些、哪些还是默认“</td></tr>
 </tbody>
@@ -1743,7 +1736,7 @@ gops prj sync      -&gt; 同步 / 补齐系统（包内内容非破坏覆盖，�
 </thead>
 <tbody>
 <tr><td>⑤ 锁文件 / manifest</td><td>问题 1、2（记录保值）</td><td><code>merged_vars.yml</code> 已入库，但未记录系统版本 / 模块版本 / 值哈希</td><td>“部署的是哪一版、用了什么值“可复现，回滚有依据</td></tr>
-<tr><td>⑥ 轻量漂移报告</td><td>问题 1</td><td><code>status</code> / <code>diagnose</code> 不比对“值文件改动 vs 已生成的 <code>.env</code>“</td><td>报“值变了但没重新 localize“，不必做完整 reconcile</td></tr>
+<tr><td>⑥ 轻量漂移报告</td><td>问题 1</td><td><code>status</code> / <code>diagnose</code> 不比对“值文件改动 vs 已生成的 <code>.env</code>“</td><td>报“值变了但没重新 localize“，不必做完整 reconcile（曾以只读 <code>sys check</code> 实现，2.3.x 移除；保留部分并入 <code>sys localize</code> 结尾的 <code>[WARN]</code>）</td></tr>
 <tr><td>⑦ <code>values/</code> 提交检查（<code>gops prj doctor</code> 或 CI <code>--check</code>）</td><td>问题 1</td><td>无，全靠 git 纪律（定位页「边界」已承认）</td><td>把“靠纪律“补成“靠工具提醒“</td></tr>
 </tbody>
 </table>
@@ -1807,7 +1800,10 @@ gops prj sync      -&gt; 同步 / 补齐系统（包内内容非破坏覆盖，�
 <li>回归：无参数 + 真 TTY 时仍弹出交互选择。</li>
 </ul>
 <p><strong>成本 / 风险</strong>：S。低风险；注意 <code>--model</code> × <code>--kind</code> 的互斥校验。</p>
-<h3 id="②-gops-sys-check部署前变量校验"><a class="header" href="#②-gops-sys-check部署前变量校验">② <code>gops sys check</code>：部署前变量校验</a></h3>
+<h3 id="②-gops-sys-validate部署前变量校验"><a class="header" href="#②-gops-sys-validate部署前变量校验">② <code>gops sys validate</code>：部署前变量校验</a></h3>
+<blockquote>
+<p>注：<code>gops sys check</code> 这个名字曾用于一个只读的「<code>.env</code> 漂移」检查，已在 2.3.x 移除（保留部分并入 <code>sys localize</code> 结尾的 <code>[WARN]</code>）；故此处改用 <code>validate</code>。</p>
+</blockquote>
 <p><strong>目标</strong>：在 <code>localize</code> 之后、<code>start</code> 之前，把“上线才炸“的未定义变量提前成一条明确报错。</p>
 <p><strong>现状证据</strong></p>
 <ul>
@@ -1816,7 +1812,7 @@ gops prj sync      -&gt; 同步 / 补齐系统（包内内容非破坏覆盖，�
 </ul>
 <p><strong>期望行为</strong></p>
 <ul>
-<li>新增只读命令 <code>gops sys check</code>：扫描系统内 compose 文件（<code>sys/docker-compose.{yaml,yml}</code> 等）的插值占位
+<li>新增只读命令 <code>gops sys validate</code>：扫描系统内 compose 文件（<code>sys/docker-compose.{yaml,yml}</code> 等）的插值占位
 <ul>
 <li>形态：<code>${VAR}</code>、<code>${VAR:-default}</code>、<code>${VAR-default}</code>、<code>$VAR</code>；带 <code>:-</code> / <code>-</code> 默认值的视为可选；</li>
 <li>其余必须在“合并值字典（∪ 生成的 <code>.env</code>）“中存在；</li>
@@ -1896,7 +1892,7 @@ gops prj sync      -&gt; 同步 / 补齐系统（包内内容非破坏覆盖，�
 <h2 id="如果只做三件事"><a class="header" href="#如果只做三件事">如果只做三件事</a></h2>
 <ol>
 <li><strong><code>gops sys new --model</code></strong> —— 解锁 CI / 自动化，门槛最低。</li>
-<li><strong><code>gops sys check</code> 部署前校验</strong> —— 变量 + 密钥占位双校验，直打“后果严重“。</li>
+<li><strong><code>gops sys validate</code> 部署前校验</strong> —— 变量 + 密钥占位双校验，直打“后果严重“。</li>
 <li><strong><code>gops sys diff</code></strong> —— 直打“容易遗忘“，且能作为对外卖点。</li>
 </ol>
 <p>这三条合起来，正好把问题 1 的三个症状（<strong>时常修改 / 容易遗忘 / 后果严重</strong>）各自对应上一个可交付的功能，且都不动核心架构。</p>
@@ -1920,11 +1916,9 @@ gops prj sync      -&gt; 同步 / 补齐系统（包内内容非破坏覆盖，�
 <h2 id="当前命令"><a class="header" href="#当前命令">当前命令</a></h2>
 <pre><code class="language-bash"># gops sys —— 定义 / 交付 / 工件
 gops sys new --name &lt;name&gt; [--kind gxl|docker-compose]
-gops sys update [--force]
+gops sys resolve [--force]
 gops sys package [--force] [--output &lt;path&gt;] [--full]
 gops sys localize [--mod &lt;module&gt;] [--only]
-gops sys setting --init
-gops sys check
 
 # gops run —— 运行时运维（在环境里落地/运行）
 gops run download [--mod &lt;module&gt;] [--env &lt;env&gt;]
@@ -1974,36 +1968,33 @@ gops sys new --name gateway --kind docker-compose   # 纯 compose（无型号）
 <li><code>sys/mod_list.yml</code>：模块列表（GXL；纯 compose 可省略）</li>
 <li><code>sys/setting/vars.yml</code>：系统设置变量定义（源）</li>
 <li><code>sys/setting/list.yml</code>：按模块的本地化列表（可选）</li>
-<li><code>sys/merged_vars.yml</code>：聚合变量（<code>sys update</code> 生成：模块变量 ⊕ 系统变量，需入库）</li>
+<li><code>sys/merged_vars.yml</code>：聚合变量（<code>sys resolve</code> 生成：模块变量 ⊕ 系统变量，需入库）</li>
 <li><code>sys/workflows/operators.gxl</code>：系统级工作流（GXL）</li>
-<li><code>values/sys_value.yml</code>：值文件（<code>sys update</code> 生成<strong>注释模板</strong>，取消注释即覆盖）</li>
+<li><code>values/sys_value.yml</code>：值文件（<code>sys resolve</code> 生成<strong>注释模板</strong>，取消注释即覆盖）</li>
 <li><code>values/value.yml</code>：额外覆盖层（适合入库的客户覆盖）</li>
 <li><code>sys/docker-compose.yaml</code>：系统级 compose 定义（用 <code>${VAR}</code> 占位；放在系统根（旧布局）仍受支持）</li>
 <li><code>.env</code>：<code>sys localize</code> 生成的非密钥配置（供 compose 消费）</li>
 </ul>
 <h2 id="值--本地化流程"><a class="header" href="#值--本地化流程">值 / 本地化流程</a></h2>
-<pre><code class="language-text">gops sys update   -&gt; sys/merged_vars.yml（系统默认值）+ values/sys_value.yml（注释模板）
+<pre><code class="language-text">gops sys resolve   -&gt; sys/merged_vars.yml（系统默认值）+ values/sys_value.yml（注释模板）
 gops sys localize -&gt; .env = merged_vars 默认值 ⊕ values/sys_value.yml ⊕ values/value.yml
 </code></pre>
 <p>两个值文件都是<strong>可选、可部分覆盖</strong>：只写需要修改的项，其余取系统默认值。保持注释模板原样时等价于空覆盖。</p>
-<p><code>sys localize</code> 默认<strong>总是先解析变量</strong>（等价于先跑一次 <code>update</code>，含解析/下载模块），再生成 <code>.env</code>；<code>--only</code> 跳过解析（用现有 <code>sys/merged_vars.yml</code>，缺失则明确报错）。</p>
+<p><code>sys localize</code> 默认<strong>总是先解析变量</strong>（等价于先跑一次 <code>resolve</code>，含解析/下载模块），再生成 <code>.env</code>；<code>--only</code> 跳过解析（用现有 <code>sys/merged_vars.yml</code>，缺失则明确报错）。</p>
 <h2 id="密钥"><a class="header" href="#密钥">密钥</a></h2>
 <p>密钥<strong>不写入</strong> <code>.env</code>：在 <code>sys/docker-compose.yaml</code> 里用 <code>${SEC_xxx}</code> 占位，<code>gops run start</code> 运行时从 <code>~/.galaxy/sec_value.yml</code>（或当前目录 <code>./.galaxy/sec_value.yml</code>）读取并注入子进程环境（key 会归一化为大写并加 <code>SEC_</code> 前缀）。<code>gops run diagnose</code>（<code>docker compose config</code>）只读校验，注入的是掩码值 <code>********</code>。详见 <code>galaxy-ops</code> 仓库的 <code>src/system/README.md</code>。</p>
 <h2 id="常见流程"><a class="header" href="#常见流程">常见流程</a></h2>
-<h3 id="更新系统本地引用"><a class="header" href="#更新系统本地引用">更新系统本地引用</a></h3>
-<pre><code class="language-bash">gops sys update
-gops sys update --force
+<h3 id="解析系统定义取模块--解析变量"><a class="header" href="#解析系统定义取模块--解析变量">解析系统定义（取模块 / 解析变量）</a></h3>
+<pre><code class="language-bash">gops sys resolve
+gops sys resolve --force
 </code></pre>
 <h3 id="本地化系统"><a class="header" href="#本地化系统">本地化系统</a></h3>
-<pre><code class="language-bash">gops sys localize            # 默认先解析变量（等价于先 update），再生成 .env
+<pre><code class="language-bash">gops sys localize            # 默认先解析变量（等价于先 resolve），再生成 .env
 gops sys localize --only     # 只 localize，不解析/下载模块（用现有 merged_vars.yml）
 gops sys localize --mod nginx
 </code></pre>
 <h3 id="打包交付"><a class="header" href="#打包交付">打包交付</a></h3>
-<pre><code class="language-bash">gops sys package             # 先 update 再打包 → ../&lt;name&gt;-&lt;version&gt;.tar.gz
-</code></pre>
-<h3 id="初始化系统设置"><a class="header" href="#初始化系统设置">初始化系统设置</a></h3>
-<pre><code class="language-bash">gops sys setting --init
+<pre><code class="language-bash">gops sys package             # 先 resolve 再打包 → ../&lt;name&gt;-&lt;version&gt;.tar.gz
 </code></pre>
 <h3 id="执行系统操作"><a class="header" href="#执行系统操作">执行系统操作</a></h3>
 <pre><code class="language-bash">gops run start --env default
@@ -2016,7 +2007,7 @@ gops prj new      -&gt; 创建运维项目
 gops prj import   -&gt; 把系统导入项目
 gops prj sync     -&gt; 同步 / 补齐系统（旧名 update）
 </code></pre>
-<p>导入到运维项目后，项目值放在 <code>&lt;project&gt;/values/&lt;system&gt;/</code>。在项目内的系统目录执行 <code>gops sys localize</code> / <code>gops sys update</code> 时，会依据上层 <code>ops-prj.yml</code> 直接使用该项目值目录，不依赖 <code>&lt;sys&gt;/values</code> 符号链接是否完整。</p>
+<p>导入到运维项目后，项目值放在 <code>&lt;project&gt;/values/&lt;system&gt;/</code>。在项目内的系统目录执行 <code>gops sys localize</code> / <code>gops sys resolve</code> 时，会依据上层 <code>ops-prj.yml</code> 直接使用该项目值目录，不依赖 <code>&lt;sys&gt;/values</code> 符号链接是否完整。</p>
 <h2 id="现实边界"><a class="header" href="#现实边界">现实边界</a></h2>
 <ul>
 <li><code>gxl</code> 系统的工作流执行仍依赖 <code>gx</code></li>
@@ -2066,7 +2057,7 @@ vender: ''
 <ul>
 <li><code>sys/mod_list.yml</code>：模块列表（仅 <code>gxl</code> 需要）</li>
 <li><code>sys/setting/vars.yml</code>：系统设置变量定义（源）</li>
-<li><code>sys/merged_vars.yml</code>：<code>gops sys update</code> 解析出的聚合变量（需入库）</li>
+<li><code>sys/merged_vars.yml</code>：<code>gops sys resolve</code> 解析出的聚合变量（需入库）</li>
 </ul>
 <h2 id="在流程中的作用"><a class="header" href="#在流程中的作用">在流程中的作用</a></h2>
 <ul>
@@ -2089,12 +2080,9 @@ cd microservice-stack
 </code></pre>
 <h2 id="3-维护系统模块列表"><a class="header" href="#3-维护系统模块列表">3. 维护系统模块列表</a></h2>
 <p>在 <code>sys/mod_list.yml</code> 中把需要的模块加入系统。</p>
-<h2 id="4-初始化系统设置可选"><a class="header" href="#4-初始化系统设置可选">4. 初始化系统设置（可选）</a></h2>
-<pre><code class="language-bash">gops sys setting --init
-</code></pre>
-<h2 id="5-解析变量并本地化"><a class="header" href="#5-解析变量并本地化">5. 解析变量并本地化</a></h2>
-<pre><code class="language-bash">gops sys update      # 解析变量 -&gt; sys/merged_vars.yml，并生成 values/sys_value.yml（注释模板）
-gops sys localize    # 生成 .env（默认先解析变量，等价于先 update）
+<h2 id="4-解析变量并本地化"><a class="header" href="#4-解析变量并本地化">4. 解析变量并本地化</a></h2>
+<pre><code class="language-bash">gops sys resolve      # 解析变量 -&gt; sys/merged_vars.yml，并生成 values/sys_value.yml（注释模板）
+gops sys localize    # 生成 .env（默认先解析变量，等价于先 resolve）
 </code></pre>
 <p>如果只想处理某个模块：</p>
 <pre><code class="language-bash">gops sys localize --mod gateway
@@ -2104,10 +2092,10 @@ gops sys localize    # 生成 .env（默认先解析变量，等价于先 update
 HTTP_PORT: 8081
 </code></pre>
 <p>也可以在同目录放 <code>values/value.yml</code> 作为额外覆盖层（优先级最高，适合入库的客户覆盖）。</p>
-<h2 id="6-打包交付"><a class="header" href="#6-打包交付">6. 打包交付</a></h2>
+<h2 id="5-打包交付"><a class="header" href="#5-打包交付">5. 打包交付</a></h2>
 <pre><code class="language-bash">gops sys package     # -&gt; ../microservice-stack-&lt;version&gt;.tar.gz
 </code></pre>
-<h2 id="7-在运维项目中使用客户差异"><a class="header" href="#7-在运维项目中使用客户差异">7. 在运维项目中使用（客户差异）</a></h2>
+<h2 id="6-在运维项目中使用客户差异"><a class="header" href="#6-在运维项目中使用客户差异">6. 在运维项目中使用（客户差异）</a></h2>
 <pre><code class="language-bash">cd ..
 gops prj new --name customer-a
 cd customer-a
@@ -2115,7 +2103,7 @@ gops prj import --path ../microservice-stack-0.1.0.tar.gz
 cd microservice-stack
 gops sys localize    # 值取自 &lt;project&gt;/values/microservice-stack/
 </code></pre>
-<h2 id="8-执行系统操作"><a class="header" href="#8-执行系统操作">8. 执行系统操作</a></h2>
+<h2 id="7-执行系统操作"><a class="header" href="#7-执行系统操作">7. 执行系统操作</a></h2>
 <pre><code class="language-bash">gops run download --env default
 gops run install --env default
 gops run start --env default
@@ -2172,14 +2160,14 @@ vender: ''
 </code></pre>
 <p>key 会归一化为大写并加 <code>SEC_</code> 前缀：<code>postgres_password</code> → <code>SEC_POSTGRES_PASSWORD</code>。</p>
 <h2 id="3-生成-env"><a class="header" href="#3-生成-env">3. 生成 <code>.env</code></a></h2>
-<pre><code class="language-bash">gops sys localize        # 默认先解析变量（等价于先 update），再生成 .env
+<pre><code class="language-bash">gops sys localize        # 默认先解析变量（等价于先 resolve），再生成 .env
 cat .env
 </code></pre>
 <p>规则：</p>
 <pre><code class="language-text">.env = sys/merged_vars.yml 默认值 ⊕ values/sys_value.yml ⊕ values/value.yml
 </code></pre>
 <ul>
-<li><code>values/sys_value.yml</code> 是 <code>sys update</code> 生成的<strong>注释模板</strong>：取消注释要覆盖的项即可，其余取默认值。</li>
+<li><code>values/sys_value.yml</code> 是 <code>sys resolve</code> 生成的<strong>注释模板</strong>：取消注释要覆盖的项即可，其余取默认值。</li>
 <li><code>values/value.yml</code> 是更高优先级的覆盖层。</li>
 </ul>
 <p>例如只想改端口与副本数：</p>
@@ -2200,7 +2188,7 @@ gops run uninstall   # docker compose down
 </code></pre>
 <p><code>kind: docker-compose</code> 下 <code>--mod</code> 参数会被忽略（没有模块概念）；<code>--env</code> 仍可传入。</p>
 <h2 id="5-交付给客户运维项目"><a class="header" href="#5-交付给客户运维项目">5. 交付给客户（运维项目）</a></h2>
-<pre><code class="language-bash">gops sys package                          # 先 update 再打包 -&gt; ../gateway-&lt;version&gt;.tar.gz
+<pre><code class="language-bash">gops sys package                          # 先 resolve 再打包 -&gt; ../gateway-&lt;version&gt;.tar.gz
 cd ..
 gops prj new --name customer-a
 cd customer-a
@@ -2209,7 +2197,7 @@ cd gateway
 gops sys localize                         # 使用 &lt;project&gt;/values/gateway/ 下的客户值
 gops run start
 </code></pre>
-<p>客户差异写在 <code>&lt;project&gt;/values/gateway/</code>（例如 <code>value.yml</code>）。在项目内的系统目录执行 <code>gops sys localize</code> / <code>sys update</code> 时，会依据上层 <code>ops-prj.yml</code> 直接使用该项目值目录。</p>
+<p>客户差异写在 <code>&lt;project&gt;/values/gateway/</code>（例如 <code>value.yml</code>）。在项目内的系统目录执行 <code>gops sys localize</code> / <code>sys resolve</code> 时，会依据上层 <code>ops-prj.yml</code> 直接使用该项目值目录。</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="system-目录结构"><a class="header" href="#system-目录结构">System 目录结构</a></h1>
 <p>本文档以当前 <code>gops sys new</code> 的真实生成结果为准。系统有两种部署类型，目录结构不同。</p>
@@ -2252,7 +2240,7 @@ gops run start
 <p>compose 类型不生成 <code>_gal/</code>、<code>values/</code>、<code>mod_list.yml</code>、<code>workflows/</code>、<code>setting/list.yml</code>。</p>
 <p>compose 文件默认位于 <code>sys/</code>，<code>gops sys</code> 按 <code>sys/compose.{yaml,yml}</code> → <code>sys/docker-compose.{yaml,yml}</code> → 系统根同名文件的顺序查找。无论文件在哪，compose <strong>项目目录都锚定系统根</strong>（项目名 = 根目录名，相对挂载路径与 <code>.env</code> 均相对系统根）。把文件放在系统根（旧布局）仍受支持：此时 <code>gops</code> 不加 <code>-f</code>，交由 docker 自动发现（<code>docker-compose.override.yml</code> 自动合并、<code>COMPOSE_FILE</code> 环境变量继续生效）；<code>sys/</code> 布局下由 <code>gops</code> 显式合并 <code>&lt;sys&gt;/&lt;stem&gt;.override.{yaml,yml}</code>。</p>
 <h2 id="运行时生成的文件"><a class="header" href="#运行时生成的文件">运行时生成的文件</a></h2>
-<p><code>gops sys update</code> / <code>gops sys localize</code> 会在需要时补齐：</p>
+<p><code>gops sys resolve</code> / <code>gops sys localize</code> 会在需要时补齐：</p>
 <ul>
 <li><code>sys/merged_vars.yml</code>：聚合变量（模块 ⊕ 系统），需入库</li>
 <li><code>values/sys_value.yml</code>：值文件（<strong>注释模板</strong>；取消注释需要覆盖的项即可）</li>
@@ -2270,7 +2258,7 @@ gops run start
 <p>旧文档里常见的这些内容，不应再视为当前最小骨架的一部分：</p>
 <ul>
 <li><code>sys/vars.yml</code></li>
-<li><code>sys/&lt;model&gt;/mods/</code>（由 <code>gops sys update</code> 生成，不是初始结构）</li>
+<li><code>sys/&lt;model&gt;/mods/</code>（由 <code>gops sys resolve</code> 生成，不是初始结构）</li>
 <li><code>test_res/</code></li>
 <li>独立 <code>gsys</code> CLI 生成目录</li>
 </ul>
@@ -2294,14 +2282,14 @@ gops run start
 <li><code>sys_model.yml</code>：系统模型定义（<code>name</code> / <code>model</code> / <code>kind</code> / <code>vender</code>）</li>
 <li><code>docker-compose.yaml</code>：系统级 compose 定义（<code>sys new</code> 默认生成，用 <code>${VAR}</code> 占位；放在系统根（旧布局）仍受支持）</li>
 <li><code>mod_list.yml</code>：模块列表定义（GXL；可选）</li>
-<li><code>merged_vars.yml</code>：聚合变量（<code>sys update</code> 生成，需入库）</li>
+<li><code>merged_vars.yml</code>：聚合变量（<code>sys resolve</code> 生成，需入库）</li>
 <li><code>setting/list.yml</code>：设置列表（可选）</li>
 <li><code>setting/vars.yml</code>：设置变量定义（源）</li>
 <li><code>workflows/operators.gxl</code>：系统操作工作流（GXL；可选）</li>
 </ul>
 <h2 id="values本地化输入"><a class="header" href="#values本地化输入"><code>values/</code>（本地化输入）</a></h2>
 <ul>
-<li><code>sys_value.yml</code>：值文件。<code>sys update</code> 首次生成的是<strong>注释模板</strong>（可用变量全部以注释列出），取消注释需要覆盖的项即可；保持注释的项取系统默认值。</li>
+<li><code>sys_value.yml</code>：值文件。<code>sys resolve</code> 首次生成的是<strong>注释模板</strong>（可用变量全部以注释列出），取消注释需要覆盖的项即可；保持注释的项取系统默认值。</li>
 <li><code>value.yml</code>：额外覆盖层，优先级最高（适合入库的客户覆盖）。</li>
 <li><code>setting/mod_value.yml</code>、<code>&lt;mod&gt;/mod_value.yml</code>：本地化辅助值文件。</li>
 </ul>
@@ -2321,17 +2309,18 @@ gops run start
 <h2 id="当前-cli-与文件关系"><a class="header" href="#当前-cli-与文件关系">当前 CLI 与文件关系</a></h2>
 <ul>
 <li><code>gops sys new</code>：初始化文件骨架（按 <code>kind</code> 决定是否生成 GXL 骨架）</li>
-<li><code>gops sys update</code>：解析变量 → <code>sys/merged_vars.yml</code>，并初始化 <code>values/</code></li>
-<li><code>gops sys package</code>：先 <code>update</code> 再打包为 <code>&lt;name&gt;-&lt;version&gt;.tar.gz</code></li>
+<li><code>gops sys resolve</code>：解析变量 → <code>sys/merged_vars.yml</code>，并初始化 <code>values/</code></li>
+<li><code>gops sys package</code>：先 <code>resolve</code> 再打包为 <code>&lt;name&gt;-&lt;version&gt;.tar.gz</code></li>
 <li><code>gops sys localize</code>：按上述规则生成 <code>.env</code></li>
-<li><code>gops sys setting --init</code>：初始化系统设置相关文件</li>
 </ul>
 <h2 id="不再使用的旧说法"><a class="header" href="#不再使用的旧说法">不再使用的旧说法</a></h2>
 <ul>
 <li><code>SYS_BIN = "gsys"</code> / <code>MOD_BIN = "gmod"</code>（GXL 模板中已改为 <code>"gops sys"</code> / <code>"gops mod"</code>）</li>
 <li>“系统级 vars.yml 必然位于 sys/ 根目录”</li>
-<li>“sys/mods/ 是固定初始结构”（模块现在按目标模型分组到 <code>sys/&lt;model&gt;/mods/&lt;mod&gt;/</code>，由 <code>gops sys update</code> 生成）</li>
+<li>“sys/mods/ 是固定初始结构”（模块现在按目标模型分组到 <code>sys/&lt;model&gt;/mods/&lt;mod&gt;/</code>，由 <code>gops sys resolve</code> 生成）</li>
 <li>“系统变量文件叫 <code>sys/sys_vars.yml</code>”（已重命名为 <code>merged_vars.yml</code>，旧名仅作读取兼容）</li>
+<li><code>gops sys update</code>（已更名为 <code>gops sys resolve</code>；旧名保留为隐藏别名）</li>
+<li><code>gops sys setting</code>（已移除；需要 <code>sys/setting/</code> 骨架时用 <code>gops sys new</code>，只补缺失、不覆盖）</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="system-命名约定"><a class="header" href="#system-命名约定">System 命名约定</a></h1>
@@ -2407,17 +2396,11 @@ gops run start --mod &lt;module&gt;
 <li>自动化测试场景可设置 <code>TEST_MODE=1</code></li>
 <li>不需要型号的纯 compose 系统用 <code>gops sys new --kind docker-compose</code>（不询问型号）</li>
 </ul>
-<h2 id="2-gops-sys-setting---init-没有生成预期文件"><a class="header" href="#2-gops-sys-setting---init-没有生成预期文件">2. <code>gops sys setting --init</code> 没有生成预期文件</a></h2>
-<p>确认点：</p>
-<ul>
-<li>当前目录必须是系统根目录</li>
-<li><code>sys/setting/</code> 目录是否存在</li>
-</ul>
-<h2 id="3-gops-sys-localize-失败"><a class="header" href="#3-gops-sys-localize-失败">3. <code>gops sys localize</code> 失败</a></h2>
+<h2 id="2-gops-sys-localize-失败"><a class="header" href="#2-gops-sys-localize-失败">2. <code>gops sys localize</code> 失败</a></h2>
 <p>常见原因与报错：</p>
 <ul>
 <li><strong><code>系统变量未解析：缺少 .../sys/merged_vars.yml</code></strong>
-→ 先执行 <code>gops sys update</code> 解析变量；或去掉 <code>--only</code>，让 <code>localize</code> 自动先 <code>update</code>。</li>
+→ 先执行 <code>gops sys resolve</code> 解析变量；或去掉 <code>--only</code>，让 <code>localize</code> 自动先 <code>resolve</code>。</li>
 <li><code>sys_model.yml</code> 缺失</li>
 <li>值文件内容不是合法 YAML
 （提示：全注释 / 空文件会被视为<strong>空覆盖</strong>，不会报错）</li>
@@ -2426,14 +2409,14 @@ gops run start --mod &lt;module&gt;
 <pre><code class="language-bash">gops sys localize --debug 2
 </code></pre>
 <p>先打开调试输出定位是哪一层配置缺失。</p>
-<h2 id="4-值文件写了却没生效"><a class="header" href="#4-值文件写了却没生效">4. 值文件写了却没生效</a></h2>
+<h2 id="3-值文件写了却没生效"><a class="header" href="#3-值文件写了却没生效">3. 值文件写了却没生效</a></h2>
 <p>确认点：</p>
 <ul>
-<li><code>values/sys_value.yml</code> 里对应的行<strong>已取消注释</strong>——<code>sys update</code> 生成的是整份注释模板，保持注释等价于空覆盖</li>
+<li><code>values/sys_value.yml</code> 里对应的行<strong>已取消注释</strong>——<code>sys resolve</code> 生成的是整份注释模板，保持注释等价于空覆盖</li>
 <li>优先级：<code>values/value.yml</code> &gt; <code>values/sys_value.yml</code> &gt; <code>sys/merged_vars.yml</code> 的系统默认值</li>
 <li>在运维项目内执行时，值来自 <code>&lt;project&gt;/values/&lt;system&gt;/</code>（依据上层 <code>ops-prj.yml</code> 解析），而不是系统自带的 <code>&lt;sys&gt;/values</code></li>
 </ul>
-<h2 id="5-日志出现-unexpanded-variable-in-localize-path-且本地化被跳过"><a class="header" href="#5-日志出现-unexpanded-variable-in-localize-path-且本地化被跳过">5. 日志出现 <code>unexpanded variable in localize path</code> 且本地化被跳过</a></h2>
+<h2 id="4-日志出现-unexpanded-variable-in-localize-path-且本地化被跳过"><a class="header" href="#4-日志出现-unexpanded-variable-in-localize-path-且本地化被跳过">4. 日志出现 <code>unexpanded variable in localize path</code> 且本地化被跳过</a></h2>
 <p>原因：<code>sys/setting/list.yml</code> 里的路径模板引用了未设置的变量（常见是 <code>${GXL_PRJ_ROOT}</code>）。</p>
 <p>说明：</p>
 <ul>
@@ -2441,7 +2424,7 @@ gops run start --mod &lt;module&gt;
 <li>路径里仍残留 <code>${...}</code> 时会告警并跳过；不会再创建字面量 <code>${...}</code> 目录</li>
 </ul>
 <p>建议：确认是在系统目录内执行，且该目录（或其上层）存在 <code>_gal/project.toml</code>。</p>
-<h2 id="6-downloadinstallstart-等系统命令失败"><a class="header" href="#6-downloadinstallstart-等系统命令失败">6. <code>download/install/start</code> 等系统命令失败</a></h2>
+<h2 id="5-downloadinstallstart-等系统命令失败"><a class="header" href="#5-downloadinstallstart-等系统命令失败">5. <code>download/install/start</code> 等系统命令失败</a></h2>
 <p>分两种情况（由 <code>sys/sys_model.yml</code> 的 <code>kind</code> 决定）：</p>
 <ul>
 <li><code>kind: gxl</code>：最终依赖系统工作流和 <code>gx</code>
@@ -2459,14 +2442,14 @@ gops run start --mod &lt;module&gt;
 </ul>
 </li>
 </ul>
-<h2 id="7-docker-compose-报变量未定义"><a class="header" href="#7-docker-compose-报变量未定义">7. <code>docker compose</code> 报变量未定义</a></h2>
+<h2 id="6-docker-compose-报变量未定义"><a class="header" href="#6-docker-compose-报变量未定义">6. <code>docker compose</code> 报变量未定义</a></h2>
 <p>确认点：</p>
 <ul>
 <li>已执行 <code>gops sys localize</code> 生成 <code>.env</code></li>
 <li><code>.env</code> 位于系统根；compose 文件默认在 <code>sys/</code>（项目目录锚定系统根，<code>${VAR}</code> 由系统根的 <code>.env</code> 注入）</li>
 <li>密钥类变量用 <code>${SEC_xxx}</code> 占位，由 <code>gops run start</code> 从 <code>~/.galaxy/sec_value.yml</code> 注入；直接用 <code>docker compose up</code> 不会自动注入密钥</li>
 </ul>
-<h2 id="8-文档和目录树不一致"><a class="header" href="#8-文档和目录树不一致">8. 文档和目录树不一致</a></h2>
+<h2 id="7-文档和目录树不一致"><a class="header" href="#7-文档和目录树不一致">7. 文档和目录树不一致</a></h2>
 <p>处理原则：</p>
 <ul>
 <li>以当前 <code>gops sys new</code> 真实生成结果为准</li>

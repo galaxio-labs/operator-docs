@@ -45,7 +45,7 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-ec8dea9d.js";
+            window.path_to_searchindex_js = "../../../searchindex-be10778c.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../toc-18d2ed36.js"></script>
@@ -206,14 +206,14 @@
 <li><code>sys_model.yml</code>：系统模型定义（<code>name</code> / <code>model</code> / <code>kind</code> / <code>vender</code>）</li>
 <li><code>docker-compose.yaml</code>：系统级 compose 定义（<code>sys new</code> 默认生成，用 <code>${VAR}</code> 占位；放在系统根（旧布局）仍受支持）</li>
 <li><code>mod_list.yml</code>：模块列表定义（GXL；可选）</li>
-<li><code>merged_vars.yml</code>：聚合变量（<code>sys update</code> 生成，需入库）</li>
+<li><code>merged_vars.yml</code>：聚合变量（<code>sys resolve</code> 生成，需入库）</li>
 <li><code>setting/list.yml</code>：设置列表（可选）</li>
 <li><code>setting/vars.yml</code>：设置变量定义（源）</li>
 <li><code>workflows/operators.gxl</code>：系统操作工作流（GXL；可选）</li>
 </ul>
 <h2 id="values本地化输入"><a class="header" href="#values本地化输入"><code>values/</code>（本地化输入）</a></h2>
 <ul>
-<li><code>sys_value.yml</code>：值文件。<code>sys update</code> 首次生成的是<strong>注释模板</strong>（可用变量全部以注释列出），取消注释需要覆盖的项即可；保持注释的项取系统默认值。</li>
+<li><code>sys_value.yml</code>：值文件。<code>sys resolve</code> 首次生成的是<strong>注释模板</strong>（可用变量全部以注释列出），取消注释需要覆盖的项即可；保持注释的项取系统默认值。</li>
 <li><code>value.yml</code>：额外覆盖层，优先级最高（适合入库的客户覆盖）。</li>
 <li><code>setting/mod_value.yml</code>、<code>&lt;mod&gt;/mod_value.yml</code>：本地化辅助值文件。</li>
 </ul>
@@ -233,17 +233,18 @@
 <h2 id="当前-cli-与文件关系"><a class="header" href="#当前-cli-与文件关系">当前 CLI 与文件关系</a></h2>
 <ul>
 <li><code>gops sys new</code>：初始化文件骨架（按 <code>kind</code> 决定是否生成 GXL 骨架）</li>
-<li><code>gops sys update</code>：解析变量 → <code>sys/merged_vars.yml</code>，并初始化 <code>values/</code></li>
-<li><code>gops sys package</code>：先 <code>update</code> 再打包为 <code>&lt;name&gt;-&lt;version&gt;.tar.gz</code></li>
+<li><code>gops sys resolve</code>：解析变量 → <code>sys/merged_vars.yml</code>，并初始化 <code>values/</code></li>
+<li><code>gops sys package</code>：先 <code>resolve</code> 再打包为 <code>&lt;name&gt;-&lt;version&gt;.tar.gz</code></li>
 <li><code>gops sys localize</code>：按上述规则生成 <code>.env</code></li>
-<li><code>gops sys setting --init</code>：初始化系统设置相关文件</li>
 </ul>
 <h2 id="不再使用的旧说法"><a class="header" href="#不再使用的旧说法">不再使用的旧说法</a></h2>
 <ul>
 <li><code>SYS_BIN = "gsys"</code> / <code>MOD_BIN = "gmod"</code>（GXL 模板中已改为 <code>"gops sys"</code> / <code>"gops mod"</code>）</li>
 <li>“系统级 vars.yml 必然位于 sys/ 根目录”</li>
-<li>“sys/mods/ 是固定初始结构”（模块现在按目标模型分组到 <code>sys/&lt;model&gt;/mods/&lt;mod&gt;/</code>，由 <code>gops sys update</code> 生成）</li>
+<li>“sys/mods/ 是固定初始结构”（模块现在按目标模型分组到 <code>sys/&lt;model&gt;/mods/&lt;mod&gt;/</code>，由 <code>gops sys resolve</code> 生成）</li>
 <li>“系统变量文件叫 <code>sys/sys_vars.yml</code>”（已重命名为 <code>merged_vars.yml</code>，旧名仅作读取兼容）</li>
+<li><code>gops sys update</code>（已更名为 <code>gops sys resolve</code>；旧名保留为隐藏别名）</li>
+<li><code>gops sys setting</code>（已移除；需要 <code>sys/setting/</code> 骨架时用 <code>gops sys new</code>，只补缺失、不覆盖）</li>
 </ul>
 
                     </main>

@@ -45,7 +45,7 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-ec8dea9d.js";
+            window.path_to_searchindex_js = "../../../searchindex-be10778c.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../toc-18d2ed36.js"></script>
@@ -199,17 +199,11 @@
 <li>自动化测试场景可设置 <code>TEST_MODE=1</code></li>
 <li>不需要型号的纯 compose 系统用 <code>gops sys new --kind docker-compose</code>（不询问型号）</li>
 </ul>
-<h2 id="2-gops-sys-setting---init-没有生成预期文件"><a class="header" href="#2-gops-sys-setting---init-没有生成预期文件">2. <code>gops sys setting --init</code> 没有生成预期文件</a></h2>
-<p>确认点：</p>
-<ul>
-<li>当前目录必须是系统根目录</li>
-<li><code>sys/setting/</code> 目录是否存在</li>
-</ul>
-<h2 id="3-gops-sys-localize-失败"><a class="header" href="#3-gops-sys-localize-失败">3. <code>gops sys localize</code> 失败</a></h2>
+<h2 id="2-gops-sys-localize-失败"><a class="header" href="#2-gops-sys-localize-失败">2. <code>gops sys localize</code> 失败</a></h2>
 <p>常见原因与报错：</p>
 <ul>
 <li><strong><code>系统变量未解析：缺少 .../sys/merged_vars.yml</code></strong>
-→ 先执行 <code>gops sys update</code> 解析变量；或去掉 <code>--only</code>，让 <code>localize</code> 自动先 <code>update</code>。</li>
+→ 先执行 <code>gops sys resolve</code> 解析变量；或去掉 <code>--only</code>，让 <code>localize</code> 自动先 <code>resolve</code>。</li>
 <li><code>sys_model.yml</code> 缺失</li>
 <li>值文件内容不是合法 YAML
 （提示：全注释 / 空文件会被视为<strong>空覆盖</strong>，不会报错）</li>
@@ -218,14 +212,14 @@
 <pre><code class="language-bash">gops sys localize --debug 2
 </code></pre>
 <p>先打开调试输出定位是哪一层配置缺失。</p>
-<h2 id="4-值文件写了却没生效"><a class="header" href="#4-值文件写了却没生效">4. 值文件写了却没生效</a></h2>
+<h2 id="3-值文件写了却没生效"><a class="header" href="#3-值文件写了却没生效">3. 值文件写了却没生效</a></h2>
 <p>确认点：</p>
 <ul>
-<li><code>values/sys_value.yml</code> 里对应的行<strong>已取消注释</strong>——<code>sys update</code> 生成的是整份注释模板，保持注释等价于空覆盖</li>
+<li><code>values/sys_value.yml</code> 里对应的行<strong>已取消注释</strong>——<code>sys resolve</code> 生成的是整份注释模板，保持注释等价于空覆盖</li>
 <li>优先级：<code>values/value.yml</code> &gt; <code>values/sys_value.yml</code> &gt; <code>sys/merged_vars.yml</code> 的系统默认值</li>
 <li>在运维项目内执行时，值来自 <code>&lt;project&gt;/values/&lt;system&gt;/</code>（依据上层 <code>ops-prj.yml</code> 解析），而不是系统自带的 <code>&lt;sys&gt;/values</code></li>
 </ul>
-<h2 id="5-日志出现-unexpanded-variable-in-localize-path-且本地化被跳过"><a class="header" href="#5-日志出现-unexpanded-variable-in-localize-path-且本地化被跳过">5. 日志出现 <code>unexpanded variable in localize path</code> 且本地化被跳过</a></h2>
+<h2 id="4-日志出现-unexpanded-variable-in-localize-path-且本地化被跳过"><a class="header" href="#4-日志出现-unexpanded-variable-in-localize-path-且本地化被跳过">4. 日志出现 <code>unexpanded variable in localize path</code> 且本地化被跳过</a></h2>
 <p>原因：<code>sys/setting/list.yml</code> 里的路径模板引用了未设置的变量（常见是 <code>${GXL_PRJ_ROOT}</code>）。</p>
 <p>说明：</p>
 <ul>
@@ -233,7 +227,7 @@
 <li>路径里仍残留 <code>${...}</code> 时会告警并跳过；不会再创建字面量 <code>${...}</code> 目录</li>
 </ul>
 <p>建议：确认是在系统目录内执行，且该目录（或其上层）存在 <code>_gal/project.toml</code>。</p>
-<h2 id="6-downloadinstallstart-等系统命令失败"><a class="header" href="#6-downloadinstallstart-等系统命令失败">6. <code>download/install/start</code> 等系统命令失败</a></h2>
+<h2 id="5-downloadinstallstart-等系统命令失败"><a class="header" href="#5-downloadinstallstart-等系统命令失败">5. <code>download/install/start</code> 等系统命令失败</a></h2>
 <p>分两种情况（由 <code>sys/sys_model.yml</code> 的 <code>kind</code> 决定）：</p>
 <ul>
 <li><code>kind: gxl</code>：最终依赖系统工作流和 <code>gx</code>
@@ -251,14 +245,14 @@
 </ul>
 </li>
 </ul>
-<h2 id="7-docker-compose-报变量未定义"><a class="header" href="#7-docker-compose-报变量未定义">7. <code>docker compose</code> 报变量未定义</a></h2>
+<h2 id="6-docker-compose-报变量未定义"><a class="header" href="#6-docker-compose-报变量未定义">6. <code>docker compose</code> 报变量未定义</a></h2>
 <p>确认点：</p>
 <ul>
 <li>已执行 <code>gops sys localize</code> 生成 <code>.env</code></li>
 <li><code>.env</code> 位于系统根；compose 文件默认在 <code>sys/</code>（项目目录锚定系统根，<code>${VAR}</code> 由系统根的 <code>.env</code> 注入）</li>
 <li>密钥类变量用 <code>${SEC_xxx}</code> 占位，由 <code>gops run start</code> 从 <code>~/.galaxy/sec_value.yml</code> 注入；直接用 <code>docker compose up</code> 不会自动注入密钥</li>
 </ul>
-<h2 id="8-文档和目录树不一致"><a class="header" href="#8-文档和目录树不一致">8. 文档和目录树不一致</a></h2>
+<h2 id="7-文档和目录树不一致"><a class="header" href="#7-文档和目录树不一致">7. 文档和目录树不一致</a></h2>
 <p>处理原则：</p>
 <ul>
 <li>以当前 <code>gops sys new</code> 真实生成结果为准</li>

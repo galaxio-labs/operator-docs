@@ -45,7 +45,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-ec8dea9d.js";
+            window.path_to_searchindex_js = "../searchindex-be10778c.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-18d2ed36.js"></script>
@@ -475,7 +475,7 @@
     P --&gt;|gops prj reimport 保留 values| P
 </pre>
 
-<p>关键机制：在项目内的系统目录执行 <code>gops sys localize</code> / <code>sys update</code> 时，会依据上层 <code>ops-prj.yml</code> 反向解析出该项目为该系统维护的值目录，而不是使用系统自带的 <code>values/</code>。产品定义与客户现场在磁盘结构上天然分离。</p>
+<p>关键机制：在项目内的系统目录执行 <code>gops sys localize</code> / <code>sys resolve</code> 时，会依据上层 <code>ops-prj.yml</code> 反向解析出该项目为该系统维护的值目录，而不是使用系统自带的 <code>values/</code>。产品定义与客户现场在磁盘结构上天然分离。</p>
 <h3 id="2-执行中立同一命令面两种后端"><a class="header" href="#2-执行中立同一命令面两种后端">2. 执行中立：同一命令面，两种后端</a></h3>
 <p><code>sys/sys_model.yml</code> 的 <code>kind</code> 决定行为，但操作员的命令是同一套：</p>
 <pre class="mermaid">flowchart LR
@@ -517,7 +517,7 @@
 
 <ul>
 <li><code>.env = merged_vars 默认值 ⊕ values/sys_value.yml ⊕ values/value.yml</code></li>
-<li><code>sys update</code> 生成的 <code>values/sys_value.yml</code> 是<strong>整份注释模板</strong>：保持注释即“空覆盖“，取消注释才生效，默认值不会被钉死。</li>
+<li><code>sys resolve</code> 生成的 <code>values/sys_value.yml</code> 是<strong>整份注释模板</strong>：保持注释即“空覆盖“，取消注释才生效，默认值不会被钉死。</li>
 <li>优先级明确：<code>value.yml</code>（客户覆盖） &gt; <code>sys_value.yml</code>（系统值） &gt; <code>merged_vars</code>（默认）。</li>
 <li>来源可追踪：本地化会写出实际使用的值，能回答“这个最终值是谁给的“。</li>
 </ul>
@@ -525,7 +525,7 @@
 <p>compose 里用 <code>${SEC_xxx}</code> 占位；<code>gops run start</code> 运行时从 <code>~/.galaxy/sec_value.yml</code>（或 <code>./.galaxy/sec_value.yml</code>）读取，只注入 <strong>docker compose 子进程环境</strong>，不写 <code>.env</code>、不入库；<code>gops run diagnose</code>（<code>docker compose config</code>）注入的是掩码值 <code>********</code>。</p>
 <p>配置与敏感值在生命周期上被彻底分开，而不是仅靠 <code>.gitignore</code> 约定。</p>
 <h3 id="6-交付闭环打包--导入--同步保值"><a class="header" href="#6-交付闭环打包--导入--同步保值">6. 交付闭环：打包 → 导入 → 同步保值</a></h3>
-<pre><code class="language-text">gops sys package   -&gt; &lt;name&gt;-&lt;version&gt;.tar.gz（先 update 解析变量）
+<pre><code class="language-text">gops sys package   -&gt; &lt;name&gt;-&lt;version&gt;.tar.gz（先 resolve 解析变量）
 gops prj import    -&gt; 导入客户项目
 gops prj sync      -&gt; 同步 / 补齐系统（包内内容非破坏覆盖，缺失系统按包导入）
 </code></pre>

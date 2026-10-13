@@ -45,7 +45,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-ec8dea9d.js";
+            window.path_to_searchindex_js = "../../searchindex-be10778c.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-18d2ed36.js"></script>
@@ -201,11 +201,9 @@
 <h2 id="当前命令"><a class="header" href="#当前命令">当前命令</a></h2>
 <pre><code class="language-bash"># gops sys —— 定义 / 交付 / 工件
 gops sys new --name &lt;name&gt; [--kind gxl|docker-compose]
-gops sys update [--force]
+gops sys resolve [--force]
 gops sys package [--force] [--output &lt;path&gt;] [--full]
 gops sys localize [--mod &lt;module&gt;] [--only]
-gops sys setting --init
-gops sys check
 
 # gops run —— 运行时运维（在环境里落地/运行）
 gops run download [--mod &lt;module&gt;] [--env &lt;env&gt;]
@@ -255,36 +253,33 @@ gops sys new --name gateway --kind docker-compose   # 纯 compose（无型号）
 <li><code>sys/mod_list.yml</code>：模块列表（GXL；纯 compose 可省略）</li>
 <li><code>sys/setting/vars.yml</code>：系统设置变量定义（源）</li>
 <li><code>sys/setting/list.yml</code>：按模块的本地化列表（可选）</li>
-<li><code>sys/merged_vars.yml</code>：聚合变量（<code>sys update</code> 生成：模块变量 ⊕ 系统变量，需入库）</li>
+<li><code>sys/merged_vars.yml</code>：聚合变量（<code>sys resolve</code> 生成：模块变量 ⊕ 系统变量，需入库）</li>
 <li><code>sys/workflows/operators.gxl</code>：系统级工作流（GXL）</li>
-<li><code>values/sys_value.yml</code>：值文件（<code>sys update</code> 生成<strong>注释模板</strong>，取消注释即覆盖）</li>
+<li><code>values/sys_value.yml</code>：值文件（<code>sys resolve</code> 生成<strong>注释模板</strong>，取消注释即覆盖）</li>
 <li><code>values/value.yml</code>：额外覆盖层（适合入库的客户覆盖）</li>
 <li><code>sys/docker-compose.yaml</code>：系统级 compose 定义（用 <code>${VAR}</code> 占位；放在系统根（旧布局）仍受支持）</li>
 <li><code>.env</code>：<code>sys localize</code> 生成的非密钥配置（供 compose 消费）</li>
 </ul>
 <h2 id="值--本地化流程"><a class="header" href="#值--本地化流程">值 / 本地化流程</a></h2>
-<pre><code class="language-text">gops sys update   -&gt; sys/merged_vars.yml（系统默认值）+ values/sys_value.yml（注释模板）
+<pre><code class="language-text">gops sys resolve   -&gt; sys/merged_vars.yml（系统默认值）+ values/sys_value.yml（注释模板）
 gops sys localize -&gt; .env = merged_vars 默认值 ⊕ values/sys_value.yml ⊕ values/value.yml
 </code></pre>
 <p>两个值文件都是<strong>可选、可部分覆盖</strong>：只写需要修改的项，其余取系统默认值。保持注释模板原样时等价于空覆盖。</p>
-<p><code>sys localize</code> 默认<strong>总是先解析变量</strong>（等价于先跑一次 <code>update</code>，含解析/下载模块），再生成 <code>.env</code>；<code>--only</code> 跳过解析（用现有 <code>sys/merged_vars.yml</code>，缺失则明确报错）。</p>
+<p><code>sys localize</code> 默认<strong>总是先解析变量</strong>（等价于先跑一次 <code>resolve</code>，含解析/下载模块），再生成 <code>.env</code>；<code>--only</code> 跳过解析（用现有 <code>sys/merged_vars.yml</code>，缺失则明确报错）。</p>
 <h2 id="密钥"><a class="header" href="#密钥">密钥</a></h2>
 <p>密钥<strong>不写入</strong> <code>.env</code>：在 <code>sys/docker-compose.yaml</code> 里用 <code>${SEC_xxx}</code> 占位，<code>gops run start</code> 运行时从 <code>~/.galaxy/sec_value.yml</code>（或当前目录 <code>./.galaxy/sec_value.yml</code>）读取并注入子进程环境（key 会归一化为大写并加 <code>SEC_</code> 前缀）。<code>gops run diagnose</code>（<code>docker compose config</code>）只读校验，注入的是掩码值 <code>********</code>。详见 <code>galaxy-ops</code> 仓库的 <code>src/system/README.md</code>。</p>
 <h2 id="常见流程"><a class="header" href="#常见流程">常见流程</a></h2>
-<h3 id="更新系统本地引用"><a class="header" href="#更新系统本地引用">更新系统本地引用</a></h3>
-<pre><code class="language-bash">gops sys update
-gops sys update --force
+<h3 id="解析系统定义取模块--解析变量"><a class="header" href="#解析系统定义取模块--解析变量">解析系统定义（取模块 / 解析变量）</a></h3>
+<pre><code class="language-bash">gops sys resolve
+gops sys resolve --force
 </code></pre>
 <h3 id="本地化系统"><a class="header" href="#本地化系统">本地化系统</a></h3>
-<pre><code class="language-bash">gops sys localize            # 默认先解析变量（等价于先 update），再生成 .env
+<pre><code class="language-bash">gops sys localize            # 默认先解析变量（等价于先 resolve），再生成 .env
 gops sys localize --only     # 只 localize，不解析/下载模块（用现有 merged_vars.yml）
 gops sys localize --mod nginx
 </code></pre>
 <h3 id="打包交付"><a class="header" href="#打包交付">打包交付</a></h3>
-<pre><code class="language-bash">gops sys package             # 先 update 再打包 → ../&lt;name&gt;-&lt;version&gt;.tar.gz
-</code></pre>
-<h3 id="初始化系统设置"><a class="header" href="#初始化系统设置">初始化系统设置</a></h3>
-<pre><code class="language-bash">gops sys setting --init
+<pre><code class="language-bash">gops sys package             # 先 resolve 再打包 → ../&lt;name&gt;-&lt;version&gt;.tar.gz
 </code></pre>
 <h3 id="执行系统操作"><a class="header" href="#执行系统操作">执行系统操作</a></h3>
 <pre><code class="language-bash">gops run start --env default
@@ -297,7 +292,7 @@ gops prj new      -&gt; 创建运维项目
 gops prj import   -&gt; 把系统导入项目
 gops prj sync     -&gt; 同步 / 补齐系统（旧名 update）
 </code></pre>
-<p>导入到运维项目后，项目值放在 <code>&lt;project&gt;/values/&lt;system&gt;/</code>。在项目内的系统目录执行 <code>gops sys localize</code> / <code>gops sys update</code> 时，会依据上层 <code>ops-prj.yml</code> 直接使用该项目值目录，不依赖 <code>&lt;sys&gt;/values</code> 符号链接是否完整。</p>
+<p>导入到运维项目后，项目值放在 <code>&lt;project&gt;/values/&lt;system&gt;/</code>。在项目内的系统目录执行 <code>gops sys localize</code> / <code>gops sys resolve</code> 时，会依据上层 <code>ops-prj.yml</code> 直接使用该项目值目录，不依赖 <code>&lt;sys&gt;/values</code> 符号链接是否完整。</p>
 <h2 id="现实边界"><a class="header" href="#现实边界">现实边界</a></h2>
 <ul>
 <li><code>gxl</code> 系统的工作流执行仍依赖 <code>gx</code></li>

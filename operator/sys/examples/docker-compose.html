@@ -45,7 +45,7 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-ec8dea9d.js";
+            window.path_to_searchindex_js = "../../../searchindex-be10778c.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../toc-18d2ed36.js"></script>
@@ -230,14 +230,14 @@ vender: ''
 </code></pre>
 <p>key 会归一化为大写并加 <code>SEC_</code> 前缀：<code>postgres_password</code> → <code>SEC_POSTGRES_PASSWORD</code>。</p>
 <h2 id="3-生成-env"><a class="header" href="#3-生成-env">3. 生成 <code>.env</code></a></h2>
-<pre><code class="language-bash">gops sys localize        # 默认先解析变量（等价于先 update），再生成 .env
+<pre><code class="language-bash">gops sys localize        # 默认先解析变量（等价于先 resolve），再生成 .env
 cat .env
 </code></pre>
 <p>规则：</p>
 <pre><code class="language-text">.env = sys/merged_vars.yml 默认值 ⊕ values/sys_value.yml ⊕ values/value.yml
 </code></pre>
 <ul>
-<li><code>values/sys_value.yml</code> 是 <code>sys update</code> 生成的<strong>注释模板</strong>：取消注释要覆盖的项即可，其余取默认值。</li>
+<li><code>values/sys_value.yml</code> 是 <code>sys resolve</code> 生成的<strong>注释模板</strong>：取消注释要覆盖的项即可，其余取默认值。</li>
 <li><code>values/value.yml</code> 是更高优先级的覆盖层。</li>
 </ul>
 <p>例如只想改端口与副本数：</p>
@@ -258,7 +258,7 @@ gops run uninstall   # docker compose down
 </code></pre>
 <p><code>kind: docker-compose</code> 下 <code>--mod</code> 参数会被忽略（没有模块概念）；<code>--env</code> 仍可传入。</p>
 <h2 id="5-交付给客户运维项目"><a class="header" href="#5-交付给客户运维项目">5. 交付给客户（运维项目）</a></h2>
-<pre><code class="language-bash">gops sys package                          # 先 update 再打包 -&gt; ../gateway-&lt;version&gt;.tar.gz
+<pre><code class="language-bash">gops sys package                          # 先 resolve 再打包 -&gt; ../gateway-&lt;version&gt;.tar.gz
 cd ..
 gops prj new --name customer-a
 cd customer-a
@@ -267,7 +267,7 @@ cd gateway
 gops sys localize                         # 使用 &lt;project&gt;/values/gateway/ 下的客户值
 gops run start
 </code></pre>
-<p>客户差异写在 <code>&lt;project&gt;/values/gateway/</code>（例如 <code>value.yml</code>）。在项目内的系统目录执行 <code>gops sys localize</code> / <code>sys update</code> 时，会依据上层 <code>ops-prj.yml</code> 直接使用该项目值目录。</p>
+<p>客户差异写在 <code>&lt;project&gt;/values/gateway/</code>（例如 <code>value.yml</code>）。在项目内的系统目录执行 <code>gops sys localize</code> / <code>sys resolve</code> 时，会依据上层 <code>ops-prj.yml</code> 直接使用该项目值目录。</p>
 
                     </main>
 

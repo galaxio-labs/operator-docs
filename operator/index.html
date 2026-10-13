@@ -45,7 +45,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-ec8dea9d.js";
+            window.path_to_searchindex_js = "../searchindex-be10778c.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-18d2ed36.js"></script>
@@ -225,11 +225,9 @@ gops prj backup          # 存一份现场态
 <h3 id="系统命令"><a class="header" href="#系统命令">系统命令</a></h3>
 <pre><code class="language-bash"># gops sys —— 定义 / 交付 / 工件
 gops sys new --name &lt;name&gt; [--kind gxl|docker-compose]
-gops sys update
+gops sys resolve
 gops sys package [--full]
 gops sys localize [--mod &lt;module&gt;] [--only]
-gops sys setting --init
-gops sys check
 
 # gops run —— 运行时运维（在环境里落地/运行）
 gops run download [--mod &lt;module&gt;] [--env &lt;env&gt;]

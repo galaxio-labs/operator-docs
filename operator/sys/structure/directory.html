@@ -45,7 +45,7 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-ec8dea9d.js";
+            window.path_to_searchindex_js = "../../../searchindex-be10778c.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../toc-18d2ed36.js"></script>
@@ -228,7 +228,7 @@
 <p>compose 类型不生成 <code>_gal/</code>、<code>values/</code>、<code>mod_list.yml</code>、<code>workflows/</code>、<code>setting/list.yml</code>。</p>
 <p>compose 文件默认位于 <code>sys/</code>，<code>gops sys</code> 按 <code>sys/compose.{yaml,yml}</code> → <code>sys/docker-compose.{yaml,yml}</code> → 系统根同名文件的顺序查找。无论文件在哪，compose <strong>项目目录都锚定系统根</strong>（项目名 = 根目录名，相对挂载路径与 <code>.env</code> 均相对系统根）。把文件放在系统根（旧布局）仍受支持：此时 <code>gops</code> 不加 <code>-f</code>，交由 docker 自动发现（<code>docker-compose.override.yml</code> 自动合并、<code>COMPOSE_FILE</code> 环境变量继续生效）；<code>sys/</code> 布局下由 <code>gops</code> 显式合并 <code>&lt;sys&gt;/&lt;stem&gt;.override.{yaml,yml}</code>。</p>
 <h2 id="运行时生成的文件"><a class="header" href="#运行时生成的文件">运行时生成的文件</a></h2>
-<p><code>gops sys update</code> / <code>gops sys localize</code> 会在需要时补齐：</p>
+<p><code>gops sys resolve</code> / <code>gops sys localize</code> 会在需要时补齐：</p>
 <ul>
 <li><code>sys/merged_vars.yml</code>：聚合变量（模块 ⊕ 系统），需入库</li>
 <li><code>values/sys_value.yml</code>：值文件（<strong>注释模板</strong>；取消注释需要覆盖的项即可）</li>
@@ -246,7 +246,7 @@
 <p>旧文档里常见的这些内容，不应再视为当前最小骨架的一部分：</p>
 <ul>
 <li><code>sys/vars.yml</code></li>
-<li><code>sys/&lt;model&gt;/mods/</code>（由 <code>gops sys update</code> 生成，不是初始结构）</li>
+<li><code>sys/&lt;model&gt;/mods/</code>（由 <code>gops sys resolve</code> 生成，不是初始结构）</li>
 <li><code>test_res/</code></li>
 <li>独立 <code>gsys</code> CLI 生成目录</li>
 </ul>

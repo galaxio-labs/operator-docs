@@ -45,7 +45,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-ec8dea9d.js";
+            window.path_to_searchindex_js = "searchindex-be10778c.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-18d2ed36.js"></script>
@@ -188,6 +188,13 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="changelog"><a class="header" href="#changelog">Changelog</a></h1>
+<h1 id="文档更新-2026-10-13--现场态五声明解耦sys-update--sys-resolve移除-sys-setting--sys-check"><a class="header" href="#文档更新-2026-10-13--现场态五声明解耦sys-update--sys-resolve移除-sys-setting--sys-check">文档更新 2026-10-13 —— 现场态五声明解耦；<code>sys update</code> → <code>sys resolve</code>；移除 <code>sys setting</code> / <code>sys check</code></a></h1>
+<ul>
+<li><strong><code>cmd/gops.md</code></strong>：<code>gops prj</code> 一节重写（<code>sync</code> / <code>backup</code> / <code>restore</code> / <code>contract export|import</code> / <code>upgrade</code> / <code>diagnose</code>，移除 <code>update</code> / <code>reimport</code>）；新增现场态五声明「互相独立」总表；<code>sys package</code> 的 <code>ignore:</code> 改为 <code>pkg_exclude:</code> + <code>pkg_include:</code>；版本与功能状态表更新为 2.3.x</li>
+<li><strong><code>gops sys update</code> 更名为 <code>gops sys resolve</code></strong>（旧名 <code>update</code> 保留为隐藏别名）：<code>cmd/gops.md</code> 及 <code>operator/</code>（<code>overview</code> / <code>README</code> / <code>sys/*</code>）相关说明同步</li>
+<li><strong>移除 <code>gops sys setting</code></strong>（只在 <code>--init</code> 时覆盖成示例值、与 <code>gops sys new</code> 重叠）；<code>cmd/gops.md</code>、<code>operator/README.md</code>、<code>operator/sys/{README,examples,troubleshooting,structure}</code> 同步移除引用，「不再使用的旧说法」补充</li>
+<li><strong>移除 <code>gops sys check</code></strong>（只读漂移检查；保留部分并入 <code>sys localize</code> 结尾的 <code>[WARN]</code>）；<code>cmd/gops.md</code>（功能状态表、漂移说明）、<code>operator/README.md</code>、<code>operator/sys/README.md</code> 同步；<code>operator/roadmap.md</code> 的 ② 提案改用 <code>gops sys validate</code>、⑥ 标注已实现后移除</li>
+</ul>
 <h1 id="文档更新-2026-09-30--值变更表gops-sys-diff--gops-mod-diff"><a class="header" href="#文档更新-2026-09-30--值变更表gops-sys-diff--gops-mod-diff">文档更新 2026-09-30 —— 值变更表（<code>gops sys diff</code> / <code>gops mod diff</code>）</a></h1>
 <ul>
 <li><strong>命令行工具</strong>：<code>cmd/gops.md</code> 新增「展示系统值变更」与「展示模块值变更」两节（列含义、未展开值比对、<code>--json</code>、<code>localize</code> 末尾附带变更表）；<code>gops prj diff</code> 标注暂不提供；<code>mod localize</code> / <code>sys localize</code> 补<strong>文件变更表</strong>（<code>created</code>/<code>replaced</code>，前后内容指纹比对）；<code>sys diff</code> 补 <strong>gxl 系统的模块分组</strong>（<code>[mod: &lt;name&gt;]</code>，<code>values/&lt;mod&gt;/mod_value.yml</code>）与 <code>--json</code> 新结构</li>
