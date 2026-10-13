@@ -1,5 +1,10 @@
 # Changelog
 
+# 文档更新 2026-10-14 —— `gops self` / `gx self` 支持下载镜像 `--mirror`
+
+- **`cmd/gops.md`**：`自升级命令 (gops self)` 新增「下载镜像（`--mirror`）」小节，并在「检查更新」「升级」示例中补充 `--mirror` 用法
+- **`cmd/gx.md`**：命令列表标注 `gx self check|update` 支持 `--mirror <PRESET|URL>`，并补一条说明（内置预设 `githubproxy` = `https://githubproxy.cc/`，只重写绝对 `http(s)` 地址，`sha256` 校验不变）
+
 # 文档更新 2026-10-13 —— 现场态五声明解耦；`sys update` → `sys resolve`；移除 `sys setting` / `sys check`
 
 - **`cmd/gops.md`**：`gops prj` 一节重写（`sync` / `backup` / `restore` / `contract export|import` / `upgrade` / `diagnose`，移除 `update` / `reimport`）；新增现场态五声明「互相独立」总表；`sys package` 的 `ignore:` 改为 `pkg_exclude:` + `pkg_include:`；版本与功能状态表更新为 2.3.x

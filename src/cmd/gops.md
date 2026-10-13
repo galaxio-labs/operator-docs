@@ -601,6 +601,9 @@ gops self check --channel alpha
 
 # 机器可读输出（stdout 仅 JSON，不含版本横幅）
 gops self check --channel alpha --json
+
+# 走下载镜像
+gops self check --channel alpha --mirror githubproxy
 ```
 
 ### 升级
@@ -620,6 +623,10 @@ gops self update --channel alpha --to 2.1.0
 
 # 已是最新时强制重装
 gops self update --channel alpha --force
+
+# 走下载镜像（预设，或自定义前缀 URL）
+gops self update --channel alpha --mirror githubproxy
+gops self update --channel alpha --mirror https://githubproxy.cc/
 ```
 
 更新前会备份当前二进制；新版本 `--version` 健康检查失败会自动回滚。
@@ -633,6 +640,22 @@ gops self rollback
 # 指定备份 id（14 位时间戳）
 gops self rollback --id 20260321123456
 ```
+
+### 下载镜像（`--mirror`）
+
+`check` / `update` 均支持 `--mirror <PRESET|URL>`：把清单与制品的下载地址改为经过镜像前缀。
+
+```bash
+# 内置预设：githubproxy → https://githubproxy.cc/
+gops self update --channel alpha --mirror githubproxy
+
+# 自定义前缀（必须是带 scheme 的完整 URL）
+gops self update --channel alpha --mirror https://githubproxy.cc/
+```
+
+- 只重写**绝对的 `http(s)` 下载地址**，`sha256` 校验不变；本地/相对路径不受影响。
+- 未知预设名（既不是预设、也不是带 `scheme` 的 URL）会**直接报错**，不会被当作 URL 使用。
+- 适用于 GitHub 访问慢或被阻断的网络环境。
 
 ### 说明
 

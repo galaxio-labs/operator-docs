@@ -26,7 +26,9 @@ gx <COMMAND>
 | `gx mod update` | 更新项目模块（依据本地 `_gal` 配置） |
 | `gx doc [TOPIC]` | 查看内置文档 |
 | `gx check` | 打印当前运行环境信息 |
-| `gx self check\|update\|rollback` | 自更新管理 |
+| `gx self check\|update\|rollback` | 自更新管理（`check` / `update` 支持 `--mirror <PRESET|URL>` 走下载镜像） |
+
+> `gx self check` / `gx self update` 的 `--mirror <PRESET|URL>`：把清单与制品下载地址改为经过镜像前缀，内置预设 `githubproxy`（= `https://githubproxy.cc/`），也可传自定义前缀 URL；只重写绝对 `http(s)` 地址，`sha256` 校验不变，未知预设名会报错。
 
 ## 参数说明
 
